@@ -1,7 +1,7 @@
 ---
 title: mcp
 source: https://code.claude.com/docs/en/mcp.md
-fetched: 2025-11-15T09:07:10.129Z
+fetched: 2025-11-15T09:17:21.765Z
 ---
 
 # mcp

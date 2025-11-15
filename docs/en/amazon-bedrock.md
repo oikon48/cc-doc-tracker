@@ -1,7 +1,7 @@
 ---
 title: amazon-bedrock
 source: https://code.claude.com/docs/en/amazon-bedrock.md
-fetched: 2025-11-15T09:07:10.736Z
+fetched: 2025-11-15T09:17:22.350Z
 ---
 
 # amazon-bedrock

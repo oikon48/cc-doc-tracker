@@ -1,7 +1,7 @@
 ---
 title: skills
 source: https://code.claude.com/docs/en/skills.md
-fetched: 2025-11-15T09:07:09.220Z
+fetched: 2025-11-15T09:17:20.211Z
 ---
 
 # skills

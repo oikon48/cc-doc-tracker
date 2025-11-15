@@ -1,7 +1,7 @@
 ---
 title: hooks
 source: https://code.claude.com/docs/en/hooks.md
-fetched: 2025-11-15T09:07:21.399Z
+fetched: 2025-11-15T09:17:32.439Z
 ---
 
 # hooks

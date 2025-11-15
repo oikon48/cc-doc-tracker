@@ -1,7 +1,7 @@
 ---
 title: setup
 source: https://code.claude.com/docs/en/setup.md
-fetched: 2025-11-15T09:07:18.822Z
+fetched: 2025-11-15T09:17:30.103Z
 ---
 
 # setup

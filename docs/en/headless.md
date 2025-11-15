@@ -1,7 +1,7 @@
 ---
 title: headless
 source: https://code.claude.com/docs/en/headless.md
-fetched: 2025-11-15T09:07:10.102Z
+fetched: 2025-11-15T09:17:21.724Z
 ---
 
 # headless

@@ -1,7 +1,7 @@
 ---
 title: gitlab-ci-cd
 source: https://code.claude.com/docs/en/gitlab-ci-cd.md
-fetched: 2025-11-15T09:07:10.140Z
+fetched: 2025-11-15T09:17:21.737Z
 ---
 
 # gitlab-ci-cd

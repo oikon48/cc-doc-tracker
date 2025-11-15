@@ -1,7 +1,7 @@
 ---
 title: plugins-reference
 source: https://code.claude.com/docs/en/plugins-reference.md
-fetched: 2025-11-15T09:07:21.383Z
+fetched: 2025-11-15T09:17:32.432Z
 ---
 
 # plugins-reference

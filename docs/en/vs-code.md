@@ -1,7 +1,7 @@
 ---
 title: vs-code
 source: https://code.claude.com/docs/en/vs-code.md
-fetched: 2025-11-15T09:07:20.114Z
+fetched: 2025-11-15T09:17:31.275Z
 ---
 
 # vs-code

@@ -1,7 +1,7 @@
 ---
 title: settings
 source: https://code.claude.com/docs/en/settings.md
-fetched: 2025-11-15T09:07:20.063Z
+fetched: 2025-11-15T09:17:31.287Z
 ---
 
 # settings
