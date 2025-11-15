@@ -1,6 +1,6 @@
 # 📚 Claude Code Documentation Tracker
 
-[![Fetch Docs](https://github.com/[username]/cc-doc-tracker/actions/workflows/fetch-docs.yml/badge.svg)](https://github.com/[username]/cc-doc-tracker/actions/workflows/fetch-docs.yml)
+[![Fetch Docs](https://github.com/oikon48/cc-doc-tracker/actions/workflows/fetch-docs.yml/badge.svg)](https://github.com/oikon48/cc-doc-tracker/actions/workflows/fetch-docs.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Claude Codeの公式ドキュメントを自動的に取得し、変更を追跡するGitHubリポジトリです。
@@ -42,7 +42,7 @@ cc-doc-tracker/
 
 1. **リポジトリをクローン**
 ```bash
-git clone https://github.com/[username]/cc-doc-tracker.git
+git clone https://github.com/oikon48/cc-doc-tracker.git
 cd cc-doc-tracker
 ```
 
@@ -166,7 +166,7 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください
 
 ## 📧 連絡先
 
-問題や提案がある場合は、[Issues](https://github.com/[username]/cc-doc-tracker/issues)でお知らせください。
+問題や提案がある場合は、[Issues](https://github.com/oikon48/cc-doc-tracker/issues)でお知らせください。
 
 ---
 
