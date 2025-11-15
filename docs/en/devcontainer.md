@@ -1,7 +1,7 @@
 ---
 title: devcontainer
 source: https://code.claude.com/docs/en/devcontainer.md
-fetched: 2025-11-15T09:31:33.395Z
+fetched: 2025-11-15T12:02:10.007Z
 ---
 
 # Development containers

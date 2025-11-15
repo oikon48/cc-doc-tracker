@@ -1,7 +1,7 @@
 ---
 title: terminal-config
 source: https://code.claude.com/docs/en/terminal-config.md
-fetched: 2025-11-15T09:31:35.242Z
+fetched: 2025-11-15T12:02:12.019Z
 ---
 
 # Optimize your terminal setup

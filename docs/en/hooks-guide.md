@@ -1,7 +1,7 @@
 ---
 title: hooks-guide
 source: https://code.claude.com/docs/en/hooks-guide.md
-fetched: 2025-11-15T09:31:24.266Z
+fetched: 2025-11-15T12:02:01.467Z
 ---
 
 # Get started with Claude Code hooks

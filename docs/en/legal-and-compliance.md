@@ -1,7 +1,7 @@
 ---
 title: legal-and-compliance
 source: https://code.claude.com/docs/en/legal-and-compliance.md
-fetched: 2025-11-15T09:31:36.509Z
+fetched: 2025-11-15T12:02:13.215Z
 ---
 
 # Legal and compliance

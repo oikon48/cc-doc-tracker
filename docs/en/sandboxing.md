@@ -1,7 +1,7 @@
 ---
 title: sandboxing
 source: https://code.claude.com/docs/en/sandboxing.md
-fetched: 2025-11-15T09:31:33.395Z
+fetched: 2025-11-15T12:02:09.882Z
 ---
 
 # Sandboxing

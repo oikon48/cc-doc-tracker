@@ -1,7 +1,7 @@
 ---
 title: plugins
 source: https://code.claude.com/docs/en/plugins.md
-fetched: 2025-11-15T09:31:23.622Z
+fetched: 2025-11-15T12:02:00.888Z
 ---
 
 # Plugins

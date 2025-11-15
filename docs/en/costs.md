@@ -1,7 +1,7 @@
 ---
 title: costs
 source: https://code.claude.com/docs/en/costs.md
-fetched: 2025-11-15T09:31:34.041Z
+fetched: 2025-11-15T12:02:10.641Z
 ---
 
 # Manage costs effectively

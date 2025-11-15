@@ -1,7 +1,7 @@
 ---
 title: mcp
 source: https://code.claude.com/docs/en/mcp.md
-fetched: 2025-11-15T09:31:24.266Z
+fetched: 2025-11-15T12:02:01.451Z
 ---
 
 # Connect Claude Code to tools via MCP
