@@ -78,19 +78,16 @@ jobs:
           fi
 
           # Add detailed description
-          COMMIT_BODY="Automated documentation update at $TIMESTAMP
-
-Modified files:"
+          COMMIT_BODY="Automated documentation update at $TIMESTAMP"$'\n\n'"Modified files:"
 
           # Add list of changed files to commit body
           for file in $(git diff --staged --name-only | head -20); do
-            COMMIT_BODY="$COMMIT_BODY
-- $file"
+            COMMIT_BODY="${COMMIT_BODY}"$'\n'"- $file"
           done
 
           if [ "$CHANGED_COUNT" -gt 20 ]; then
-            COMMIT_BODY="$COMMIT_BODY
-... and $((CHANGED_COUNT - 20)) more files"
+            REMAINING=$((CHANGED_COUNT - 20))
+            COMMIT_BODY="${COMMIT_BODY}"$'\n'"... and ${REMAINING} more files"
           fi
 
           # Commit with message and body
