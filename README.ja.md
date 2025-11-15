@@ -4,216 +4,118 @@
 
 [![Fetch Docs](https://github.com/oikon48/cc-doc-tracker/actions/workflows/fetch-docs.yml/badge.svg)](https://github.com/oikon48/cc-doc-tracker/actions/workflows/fetch-docs.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 
-Claude Codeの公式ドキュメントを自動的に取得し、変更を追跡するGitHubリポジトリです。
-
-## ✨ ハイライト
-
-**2025年11月の大幅改善:**
-- 🎯 **不要なHTML処理を削除**（cheerio, turndown）
-- 📝 **サーバーが純粋なMarkdownを返す** - 直接保存するように変更
-- ✅ **結果:** 完璧なMarkdown可読性（エスケープ記号の問題を解消！）
+Claude Codeの公式ドキュメントを自動取得し、変更を追跡するツールです。
 
 ## 🎯 特徴
 
-- 🔄 **自動更新**: 1日2回（JST 9:00, 21:00）自動的にドキュメントを取得
-- 📝 **Markdown形式**: すべてのドキュメントをMarkdown形式で保存
-- 📊 **変更追跡**: Gitのコミット履歴で変更を完全に追跡
-- 🚀 **TypeScript実装**: 型安全で保守性の高いコード
-- ⚡ **並列処理**: 効率的なバッチ処理で高速取得
-- 🔁 **リトライ機能**: 一時的なエラーに対する耐性
+- 🔄 **自動更新**: 1日2回（JST 9:00, 21:00）
+- 📝 **純粋なMarkdown**: 直接保存（HTML変換不要）
+- 📊 **Git追跡**: 完全な変更履歴
+- 🚀 **TypeScript**: 型安全な実装
+- ⚡ **最小限の依存関係**: node-fetchのみ
 
-## 🏗️ アーキテクチャ
+## 🏗️ なぜシンプルなのか？
 
-### なぜこんなにシンプルなのか？
-
-このプロジェクトは以下の発見により大幅に簡素化されました：
-
-1. Claude Codeドキュメントサーバーは`Content-Type: text/markdown`を返す
-2. HTML解析が不要 → **cheerio削除** ✂️
-3. HTML→Markdown変換が不要 → **turndown削除** ✂️
+Claude Codeサーバーは`Content-Type: text/markdown`を直接返します。HTML解析や変換は不要でした！
 
 ### Before vs After
 
-| 項目 | Before（初期実装） | After（現在） |
-|------|-------------------|--------------|
+| 項目 | Before | After |
+|------|--------|-------|
 | **依存関係** | node-fetch + cheerio + turndown | node-fetchのみ |
-| **処理フロー** | 取得 → HTML解析 → 変換 → 保存 | 取得 → 直接保存 |
-| **Markdown品質** | エスケープ記号（`\#`, `\*`, `\[`） | クリーンなMarkdown |
-| **コード複雑度** | HTML処理ロジック含む | シンプルな直接保存 |
-| **パフォーマンス** | 遅い（HTML解析） | 速い（直接書き込み） |
+| **処理** | 取得 → HTML解析 → 変換 → 保存 | 取得 → 保存 |
+| **出力** | `\# Title \* List \[Link\]` | `# Title * List [Link]` |
 
-### 改善例
+## 🚀 クイックスタート
 
-**Before:**
-```markdown
-\# Claude Code overview
-\* An AWS account with Bedrock access enabled
-\[Amazon Bedrock console\](https://console.aws.amazon.com/bedrock/)
+```bash
+# クローン
+git clone https://github.com/oikon48/cc-doc-tracker.git
+cd cc-doc-tracker
+
+# インストール
+npm install
+
+# ドキュメント取得
+npm run fetch-docs
 ```
 
-**After:**
-```markdown
-# Claude Code overview
-* An AWS account with Bedrock access enabled
-[Amazon Bedrock console](https://console.aws.amazon.com/bedrock/)
-```
-
-## 📁 ディレクトリ構造
+## 📁 構造
 
 ```
 cc-doc-tracker/
-├── docs/
-│   └── en/                 # 取得したMarkdownドキュメント
-│       ├── overview.md
-│       ├── quickstart.md
-│       └── ...
-├── metadata/               # メタデータ
-│   ├── docs_map.md        # ドキュメント一覧
-│   └── last_update.json  # 最終更新情報
-├── src/                   # TypeScriptソースコード
-│   ├── lib/
-│   │   └── doc-fetcher.ts
-│   ├── fetch-docs.ts
-│   └── index.ts
-└── .github/
-    └── workflows/
-        └── fetch-docs.yml  # GitHub Actions設定
+├── docs/en/          # 取得したドキュメント（45ファイル）
+├── metadata/         # 取得統計
+├── src/              # TypeScriptソース
+└── .github/          # GitHub Actions
 ```
 
-## 🚀 使用方法
+## 📊 使用方法
 
-### ローカルで実行
+### 変更追跡
 
-1. **リポジトリをクローン**
 ```bash
-git clone https://github.com/oikon48/cc-doc-tracker.git
-cd cc-doc-tracker
-```
+# 更新履歴
+git log --oneline --grep="📝 Update"
 
-2. **依存関係をインストール**
-```bash
-npm install
-```
+# 日付比較
+git diff 'HEAD@{yesterday}' HEAD -- docs/
 
-3. **ドキュメントを取得**
-```bash
-npm run fetch-docs
+# ファイル履歴
+git log --follow docs/en/overview.md
 ```
 
 ### 開発
 
 ```bash
-# TypeScriptを直接実行（開発時）
-npm run dev
-
-# ビルド
-npm run build
-
-# 型チェック
-npm run type-check
-
-# リント
-npm run lint
-
-# フォーマット
-npm run format
+npm run dev        # 開発モード
+npm run build      # TypeScriptビルド
+npm run lint       # リント
 ```
 
-## 📈 変更履歴の確認
+## 🤖 自動化
 
-### コミット履歴で確認
+自動実行時刻：
+- **JST 9:00** (UTC 0:00)
+- **JST 21:00** (UTC 12:00)
 
-```bash
-# すべての変更履歴を確認
-git log --oneline --grep="📝 Update Claude Code docs"
+手動実行：Actionsタブ → "Run workflow"
 
-# 特定ファイルの変更履歴
-git log --follow docs/en/overview.md
+## 📈 統計
 
-# 変更内容の詳細を確認
-git show [commit-hash]
-```
-
-### 特定の日付の差分を確認
-
-```bash
-# 昨日から今日の変更
-git diff 'HEAD@{yesterday}' HEAD -- docs/
-
-# 特定の日付間の変更
-git diff 'HEAD@{2025-11-01}' 'HEAD@{2025-11-15}' -- docs/
-```
-
-### 変更されたファイルの一覧
-
-```bash
-# 最新のコミットで変更されたファイル
-git diff-tree --no-commit-id --name-only -r HEAD
-
-# 過去7日間で変更されたファイル
-git diff --name-only 'HEAD@{7 days ago}' HEAD -- docs/
-```
-
-## 📊 統計情報
-
-メタデータは `metadata/last_update.json` に保存されます：
+現在の成功率：**97.8%** (45/46 ドキュメント)
 
 ```json
 {
-  "lastMapUpdate": "2025-11-15 00:10:13 UTC",
-  "lastRun": "2025-11-15T12:00:00.000Z",
-  "totalDocs": 35,
-  "successfulFetch": 35,
-  "failedFetch": 0,
-  "failedFiles": []
+  "totalDocs": 46,
+  "successfulFetch": 45,
+  "failedFetch": 1
 }
 ```
 
-## 🔧 GitHub Actions
+## 🛠️ 技術スタック
 
-このリポジトリは以下のスケジュールで自動実行されます：
+### 現在
+- `node-fetch` - HTTPクライアント
+- `dotenv` - 環境変数
 
-- **JST 9:00** (UTC 0:00) - 朝の更新
-- **JST 21:00** (UTC 12:00) - 夜の更新
-
-手動実行も可能です：
-1. GitHubのActionsタブを開く
-2. "Fetch Claude Code Documentation"を選択
-3. "Run workflow"をクリック
+### 削除済み（2025年11月）
+- ~~`cheerio`~~ - HTML解析不要
+- ~~`turndown`~~ - Markdown変換不要
 
 ## 🤝 コントリビューション
 
-Issue や Pull Request は歓迎します！
-
-### 開発手順
-
-1. このリポジトリをフォーク
-2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチをプッシュ (`git push origin feature/amazing-feature`)
-5. Pull Requestを作成
+PR歓迎！シンプルで保守しやすいコードを心がけてください。
 
 ## 📝 ライセンス
 
-MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください。
-
-## 🙏 謝辞
-
-- [Claude Code](https://code.claude.com/) - Anthropic's official Claude IDE
-- [Git Scraping](https://simonwillison.net/2020/Oct/9/git-scraping/) concept by Simon Willison
+MIT
 
 ## ⚠️ 免責事項
 
-このプロジェクトは非公式のツールです。Claude CodeおよびAnthropicとは直接の関係はありません。
-ドキュメントの著作権はAnthropicに帰属します。
-
-## 📧 連絡先
-
-問題や提案がある場合は、[Issues](https://github.com/oikon48/cc-doc-tracker/issues)でお知らせください。
+非公式ツールです。Claude CodeおよびAnthropicとは無関係です。
 
 ---
 
-最終更新: 2025-11-15
+Claude Codeコミュニティのために ❤️
