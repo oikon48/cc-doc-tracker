@@ -1,173 +1,314 @@
 # 📚 Claude Code Documentation Tracker
 
+[日本語](README.ja.md)
+
 [![Fetch Docs](https://github.com/oikon48/cc-doc-tracker/actions/workflows/fetch-docs.yml/badge.svg)](https://github.com/oikon48/cc-doc-tracker/actions/workflows/fetch-docs.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 
-Claude Codeの公式ドキュメントを自動的に取得し、変更を追跡するGitHubリポジトリです。
+> Automatically fetch and track changes in Claude Code's official documentation using Git-based scraping.
 
-## 🎯 特徴
+## ✨ Highlights
 
-- 🔄 **自動更新**: 1日2回（JST 9:00, 21:00）自動的にドキュメントを取得
-- 📝 **Markdown形式**: すべてのドキュメントをMarkdown形式で保存
-- 📊 **変更追跡**: Gitのコミット履歴で変更を完全に追跡
-- 🚀 **TypeScript実装**: 型安全で保守性の高いコード
-- ⚡ **並列処理**: 効率的なバッチ処理で高速取得
-- 🔁 **リトライ機能**: 一時的なエラーに対する耐性
+**Major Improvement (November 2025):**
+- 🎯 **Removed unnecessary HTML processing** (cheerio, turndown)
+- 📝 **Server returns pure Markdown** - we now save it directly
+- ✅ **Result:** Perfect Markdown readability (no more escaped symbols!)
 
-## 📁 ディレクトリ構造
+## 🎯 Features
+
+- 🔄 **Automated Updates**: Twice daily (9:00, 21:00 JST)
+- 📝 **Pure Markdown**: Direct storage without HTML conversion
+- 📊 **Git-based Tracking**: Complete change history via commits
+- 🚀 **TypeScript**: Type-safe, maintainable codebase
+- ⚡ **Parallel Processing**: Efficient batch fetching (5 docs concurrently)
+- 🔁 **Retry Logic**: Resilient to temporary failures (3 retries with exponential backoff)
+
+## 🏗️ Architecture
+
+### Why So Simple?
+
+This project was significantly simplified after discovering that:
+
+1. Claude Code docs server returns `Content-Type: text/markdown`
+2. No HTML parsing needed → **cheerio removed** ✂️
+3. No HTML-to-Markdown conversion needed → **turndown removed** ✂️
+
+```mermaid
+graph LR
+    A[Fetch URL] --> B[Receive Markdown]
+    B --> C[Add Frontmatter]
+    C --> D[Save File]
+
+    style A fill:#e1f5fe
+    style B fill:#b3e5fc
+    style C fill:#81d4fa
+    style D fill:#4fc3f7
+```
+
+### Before vs After
+
+| Aspect | Before (Initial) | After (Current) |
+|--------|-----------------|-----------------|
+| **Dependencies** | node-fetch + cheerio + turndown | node-fetch only |
+| **Processing** | Fetch → Parse HTML → Convert → Save | Fetch → Save |
+| **Markdown Quality** | Escaped symbols (`\#`, `\*`, `\[`) | Clean Markdown |
+| **Code Complexity** | HTML processing logic | Simple direct save |
+| **Performance** | Slower (HTML parsing) | Faster (direct write) |
+
+### Example Output Improvement
+
+**Before:**
+```markdown
+\# Claude Code overview
+\* An AWS account with Bedrock access enabled
+\[Amazon Bedrock console\](https://console.aws.amazon.com/bedrock/)
+```
+
+**After:**
+```markdown
+# Claude Code overview
+* An AWS account with Bedrock access enabled
+[Amazon Bedrock console](https://console.aws.amazon.com/bedrock/)
+```
+
+## 📁 Directory Structure
 
 ```
 cc-doc-tracker/
-├── docs/
-│   └── en/                 # 取得したMarkdownドキュメント
-│       ├── overview.md
-│       ├── quickstart.md
-│       └── ...
-├── metadata/               # メタデータ
-│   ├── docs_map.md        # ドキュメント一覧
-│   └── last_update.json  # 最終更新情報
-├── src/                   # TypeScriptソースコード
+├── docs/en/                # 📄 Fetched Markdown documents
+│   ├── overview.md
+│   ├── quickstart.md
+│   └── ... (45 successfully fetched)
+├── metadata/
+│   ├── docs_map.md        # 🗺️ Document index from Claude Code
+│   └── last_update.json   # 📊 Fetch statistics
+├── src/
 │   ├── lib/
-│   │   └── doc-fetcher.ts
-│   ├── fetch-docs.ts
+│   │   └── doc-fetcher.ts # 🎯 Core fetcher (simplified!)
+│   ├── fetch-docs.ts      # 🚀 CLI entry point
 │   └── index.ts
-└── .github/
-    └── workflows/
-        └── fetch-docs.yml  # GitHub Actions設定
+└── .github/workflows/
+    └── fetch-docs.yml     # 🤖 GitHub Actions automation
 ```
 
-## 🚀 使用方法
+## 🚀 Quick Start
 
-### ローカルで実行
+### Prerequisites
 
-1. **リポジトリをクローン**
+- Node.js 18+
+- Git
+- npm or yarn
+
+### Installation & Usage
+
 ```bash
+# Clone repository
 git clone https://github.com/oikon48/cc-doc-tracker.git
 cd cc-doc-tracker
-```
 
-2. **依存関係をインストール**
-```bash
+# Install dependencies
 npm install
-```
 
-3. **ドキュメントを取得**
-```bash
+# Fetch documentation
 npm run fetch-docs
 ```
 
-### 開発
+### Development Commands
 
 ```bash
-# TypeScriptを直接実行（開発時）
-npm run dev
-
-# ビルド
-npm run build
-
-# 型チェック
-npm run type-check
-
-# リント
-npm run lint
-
-# フォーマット
-npm run format
+npm run dev          # Run with tsx (development mode)
+npm run build        # Compile TypeScript
+npm run type-check   # Type checking only
+npm run lint         # Run ESLint
+npm run format       # Format with Prettier
 ```
 
-## 📈 変更履歴の確認
+## 📊 Tracking Changes
 
-### コミット履歴で確認
+### View Commit History
 
 ```bash
-# すべての変更履歴を確認
+# All documentation updates
 git log --oneline --grep="📝 Update Claude Code docs"
 
-# 特定ファイルの変更履歴
+# Specific file history
 git log --follow docs/en/overview.md
 
-# 変更内容の詳細を確認
+# View changes in a commit
 git show [commit-hash]
 ```
 
-### 特定の日付の差分を確認
+### Compare Changes Over Time
 
 ```bash
-# 昨日から今日の変更
+# Yesterday to today
 git diff 'HEAD@{yesterday}' HEAD -- docs/
 
-# 特定の日付間の変更
+# Specific date range
 git diff 'HEAD@{2025-11-01}' 'HEAD@{2025-11-15}' -- docs/
+
+# Last week's changes
+git diff 'HEAD@{1 week ago}' HEAD -- docs/
 ```
 
-### 変更されたファイルの一覧
+### Find Changed Files
 
 ```bash
-# 最新のコミットで変更されたファイル
+# Latest commit changes
 git diff-tree --no-commit-id --name-only -r HEAD
 
-# 過去7日間で変更されたファイル
+# Changed files in last 7 days
 git diff --name-only 'HEAD@{7 days ago}' HEAD -- docs/
 ```
 
-## 📊 統計情報
+## 📈 Metadata & Statistics
 
-メタデータは `metadata/last_update.json` に保存されます：
+Fetch statistics are saved in `metadata/last_update.json`:
 
 ```json
 {
-  "lastMapUpdate": "2025-11-15 00:10:13 UTC",
-  "lastRun": "2025-11-15T12:00:00.000Z",
-  "totalDocs": 35,
-  "successfulFetch": 35,
-  "failedFetch": 0,
-  "failedFiles": []
+  "lastMapUpdate": "2025-11-06 00:10:13 UTC",
+  "lastRun": "2025-11-15T09:31:36.510Z",
+  "totalDocs": 46,
+  "successfulFetch": 45,
+  "failedFetch": 1,
+  "failedFiles": ["migration-guide.md"]
 }
 ```
 
-## 🔧 GitHub Actions
+**Current Success Rate:** 97.8% (45/46 documents)
 
-このリポジトリは以下のスケジュールで自動実行されます：
+## 🤖 GitHub Actions
 
-- **JST 9:00** (UTC 0:00) - 朝の更新
-- **JST 21:00** (UTC 12:00) - 夜の更新
+### Automated Schedule
 
-手動実行も可能です：
-1. GitHubのActionsタブを開く
-2. "Fetch Claude Code Documentation"を選択
-3. "Run workflow"をクリック
+The workflow runs automatically:
+- **9:00 JST** (0:00 UTC) - Morning update
+- **21:00 JST** (12:00 UTC) - Evening update
 
-## 🤝 コントリビューション
+### Manual Trigger
 
-Issue や Pull Request は歓迎します！
+You can also trigger the workflow manually:
 
-### 開発手順
+1. Go to [Actions tab](https://github.com/oikon48/cc-doc-tracker/actions)
+2. Select "Fetch Claude Code Documentation"
+3. Click "Run workflow"
 
-1. このリポジトリをフォーク
-2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチをプッシュ (`git push origin feature/amazing-feature`)
-5. Pull Requestを作成
+### Workflow Features
 
-## 📝 ライセンス
+- ✅ Automatic issue creation on failure
+- ✅ Detailed commit messages with file changes
+- ✅ Only commits when changes are detected
+- ✅ Comprehensive error reporting
 
-MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください。
+## 🛠️ Technical Stack
 
-## 🙏 謝辞
+### Current Dependencies
+
+```json
+{
+  "dependencies": {
+    "node-fetch": "^3.3.2",  // HTTP client
+    "dotenv": "^16.3.1"      // Environment variables
+  }
+}
+```
+
+### Removed Dependencies (as of November 2025)
+
+These packages were removed after discovering the server returns pure Markdown:
+
+- ❌ ~~`cheerio`~~ - HTML parsing (unnecessary)
+- ❌ ~~`turndown`~~ - HTML-to-Markdown conversion (unnecessary)
+- ❌ ~~`@types/turndown`~~ - TypeScript types (unnecessary)
+
+### Development Tools
+
+- TypeScript 5.3
+- ESLint + Prettier
+- tsx (TypeScript execution)
+
+## 🤝 Contributing
+
+Issues and Pull Requests are welcome! This project values simplicity and maintainability.
+
+### Development Workflow
+
+1. Fork this repository
+2. Create a feature branch
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. Open a Pull Request
+
+### Contribution Guidelines
+
+- Keep the codebase simple and readable
+- Add tests for new features
+- Update documentation as needed
+- Follow the existing code style
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Fetch Fails
+- **Check network connectivity**
+- **Verify Claude Code docs server status** at https://code.claude.com/docs/
+- **Review error details** in `metadata/last_update.json`
+
+#### GitHub Actions Fails
+- **Check workflow logs** in the [Actions tab](https://github.com/oikon48/cc-doc-tracker/actions)
+- **Verify repository permissions** (needs `contents: write`)
+- **Check for auto-created issues** (created on failure)
+
+#### TypeScript Build Errors
+```bash
+# Clean build
+rm -rf dist/
+npm run build
+```
+
+## 📝 License
+
+MIT License - See [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
 
 - [Claude Code](https://code.claude.com/) - Anthropic's official Claude IDE
-- [Turndown](https://github.com/mixmark-io/turndown) - HTML to Markdown converter
 - Inspired by [Git Scraping](https://simonwillison.net/2020/Oct/9/git-scraping/) concept by Simon Willison
 
-## ⚠️ 免責事項
+## ⚠️ Disclaimer
 
-このプロジェクトは非公式のツールです。Claude CodeおよびAnthropicとは直接の関係はありません。
-ドキュメントの著作権はAnthropicに帰属します。
+This is an **unofficial** tool and is not affiliated with Claude Code or Anthropic. Documentation copyright belongs to Anthropic.
 
-## 📧 連絡先
+## 📧 Contact
 
-問題や提案がある場合は、[Issues](https://github.com/oikon48/cc-doc-tracker/issues)でお知らせください。
+For questions, suggestions, or issues:
+- Open an [Issue](https://github.com/oikon48/cc-doc-tracker/issues)
+- Submit a [Pull Request](https://github.com/oikon48/cc-doc-tracker/pulls)
+
+## 📊 Project Stats
+
+- **Documentation Pages Tracked:** 45/46
+- **Update Frequency:** Twice daily
+- **Technology:** Pure TypeScript with minimal dependencies
+- **Simplified in:** November 2025
 
 ---
 
-最終更新: 2025-11-15
+**Last updated:** 2025-11-15
+
+<p align="center">
+  Made with ❤️ for the Claude Code community
+</p>

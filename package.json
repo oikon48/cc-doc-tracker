@@ -1,7 +1,7 @@
 {
   "name": "cc-doc-tracker",
   "version": "1.0.0",
-  "description": "Claude Code official documentation tracker - Automatically fetches and tracks changes in Claude Code docs",
+  "description": "Automatically fetch and track Claude Code documentation changes using Git-based scraping. Pure Markdown storage without HTML processing.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
@@ -15,10 +15,17 @@
   },
   "keywords": [
     "claude-code",
+    "claude",
+    "anthropic",
     "documentation",
+    "doc-tracker",
     "scraper",
     "markdown",
-    "git-scraping"
+    "git-scraping",
+    "automation",
+    "typescript",
+    "github-actions",
+    "change-tracking"
   ],
   "author": "",
   "license": "MIT",
