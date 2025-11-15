@@ -1,0 +1,10 @@
+{
+  "lastMapUpdate": "2025-11-06 00:10:13 UTC",
+  "lastRun": "2025-11-15T09:07:22.002Z",
+  "totalDocs": 46,
+  "successfulFetch": 45,
+  "failedFetch": 1,
+  "failedFiles": [
+    "migration-guide.md"
+  ]
+}

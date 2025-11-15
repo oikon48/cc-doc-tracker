@@ -1,0 +1,44 @@
+{
+  "name": "cc-doc-tracker",
+  "version": "1.0.0",
+  "description": "Claude Code official documentation tracker - Automatically fetches and tracks changes in Claude Code docs",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "fetch-docs": "tsx src/fetch-docs.ts",
+    "test": "echo \"Test placeholder - to be implemented\"",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "claude-code",
+    "documentation",
+    "scraper",
+    "markdown",
+    "git-scraping"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "turndown": "^7.1.2",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/turndown": "^5.0.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
