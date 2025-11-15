@@ -1,6 +1,4 @@
 import fetch from 'node-fetch';
-import TurndownService from 'turndown';
-import * as cheerio from 'cheerio';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -22,42 +20,12 @@ export class ClaudeDocsFetcher {
   private readonly docsMapUrl = `${this.baseUrl}/claude_code_docs_map.md`;
   private readonly docsDir: string;
   private readonly metadataDir: string;
-  private turndown: TurndownService;
   private readonly maxRetries = 3;
   private readonly retryDelay = 1000; // 1 second
 
   constructor(rootDir: string = '.') {
     this.docsDir = path.join(rootDir, 'docs', 'en');
     this.metadataDir = path.join(rootDir, 'metadata');
-    this.turndown = new TurndownService({
-      headingStyle: 'atx',
-      codeBlockStyle: 'fenced',
-      bulletListMarker: '-',
-    });
-
-    // Configure Turndown to handle special elements
-    this.configureTurndown();
-  }
-
-  private configureTurndown(): void {
-    // Keep code blocks and preserve formatting
-    this.turndown.addRule('preserveCodeBlocks', {
-      filter: ['pre'],
-      replacement: (content: string) => {
-        return '\n```\n' + content + '\n```\n';
-      }
-    });
-
-    // Handle tabs and accordions (common in documentation)
-    this.turndown.addRule('tabs', {
-      filter: (node) => {
-        return node.nodeName === 'DIV' &&
-               (node.className?.includes('tabs') || node.className?.includes('tab-'));
-      },
-      replacement: (content: string) => {
-        return '\n' + content + '\n';
-      }
-    });
   }
 
   /**
@@ -143,19 +111,7 @@ export class ClaudeDocsFetcher {
 
     try {
       const response = await this.fetchWithRetry(docInfo.url);
-      const html = await response.text();
-
-      // Parse HTML and extract content
-      const $ = cheerio.load(html);
-
-      // Remove navigation, footer, and other non-content elements
-      $('nav, footer, header, script, style, .sidebar, .navigation').remove();
-
-      // Get the main content (adjust selector based on actual structure)
-      let mainContent = $('main').html() || $('article').html() || $('.content').html() || $('body').html() || '';
-
-      // Convert HTML to Markdown
-      const markdown = this.turndown.turndown(mainContent);
+      const markdown = await response.text();
 
       // Add front matter with metadata
       const frontMatter = this.createFrontMatter(docInfo);
@@ -191,8 +147,6 @@ source: ${docInfo.url}
 fetched: ${now}
 ---
 
-# ${docInfo.title}
-
 `;
   }
 
@@ -218,7 +172,7 @@ fetched: ${now}
       const response = await fetch(url, {
         headers: {
           'User-Agent': 'Claude-Code-Doc-Tracker/1.0',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept': 'text/markdown, text/plain, */*',
         }
       });
 
