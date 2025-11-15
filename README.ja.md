@@ -10,22 +10,10 @@ Claude Codeの公式ドキュメントを自動取得し、変更を追跡する
 ## 🎯 特徴
 
 - 🔄 **自動更新**: 1日2回（JST 9:00, 21:00）
-- 📝 **純粋なMarkdown**: 直接保存（HTML変換不要）
+- 📝 **純粋なMarkdown**: ソースから直接保存
 - 📊 **Git追跡**: 完全な変更履歴
 - 🚀 **TypeScript**: 型安全な実装
-- ⚡ **最小限の依存関係**: node-fetchのみ
-
-## 🏗️ なぜシンプルなのか？
-
-Claude Codeサーバーは`Content-Type: text/markdown`を直接返します。HTML解析や変換は不要でした！
-
-### Before vs After
-
-| 項目 | Before | After |
-|------|--------|-------|
-| **依存関係** | node-fetch + cheerio + turndown | node-fetchのみ |
-| **処理** | 取得 → HTML解析 → 変換 → 保存 | 取得 → 保存 |
-| **出力** | `\# Title \* List \[Link\]` | `# Title * List [Link]` |
+- ⚡ **軽量**: 最小限の依存関係
 
 ## 🚀 クイックスタート
 
@@ -96,13 +84,10 @@ npm run lint       # リント
 
 ## 🛠️ 技術スタック
 
-### 現在
 - `node-fetch` - HTTPクライアント
 - `dotenv` - 環境変数
-
-### 削除済み（2025年11月）
-- ~~`cheerio`~~ - HTML解析不要
-- ~~`turndown`~~ - Markdown変換不要
+- TypeScript 5.3
+- GitHub Actions
 
 ## 🤝 コントリビューション
 

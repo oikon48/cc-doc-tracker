@@ -10,22 +10,10 @@ Automatically fetch and track changes in Claude Code's official documentation us
 ## 🎯 Features
 
 - 🔄 **Automated Updates**: Twice daily (9:00, 21:00 JST)
-- 📝 **Pure Markdown**: Direct storage without HTML conversion
+- 📝 **Pure Markdown**: Direct storage from source
 - 📊 **Git-based Tracking**: Complete change history
 - 🚀 **TypeScript**: Type-safe implementation
-- ⚡ **Minimal Dependencies**: Only node-fetch required
-
-## 🏗️ Why So Simple?
-
-Claude Code docs server returns `Content-Type: text/markdown` directly. No HTML parsing or conversion needed!
-
-### Before vs After
-
-| Aspect | Before | After |
-|--------|--------|-------|
-| **Dependencies** | node-fetch + cheerio + turndown | node-fetch only |
-| **Processing** | Fetch → Parse HTML → Convert → Save | Fetch → Save |
-| **Output** | `\# Title \* List \[Link\]` | `# Title * List [Link]` |
+- ⚡ **Lightweight**: Minimal dependencies
 
 ## 🚀 Quick Start
 
@@ -96,13 +84,10 @@ Current success rate: **97.8%** (45/46 documents)
 
 ## 🛠️ Tech Stack
 
-### Current
 - `node-fetch` - HTTP client
 - `dotenv` - Environment variables
-
-### Removed (Nov 2025)
-- ~~`cheerio`~~ - HTML parsing unnecessary
-- ~~`turndown`~~ - Markdown conversion unnecessary
+- TypeScript 5.3
+- GitHub Actions
 
 ## 🤝 Contributing
 
