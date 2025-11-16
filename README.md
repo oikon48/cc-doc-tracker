@@ -63,47 +63,6 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 | `fetchDoc()` | Fetch and save individual docs |
 | `metadata/` | Track statistics and failures |
 
-## 🚀 Quick Start
-
-```bash
-# Clone
-git clone https://github.com/oikon48/cc-doc-tracker.git
-cd cc-doc-tracker
-
-# Install
-npm install
-
-# Fetch docs
-npm run fetch-docs
-```
-
-## 📁 Structure
-
-```
-cc-doc-tracker/
-├── docs/en/          # Fetched documentation (45 files)
-├── metadata/         # Fetch statistics
-│   ├── docs_map.md   # Master document list
-│   └── last_update.json
-├── src/              # TypeScript source
-└── .github/          # GitHub Actions
-```
-
-## 📊 Usage
-
-### Track Changes
-
-```bash
-# View updates
-git log --oneline --grep="📝 Update"
-
-# Compare dates
-git diff 'HEAD@{yesterday}' HEAD -- docs/
-
-# File history
-git log --follow docs/en/overview.md
-```
-
 ## 🤖 Automation
 
 Runs automatically at:

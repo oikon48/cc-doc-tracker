@@ -63,47 +63,6 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 | `fetchDoc()` | 個別ドキュメントの取得と保存 |
 | `metadata/` | 統計と失敗を記録 |
 
-## 🚀 クイックスタート
-
-```bash
-# クローン
-git clone https://github.com/oikon48/cc-doc-tracker.git
-cd cc-doc-tracker
-
-# インストール
-npm install
-
-# ドキュメント取得
-npm run fetch-docs
-```
-
-## 📁 構造
-
-```
-cc-doc-tracker/
-├── docs/en/          # 取得したドキュメント（45ファイル）
-├── metadata/         # 取得統計
-│   ├── docs_map.md   # マスタードキュメントリスト
-│   └── last_update.json
-├── src/              # TypeScriptソース
-└── .github/          # GitHub Actions
-```
-
-## 📊 使用方法
-
-### 変更追跡
-
-```bash
-# 更新履歴
-git log --oneline --grep="📝 Update"
-
-# 日付比較
-git diff 'HEAD@{yesterday}' HEAD -- docs/
-
-# ファイル履歴
-git log --follow docs/en/overview.md
-```
-
 ## 🤖 自動化
 
 自動実行時刻：
