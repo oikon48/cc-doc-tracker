@@ -12,8 +12,56 @@ Automatically fetch and track changes in Claude Code's official documentation us
 - 🔄 **Automated Updates**: Twice daily (9:00, 21:00 JST)
 - 📝 **Pure Markdown**: Direct storage from source
 - 📊 **Git-based Tracking**: Complete change history
+- 🗑️ **Full Sync**: Adds new docs, updates existing, removes deleted
 - 🚀 **TypeScript**: Type-safe implementation
 - ⚡ **Lightweight**: Minimal dependencies
+
+## 🔍 How It Works
+
+### System Architecture
+
+```
+1. Fetch docs_map.md
+   ├── Parse all documentation links
+   └── Extract metadata (last updated time)
+
+2. Sync Local Files
+   ├── Compare docs_map with local files
+   └── Delete orphaned files (not in docs_map)
+
+3. Fetch Each Document
+   ├── Direct Markdown fetch (no HTML conversion)
+   ├── Add minimal frontmatter (title, source)
+   └── Save to docs/en/[filename].md
+
+4. Git Tracking
+   ├── New files → "Added [file]"
+   ├── Changed files → "Modified [file]"
+   └── Deleted files → "Deleted [file]"
+```
+
+### Data Flow
+
+```
+https://code.claude.com/docs/en/claude_code_docs_map.md
+                    ↓
+            [Parse Links: 46 docs]
+                    ↓
+         [Sync: Remove orphaned files]
+                    ↓
+        [Fetch: Get Markdown directly]
+                    ↓
+          [Git: Track all changes]
+```
+
+### Key Components
+
+| Component | Purpose |
+|-----------|---------|
+| `docs_map.md` | Master list of all documentation |
+| `syncLocalFiles()` | Remove files not in docs_map |
+| `fetchDoc()` | Fetch and save individual docs |
+| `metadata/` | Track statistics and failures |
 
 ## 🚀 Quick Start
 
@@ -35,6 +83,8 @@ npm run fetch-docs
 cc-doc-tracker/
 ├── docs/en/          # Fetched documentation (45 files)
 ├── metadata/         # Fetch statistics
+│   ├── docs_map.md   # Master document list
+│   └── last_update.json
 ├── src/              # TypeScript source
 └── .github/          # GitHub Actions
 ```
@@ -54,14 +104,6 @@ git diff 'HEAD@{yesterday}' HEAD -- docs/
 git log --follow docs/en/overview.md
 ```
 
-### Development
-
-```bash
-npm run dev        # Development mode
-npm run build      # Build TypeScript
-npm run lint       # Lint code
-```
-
 ## 🤖 Automation
 
 Runs automatically at:
@@ -78,7 +120,8 @@ Current success rate: **97.8%** (45/46 documents)
 {
   "totalDocs": 46,
   "successfulFetch": 45,
-  "failedFetch": 1
+  "failedFetch": 1,
+  "deletedFiles": 0
 }
 ```
 
@@ -88,10 +131,6 @@ Current success rate: **97.8%** (45/46 documents)
 - `dotenv` - Environment variables
 - TypeScript 5.3
 - GitHub Actions
-
-## 🤝 Contributing
-
-PRs welcome! Keep it simple and maintainable.
 
 ## 📝 License
 
