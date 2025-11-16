@@ -1,7 +1,6 @@
 ---
 title: quickstart
 source: https://code.claude.com/docs/en/quickstart.md
-fetched: 2025-11-15T09:31:22.650Z
 ---
 
 # Quickstart

@@ -1,7 +1,6 @@
 ---
 title: google-vertex-ai
 source: https://code.claude.com/docs/en/google-vertex-ai.md
-fetched: 2025-11-15T09:31:24.893Z
 ---
 
 # Claude Code on Google Vertex AI

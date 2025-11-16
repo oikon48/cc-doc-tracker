@@ -1,7 +1,6 @@
 ---
 title: vs-code
 source: https://code.claude.com/docs/en/vs-code.md
-fetched: 2025-11-15T09:31:34.638Z
 ---
 
 # Visual Studio Code

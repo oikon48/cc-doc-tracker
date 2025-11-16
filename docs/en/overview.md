@@ -1,7 +1,6 @@
 ---
 title: overview
 source: https://code.claude.com/docs/en/overview.md
-fetched: 2025-11-15T09:31:22.487Z
 ---
 
 # Claude Code overview

@@ -1,7 +1,6 @@
 ---
 title: skills
 source: https://code.claude.com/docs/en/skills.md
-fetched: 2025-11-15T09:31:23.504Z
 ---
 
 # Agent Skills

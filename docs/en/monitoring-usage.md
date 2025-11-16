@@ -1,7 +1,6 @@
 ---
 title: monitoring-usage
 source: https://code.claude.com/docs/en/monitoring-usage.md
-fetched: 2025-11-15T09:31:34.020Z
 ---
 
 # Monitoring

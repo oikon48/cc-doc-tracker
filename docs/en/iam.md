@@ -1,7 +1,6 @@
 ---
 title: iam
 source: https://code.claude.com/docs/en/iam.md
-fetched: 2025-11-15T09:31:34.020Z
 ---
 
 # Identity and Access Management

@@ -1,7 +1,6 @@
 ---
 title: analytics
 source: https://code.claude.com/docs/en/analytics.md
-fetched: 2025-11-15T09:31:34.643Z
 ---
 
 # Analytics

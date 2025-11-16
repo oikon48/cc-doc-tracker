@@ -1,7 +1,6 @@
 ---
 title: jetbrains
 source: https://code.claude.com/docs/en/jetbrains.md
-fetched: 2025-11-15T09:31:34.620Z
 ---
 
 # JetBrains IDEs

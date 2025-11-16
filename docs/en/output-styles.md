@@ -1,7 +1,6 @@
 ---
 title: output-styles
 source: https://code.claude.com/docs/en/output-styles.md
-fetched: 2025-11-15T09:31:23.523Z
 ---
 
 # Output styles

@@ -140,11 +140,9 @@ export class ClaudeDocsFetcher {
    * Create front matter for markdown files
    */
   private createFrontMatter(docInfo: DocInfo): string {
-    const now = new Date().toISOString();
     return `---
 title: ${docInfo.title}
 source: ${docInfo.url}
-fetched: ${now}
 ---
 
 `;

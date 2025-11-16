@@ -1,7 +1,6 @@
 ---
 title: data-usage
 source: https://code.claude.com/docs/en/data-usage.md
-fetched: 2025-11-15T09:31:34.009Z
 ---
 
 # Data usage

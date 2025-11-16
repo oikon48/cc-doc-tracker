@@ -1,7 +1,6 @@
 ---
 title: troubleshooting
 source: https://code.claude.com/docs/en/troubleshooting.md
-fetched: 2025-11-15T09:31:24.879Z
 ---
 
 # Troubleshooting

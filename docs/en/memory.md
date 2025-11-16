@@ -1,7 +1,6 @@
 ---
 title: memory
 source: https://code.claude.com/docs/en/memory.md
-fetched: 2025-11-15T09:31:35.242Z
 ---
 
 # Manage Claude's memory
