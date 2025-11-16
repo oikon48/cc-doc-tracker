@@ -224,6 +224,47 @@ source: ${docInfo.url}
   }
 
   /**
+   * Sync local files with docs_map (remove files not in docs_map)
+   */
+  async syncLocalFiles(expectedDocs: DocInfo[]): Promise<number> {
+    // Get list of expected files from docs_map
+    const expectedFiles = new Set(
+      expectedDocs.map(doc => this.getFilenameFromUrl(doc.url))
+    );
+
+    // Get list of actual files in docs directory
+    let actualFiles: string[] = [];
+    try {
+      actualFiles = await fs.readdir(this.docsDir);
+    } catch (error) {
+      // Directory doesn't exist yet, nothing to clean
+      return 0;
+    }
+
+    // Find files to delete (exist locally but not in docs_map)
+    const filesToDelete = actualFiles.filter(file => !expectedFiles.has(file));
+
+    // Delete orphaned files
+    let deletedCount = 0;
+    for (const file of filesToDelete) {
+      const filePath = path.join(this.docsDir, file);
+      try {
+        await fs.unlink(filePath);
+        console.log(`🗑️  Removed orphaned file: ${file}`);
+        deletedCount++;
+      } catch (error) {
+        console.error(`❌ Failed to delete ${file}:`, error);
+      }
+    }
+
+    if (deletedCount > 0) {
+      console.log(`🧹 Cleaned up ${deletedCount} orphaned file(s)`);
+    }
+
+    return deletedCount;
+  }
+
+  /**
    * Fetch all documentation
    */
   async fetchAllDocs(): Promise<void> {
@@ -239,6 +280,9 @@ source: ${docInfo.url}
       console.warn('⚠️  No documentation pages found in docs map');
       return;
     }
+
+    // Sync local files (remove files not in docs_map)
+    const deletedCount = await this.syncLocalFiles(docs);
 
     // Fetch documents in batches to avoid overwhelming the server
     const batchSize = 5;
@@ -270,12 +314,17 @@ source: ${docInfo.url}
       });
     }
 
+    if (deletedCount > 0) {
+      console.log(`🗑️  Removed ${deletedCount} orphaned document(s)`);
+    }
+
     // Save summary metadata
     await this.saveMetadata({
       totalDocs: docs.length,
       successfulFetch: successful,
       failedFetch: failed.length,
-      failedFiles: failed.map(f => f.filename)
+      failedFiles: failed.map(f => f.filename),
+      deletedFiles: deletedCount
     });
 
     console.log('\n✨ Documentation fetch complete!');
