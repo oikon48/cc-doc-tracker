@@ -1,7 +1,7 @@
 ---
 title: common-workflows
 source: https://code.claude.com/docs/en/common-workflows.md
-fetched: 2025-11-15T12:02:00.222Z
+fetched: 2025-11-16T00:24:02.736Z
 ---
 
 # Common workflows

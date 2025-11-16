@@ -1,7 +1,7 @@
 ---
 title: security
 source: https://code.claude.com/docs/en/security.md
-fetched: 2025-11-15T12:02:10.680Z
+fetched: 2025-11-16T00:24:13.240Z
 ---
 
 # Security

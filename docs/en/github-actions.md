@@ -1,7 +1,7 @@
 ---
 title: github-actions
 source: https://code.claude.com/docs/en/github-actions.md
-fetched: 2025-11-15T12:02:01.460Z
+fetched: 2025-11-16T00:24:03.999Z
 ---
 
 # Claude Code GitHub Actions

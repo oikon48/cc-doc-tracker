@@ -1,7 +1,7 @@
 ---
 title: plugin-marketplaces
 source: https://code.claude.com/docs/en/plugin-marketplaces.md
-fetched: 2025-11-15T12:02:11.313Z
+fetched: 2025-11-16T00:24:13.845Z
 ---
 
 # Plugin marketplaces

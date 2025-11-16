@@ -1,7 +1,7 @@
 ---
 title: claude-code-on-the-web
 source: https://code.claude.com/docs/en/claude-code-on-the-web.md
-fetched: 2025-11-15T12:02:00.321Z
+fetched: 2025-11-16T00:24:02.721Z
 ---
 
 # Claude Code on the web

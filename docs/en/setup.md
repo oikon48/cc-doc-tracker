@@ -1,7 +1,7 @@
 ---
 title: setup
 source: https://code.claude.com/docs/en/setup.md
-fetched: 2025-11-15T12:02:09.890Z
+fetched: 2025-11-16T00:24:12.525Z
 ---
 
 # Set up Claude Code

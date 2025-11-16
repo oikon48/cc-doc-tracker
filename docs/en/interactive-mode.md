@@ -1,7 +1,7 @@
 ---
 title: interactive-mode
 source: https://code.claude.com/docs/en/interactive-mode.md
-fetched: 2025-11-15T12:02:12.580Z
+fetched: 2025-11-16T00:24:15.065Z
 ---
 
 # Interactive mode

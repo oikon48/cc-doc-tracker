@@ -1,7 +1,7 @@
 ---
 title: model-config
 source: https://code.claude.com/docs/en/model-config.md
-fetched: 2025-11-15T12:02:12.013Z
+fetched: 2025-11-16T00:24:14.461Z
 ---
 
 # Model configuration

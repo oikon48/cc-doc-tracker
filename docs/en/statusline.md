@@ -1,7 +1,7 @@
 ---
 title: statusline
 source: https://code.claude.com/docs/en/statusline.md
-fetched: 2025-11-15T12:02:12.022Z
+fetched: 2025-11-16T00:24:14.408Z
 ---
 
 # Status line configuration

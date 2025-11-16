@@ -1,7 +1,7 @@
 ---
 title: slash-commands
 source: https://code.claude.com/docs/en/slash-commands.md
-fetched: 2025-11-15T12:02:12.575Z
+fetched: 2025-11-16T00:24:15.073Z
 ---
 
 # Slash commands

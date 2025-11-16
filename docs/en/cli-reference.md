@@ -1,7 +1,7 @@
 ---
 title: cli-reference
 source: https://code.claude.com/docs/en/cli-reference.md
-fetched: 2025-11-15T12:02:12.008Z
+fetched: 2025-11-16T00:24:14.418Z
 ---
 
 # CLI reference

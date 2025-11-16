@@ -1,7 +1,7 @@
 ---
 title: checkpointing
 source: https://code.claude.com/docs/en/checkpointing.md
-fetched: 2025-11-15T12:02:12.602Z
+fetched: 2025-11-16T00:24:15.038Z
 ---
 
 # Checkpointing
