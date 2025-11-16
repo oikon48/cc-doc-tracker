@@ -14,12 +14,18 @@ on:
         default: false
         type: boolean
 
+# Prevent concurrent executions to avoid git conflicts
+concurrency:
+  group: fetch-docs
+  cancel-in-progress: false
+
 jobs:
   fetch-docs:
     runs-on: ubuntu-latest
 
     permissions:
       contents: write  # Need write permission to commit changes
+      issues: write    # Need write permission to create issues on failure
 
     steps:
       - name: Checkout repository
@@ -95,7 +101,10 @@ jobs:
 
       - name: Push changes
         if: steps.git-check.outputs.changed == 'true'
-        run: git push
+        run: |
+          # Pull latest changes and rebase to avoid conflicts
+          git pull --rebase origin main
+          git push
 
       - name: Report status
         if: always()
