@@ -213,8 +213,7 @@ source: ${docInfo.url}
 
       const metadata = {
         ...existing,
-        ...data,
-        lastRun: new Date().toISOString()
+        ...data
       };
 
       await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf-8');
