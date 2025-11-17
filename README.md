@@ -66,9 +66,7 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 ## 🤖 Automation
 
 Runs automatically at:
-- **3:00 JST** (18:00 UTC)
 - **9:00 JST** (0:00 UTC)
-- **15:00 JST** (6:00 UTC)
 - **21:00 JST** (12:00 UTC)
 
 Manual trigger: Actions tab → "Run workflow"
