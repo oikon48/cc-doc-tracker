@@ -4,12 +4,8 @@ on:
   schedule:
     # JST 9:00 (UTC 0:00)
     - cron: '0 0 * * *'
-    # JST 15:00 (UTC 6:00)
-    - cron: '0 6 * * *'
     # JST 21:00 (UTC 12:00)
     - cron: '0 12 * * *'
-    # JST 3:00 (UTC 18:00)
-    - cron: '0 18 * * *'
   workflow_dispatch: # Manual trigger
     inputs:
       force_update:
