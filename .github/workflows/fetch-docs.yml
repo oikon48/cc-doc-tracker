@@ -2,8 +2,12 @@ name: Fetch Claude Code Documentation
 
 on:
   schedule:
+    # JST 3:00 (UTC 18:00)
+    - cron: '0 18 * * *'
     # JST 9:00 (UTC 0:00)
     - cron: '0 0 * * *'
+    # JST 15:00 (UTC 6:00)
+    - cron: '0 6 * * *'
     # JST 21:00 (UTC 12:00)
     - cron: '0 12 * * *'
   workflow_dispatch: # Manual trigger
