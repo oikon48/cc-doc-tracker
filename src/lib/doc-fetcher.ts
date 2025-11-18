@@ -1,6 +1,10 @@
 import fetch from 'node-fetch';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 interface DocInfo {
   title: string;
@@ -88,14 +92,6 @@ export class ClaudeDocsFetcher {
           });
         }
       }
-    }
-
-    // Also check for date information (Last updated:)
-    const dateMatch = content.match(/Last updated:\s*(.+)/);
-    if (dateMatch) {
-      const lastUpdated = dateMatch[1];
-      // Store this in metadata
-      this.saveMetadata({ lastMapUpdate: lastUpdated });
     }
 
     return docs;
@@ -194,6 +190,20 @@ source: ${docInfo.url}
    */
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Check if there are changes in docs directory
+   */
+  private async hasDocsChanges(): Promise<boolean> {
+    try {
+      const { stdout } = await execAsync('git diff --quiet docs/en/ || echo "changed"');
+      return stdout.trim() === 'changed';
+    } catch (error) {
+      // If git command fails (e.g., not a git repo), assume there are changes
+      console.warn('⚠️  Could not check git diff, assuming changes exist');
+      return true;
+    }
   }
 
   /**
@@ -317,16 +327,27 @@ source: ${docInfo.url}
       console.log(`🗑️  Removed ${deletedCount} orphaned document(s)`);
     }
 
-    // Save summary metadata with current timestamp
-    const now = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
-    await this.saveMetadata({
-      lastMapUpdate: now,
+    // Check if there are changes in docs directory
+    const hasChanges = await this.hasDocsChanges();
+
+    // Save summary metadata (include lastMapUpdate only if docs changed)
+    const metadata: any = {
       totalDocs: docs.length,
       successfulFetch: successful,
       failedFetch: failed.length,
       failedFiles: failed.map(f => f.filename),
       deletedFiles: deletedCount
-    });
+    };
+
+    if (hasChanges) {
+      const now = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+      metadata.lastMapUpdate = now;
+      console.log('📝 Documentation changes detected, updating timestamp');
+    } else {
+      console.log('ℹ️  No documentation changes detected');
+    }
+
+    await this.saveMetadata(metadata);
 
     console.log('\n✨ Documentation fetch complete!');
   }
