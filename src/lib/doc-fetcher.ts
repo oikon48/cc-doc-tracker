@@ -317,8 +317,10 @@ source: ${docInfo.url}
       console.log(`🗑️  Removed ${deletedCount} orphaned document(s)`);
     }
 
-    // Save summary metadata
+    // Save summary metadata with current timestamp
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
     await this.saveMetadata({
+      lastMapUpdate: now,
       totalDocs: docs.length,
       successfulFetch: successful,
       failedFetch: failed.length,
