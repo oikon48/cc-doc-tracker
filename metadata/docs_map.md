@@ -928,6 +928,7 @@ This map uses a hierarchical structure:
   * Best practices
 * Hook Events
   * PreToolUse
+  * PermissionRequest
   * PostToolUse
   * Notification
   * UserPromptSubmit
@@ -939,6 +940,7 @@ This map uses a hierarchical structure:
   * SessionEnd
 * Hook Input
   * PreToolUse Input
+  * PermissionRequest
   * PostToolUse Input
   * Notification Input
   * UserPromptSubmit Input
@@ -952,6 +954,7 @@ This map uses a hierarchical structure:
   * Advanced: JSON Output
     * Common JSON Fields
     * `PreToolUse` Decision Control
+    * `PermissionRequest` Decision Control
     * `PostToolUse` Decision Control
     * `UserPromptSubmit` Decision Control
     * `Stop`/`SubagentStop` Decision Control
