@@ -77,14 +77,21 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 
 現在の成功率：**97.8%** (45/46 ドキュメント)
 
+最終更新日時：**2025-11-20 18:04:45 UTC**
+
 ```json
 {
   "totalDocs": 46,
   "successfulFetch": 45,
   "failedFetch": 1,
+  "failedFiles": ["migration-guide.md"],
   "deletedFiles": 0
 }
 ```
+
+### 既知の問題
+
+- **migration-guide.md**: 現在取得に失敗しています（メタデータで追跡中）
 
 ## 🛠️ 技術スタック
 
@@ -92,6 +99,22 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 - `dotenv` - 環境変数
 - TypeScript 5.3
 - GitHub Actions
+
+## 🔧 トラブルシューティング
+
+### ネットワークの問題
+
+ローカル実行時にネットワークエラーが発生する場合：
+```bash
+# 取得スクリプトはcode.claude.comへのインターネットアクセスが必要です
+npm run fetch-docs
+```
+
+サンドボックス環境やオフライン環境ではネットワークエラーが予想されます。GitHub Actionsワークフローは適切なネットワークアクセスで自動的に取得を処理します。
+
+### 取得の失敗
+
+失敗したドキュメント取得の詳細については、`metadata/last_update.json`を確認してください。失敗したドキュメントは追跡され、各実行で報告されます。
 
 ## 📝 ライセンス
 

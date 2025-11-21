@@ -77,14 +77,21 @@ Manual trigger: Actions tab → "Run workflow"
 
 Current success rate: **97.8%** (45/46 documents)
 
+Last successful update: **2025-11-20 18:04:45 UTC**
+
 ```json
 {
   "totalDocs": 46,
   "successfulFetch": 45,
   "failedFetch": 1,
+  "failedFiles": ["migration-guide.md"],
   "deletedFiles": 0
 }
 ```
+
+### Known Issues
+
+- **migration-guide.md**: Currently failing to fetch (tracked in metadata)
 
 ## 🛠️ Tech Stack
 
@@ -92,6 +99,22 @@ Current success rate: **97.8%** (45/46 documents)
 - `dotenv` - Environment variables
 - TypeScript 5.3
 - GitHub Actions
+
+## 🔧 Troubleshooting
+
+### Network Issues
+
+If you encounter network errors when running locally:
+```bash
+# The fetch script requires internet access to code.claude.com
+npm run fetch-docs
+```
+
+Network errors are expected in sandboxed or offline environments. The GitHub Actions workflow handles fetching automatically with proper network access.
+
+### Failed Fetches
+
+Check `metadata/last_update.json` for details on failed document fetches. Failed documents are tracked and reported in each run.
 
 ## 📝 License
 
