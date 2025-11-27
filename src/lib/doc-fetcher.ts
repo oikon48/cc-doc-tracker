@@ -77,20 +77,17 @@ export class ClaudeDocsFetcher {
     const lines = content.split('\n');
 
     // Look for markdown links in the format [Title](url)
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    // Only match full URLs ending with .md to avoid inline relative links
+    const linkRegex = /\[([^\]]+)\]\((https:\/\/[^)]+\.md)\)/g;
 
     for (const line of lines) {
       let match;
       while ((match = linkRegex.exec(line)) !== null) {
         const [, title, url] = match;
-        // Only include actual documentation pages (not external links)
-        if (url.startsWith('/') || url.includes('code.claude.com/docs')) {
-          const filename = url.split('/').pop() || 'index';
-          docs.push({
-            title: title.trim(),
-            url: url.includes('http') ? url : `${this.baseUrl}/${filename}`
-          });
-        }
+        docs.push({
+          title: title.trim(),
+          url: url
+        });
       }
     }
 
