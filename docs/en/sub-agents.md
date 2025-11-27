@@ -1,6 +1,6 @@
 ---
-title: Agents
-source: https://code.claude.com/docs/en/sub-agents
+title: sub-agents
+source: https://code.claude.com/docs/en/sub-agents.md
 ---
 
 # Subagents
@@ -564,3 +564,8 @@ If you're using the Agent SDK or interacting with the AgentTool directly, you ca
 * [Slash commands](/en/slash-commands) - Learn about other built-in commands
 * [Settings](/en/settings) - Configure Claude Code behavior
 * [Hooks](/en/hooks) - Automate workflows with event handlers
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

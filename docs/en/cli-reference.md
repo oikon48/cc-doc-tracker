@@ -130,3 +130,8 @@ streaming, verbose logging, and programmatic usage, see the
 * [Common workflows](/en/common-workflows) - Advanced workflows and patterns
 * [Settings](/en/settings) - Configuration options
 * [SDK documentation](https://docs.claude.com/en/docs/agent-sdk) - Programmatic usage and integrations
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

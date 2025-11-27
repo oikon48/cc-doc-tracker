@@ -1,7 +1,7 @@
 {
-  "lastMapUpdate": "2025-11-26 00:22:35 UTC",
-  "totalDocs": 46,
-  "successfulFetch": 45,
+  "lastMapUpdate": "2025-11-27 06:10:06 UTC",
+  "totalDocs": 44,
+  "successfulFetch": 43,
   "failedFetch": 1,
   "failedFiles": [
     "migration-guide.md"
