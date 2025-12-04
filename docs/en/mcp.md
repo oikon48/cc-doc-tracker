@@ -645,11 +645,7 @@ For organizations that need centralized control over MCP servers, Claude Code su
 
 ### Setting up enterprise MCP configuration
 
-System administrators can deploy an enterprise MCP configuration file alongside the managed settings file:
-
-* **macOS**: `/Library/Application Support/ClaudeCode/managed-mcp.json`
-* **Windows**: `C:\ProgramData\ClaudeCode\managed-mcp.json`
-* **Linux**: `/etc/claude-code/managed-mcp.json`
+System administrators can deploy an enterprise MCP configuration file alongside the managed settings file. See [settings files](/en/settings#settings-files) for the `managed-mcp.json` file locations on each platform.
 
 The `managed-mcp.json` file uses the same format as a standard `.mcp.json` file:
 
@@ -678,11 +674,7 @@ The `managed-mcp.json` file uses the same format as a standard `.mcp.json` file:
 
 ### Restricting MCP servers with allowlists and denylists
 
-In addition to providing enterprise-managed servers, administrators can control which MCP servers users are allowed to configure using `allowedMcpServers` and `deniedMcpServers` in the `managed-settings.json` file:
-
-* **macOS**: `/Library/Application Support/ClaudeCode/managed-settings.json`
-* **Windows**: `C:\ProgramData\ClaudeCode\managed-settings.json`
-* **Linux**: `/etc/claude-code/managed-settings.json`
+In addition to providing enterprise-managed servers, administrators can control which MCP servers users are allowed to configure using `allowedMcpServers` and `deniedMcpServers` in the [managed settings file](/en/settings#settings-files):
 
 #### Restriction options
 
