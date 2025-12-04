@@ -30,6 +30,7 @@ Code through hierarchical settings:
   * macOS: `/Library/Application Support/ClaudeCode/managed-mcp.json`
   * Linux and WSL: `/etc/claude-code/managed-mcp.json`
   * Windows: `C:\ProgramData\ClaudeCode\managed-mcp.json`
+* **Other configuration** is stored in `~/.claude.json`. This file contains your preferences (theme, notification settings, editor mode), OAuth session, [MCP server](/en/mcp) configurations for user and local scopes, per-project state (allowed tools, trust settings), and various caches. Project-scoped MCP servers are stored separately in `.mcp.json`.
 
 ```JSON Example settings.json theme={null}
 {

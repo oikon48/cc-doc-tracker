@@ -393,7 +393,6 @@ This map uses a hierarchical structure:
   * Windows installation issues: errors in WSL
   * Linux and Mac installation issues: permission or command not found errors
     * Recommended solution: Native Claude Code installation
-    * Alternative solution: Migrate to local installation
 * Permissions and authentication
   * Repeated permission prompts
   * Authentication issues
@@ -544,7 +543,6 @@ This map uses a hierarchical structure:
 * Alternative installation methods
   * Native installation options
   * NPM installation
-  * Local installation
 * Running on AWS or GCP
 * Update Claude Code
   * Auto updates
@@ -760,7 +758,6 @@ This map uses a hierarchical structure:
 * Features
 * Installation
   * Marketplace Installation
-  * Auto-Installation
 * Usage
   * From Your IDE
   * From External Terminals
