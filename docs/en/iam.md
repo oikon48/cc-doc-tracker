@@ -1,8 +1,3 @@
----
-title: iam
-source: https://code.claude.com/docs/en/iam.md
----
-
 # Identity and Access Management
 
 > Learn how to configure user authentication, authorization, and access controls for Claude Code in your organization.

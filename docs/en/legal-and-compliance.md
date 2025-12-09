@@ -1,8 +1,3 @@
----
-title: legal-and-compliance
-source: https://code.claude.com/docs/en/legal-and-compliance.md
----
-
 # Legal and compliance
 
 > Legal agreements, compliance certifications, and security information for Claude Code.

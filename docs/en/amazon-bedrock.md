@@ -1,8 +1,3 @@
----
-title: amazon-bedrock
-source: https://code.claude.com/docs/en/amazon-bedrock.md
----
-
 # Claude Code on Amazon Bedrock
 
 > Learn about configuring Claude Code through Amazon Bedrock, including setup, IAM configuration, and troubleshooting.

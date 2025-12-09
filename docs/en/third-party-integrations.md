@@ -1,8 +1,3 @@
----
-title: third-party-integrations
-source: https://code.claude.com/docs/en/third-party-integrations.md
----
-
 # Enterprise deployment overview
 
 > Learn how Claude Code can integrate with various third-party services and infrastructure to meet enterprise deployment requirements.

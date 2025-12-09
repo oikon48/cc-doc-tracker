@@ -1,8 +1,3 @@
----
-title: sub-agents
-source: https://code.claude.com/docs/en/sub-agents.md
----
-
 # Subagents
 
 > Create and use specialized AI subagents in Claude Code for task-specific workflows and improved context management.

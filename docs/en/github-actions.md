@@ -1,8 +1,3 @@
----
-title: github-actions
-source: https://code.claude.com/docs/en/github-actions.md
----
-
 # Claude Code GitHub Actions
 
 > Learn about integrating Claude Code into your development workflow with Claude Code GitHub Actions

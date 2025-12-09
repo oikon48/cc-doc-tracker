@@ -1,8 +1,3 @@
----
-title: skills
-source: https://code.claude.com/docs/en/skills.md
----
-
 # Agent Skills
 
 > Create, manage, and share Skills to extend Claude's capabilities in Claude Code.

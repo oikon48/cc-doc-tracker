@@ -1,8 +1,3 @@
----
-title: plugins
-source: https://code.claude.com/docs/en/plugins.md
----
-
 # Plugins
 
 > Extend Claude Code with custom commands, agents, hooks, Skills, and MCP servers through the plugin system.

@@ -1,8 +1,3 @@
----
-title: data-usage
-source: https://code.claude.com/docs/en/data-usage.md
----
-
 # Data usage
 
 > Learn about Anthropic's data usage policies for Claude

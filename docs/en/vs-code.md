@@ -1,8 +1,3 @@
----
-title: vs-code
-source: https://code.claude.com/docs/en/vs-code.md
----
-
 # Visual Studio Code
 
 > Use Claude Code with Visual Studio Code through the native extension or CLI integration

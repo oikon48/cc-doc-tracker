@@ -1,8 +1,3 @@
----
-title: monitoring-usage
-source: https://code.claude.com/docs/en/monitoring-usage.md
----
-
 # Monitoring
 
 > Learn how to enable and configure OpenTelemetry for Claude Code.

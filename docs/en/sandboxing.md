@@ -1,8 +1,3 @@
----
-title: sandboxing
-source: https://code.claude.com/docs/en/sandboxing.md
----
-
 # Sandboxing
 
 > Learn how Claude Code's sandboxed bash tool provides filesystem and network isolation for safer, more autonomous agent execution.

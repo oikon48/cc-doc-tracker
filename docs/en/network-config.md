@@ -1,8 +1,3 @@
----
-title: network-config
-source: https://code.claude.com/docs/en/network-config.md
----
-
 # Enterprise network configuration
 
 > Configure Claude Code for enterprise environments with proxy servers, custom Certificate Authorities (CA), and mutual Transport Layer Security (mTLS) authentication.

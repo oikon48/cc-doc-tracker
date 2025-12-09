@@ -1,8 +1,3 @@
----
-title: llm-gateway
-source: https://code.claude.com/docs/en/llm-gateway.md
----
-
 # LLM gateway configuration
 
 > Learn how to configure Claude Code to work with LLM gateway solutions. Covers gateway requirements, authentication configuration, model selection, and provider-specific endpoint setup.

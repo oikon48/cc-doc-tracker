@@ -1,8 +1,3 @@
----
-title: terminal-config
-source: https://code.claude.com/docs/en/terminal-config.md
----
-
 # Optimize your terminal setup
 
 > Claude Code works best when your terminal is properly configured. Follow these guidelines to optimize your experience.

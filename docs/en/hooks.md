@@ -1,8 +1,3 @@
----
-title: hooks
-source: https://code.claude.com/docs/en/hooks.md
----
-
 # Hooks reference
 
 > This page provides reference documentation for implementing hooks in Claude Code.

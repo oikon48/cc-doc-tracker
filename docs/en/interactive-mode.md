@@ -1,8 +1,3 @@
----
-title: interactive-mode
-source: https://code.claude.com/docs/en/interactive-mode.md
----
-
 # Interactive mode
 
 > Complete reference for keyboard shortcuts, input modes, and interactive features in Claude Code sessions.

@@ -1,8 +1,3 @@
----
-title: plugin-marketplaces
-source: https://code.claude.com/docs/en/plugin-marketplaces.md
----
-
 # Plugin marketplaces
 
 > Create and manage plugin marketplaces to distribute Claude Code extensions across teams and communities.

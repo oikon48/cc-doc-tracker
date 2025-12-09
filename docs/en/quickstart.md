@@ -1,8 +1,3 @@
----
-title: quickstart
-source: https://code.claude.com/docs/en/quickstart.md
----
-
 # Quickstart
 
 > Welcome to Claude Code!

@@ -1,8 +1,3 @@
----
-title: slash-commands
-source: https://code.claude.com/docs/en/slash-commands.md
----
-
 # Slash commands
 
 > Control Claude's behavior during an interactive session with slash commands.

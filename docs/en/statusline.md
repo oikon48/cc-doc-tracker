@@ -1,8 +1,3 @@
----
-title: statusline
-source: https://code.claude.com/docs/en/statusline.md
----
-
 # Status line configuration
 
 > Create a custom status line for Claude Code to display contextual information

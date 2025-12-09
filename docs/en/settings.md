@@ -1,8 +1,3 @@
----
-title: settings
-source: https://code.claude.com/docs/en/settings.md
----
-
 # Claude Code settings
 
 > Configure Claude Code with global and project-level settings, and environment variables.

@@ -1,8 +1,3 @@
----
-title: claude-code-on-the-web
-source: https://code.claude.com/docs/en/claude-code-on-the-web.md
----
-
 # Claude Code on the web
 
 > Run Claude Code tasks asynchronously on secure cloud infrastructure

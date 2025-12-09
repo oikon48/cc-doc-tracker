@@ -1,8 +1,3 @@
----
-title: model-config
-source: https://code.claude.com/docs/en/model-config.md
----
-
 # Model configuration
 
 > Learn about the Claude Code model configuration, including model aliases like `opusplan`

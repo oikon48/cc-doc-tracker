@@ -1,8 +1,3 @@
----
-title: memory
-source: https://code.claude.com/docs/en/memory.md
----
-
 # Manage Claude's memory
 
 > Learn how to manage Claude Code's memory across sessions with different memory locations and best practices.

@@ -1,8 +1,3 @@
----
-title: security
-source: https://code.claude.com/docs/en/security.md
----
-
 # Security
 
 > Learn about Claude Code's security safeguards and best practices for safe usage.

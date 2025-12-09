@@ -1,8 +1,3 @@
----
-title: cli-reference
-source: https://code.claude.com/docs/en/cli-reference.md
----
-
 # CLI reference
 
 > Complete reference for Claude Code command-line interface, including commands and flags.

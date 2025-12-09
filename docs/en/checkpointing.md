@@ -1,8 +1,3 @@
----
-title: checkpointing
-source: https://code.claude.com/docs/en/checkpointing.md
----
-
 # Checkpointing
 
 > Automatically track and rewind Claude's edits to quickly recover from unwanted changes.

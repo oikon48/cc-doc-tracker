@@ -1,8 +1,3 @@
----
-title: jetbrains
-source: https://code.claude.com/docs/en/jetbrains.md
----
-
 # JetBrains IDEs
 
 > Use Claude Code with JetBrains IDEs including IntelliJ, PyCharm, WebStorm, and more

@@ -1,8 +1,3 @@
----
-title: plugins-reference
-source: https://code.claude.com/docs/en/plugins-reference.md
----
-
 # Plugins reference
 
 > Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.

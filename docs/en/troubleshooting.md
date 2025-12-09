@@ -1,8 +1,3 @@
----
-title: troubleshooting
-source: https://code.claude.com/docs/en/troubleshooting.md
----
-
 # Troubleshooting
 
 > Discover solutions to common issues with Claude Code installation and usage.

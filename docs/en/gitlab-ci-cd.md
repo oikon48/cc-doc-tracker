@@ -1,8 +1,3 @@
----
-title: gitlab-ci-cd
-source: https://code.claude.com/docs/en/gitlab-ci-cd.md
----
-
 # Claude Code GitLab CI/CD
 
 > Learn about integrating Claude Code into your development workflow with GitLab CI/CD

@@ -1,8 +1,3 @@
----
-title: costs
-source: https://code.claude.com/docs/en/costs.md
----
-
 # Manage costs effectively
 
 > Learn how to track and optimize token usage and costs when using Claude Code.

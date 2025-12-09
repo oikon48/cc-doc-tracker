@@ -1,8 +1,3 @@
----
-title: headless
-source: https://code.claude.com/docs/en/headless.md
----
-
 # Headless mode
 
 > Run Claude Code programmatically without interactive UI

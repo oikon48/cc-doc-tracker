@@ -1,8 +1,3 @@
----
-title: common-workflows
-source: https://code.claude.com/docs/en/common-workflows.md
----
-
 # Common workflows
 
 > Learn about common workflows with Claude Code.

@@ -1,8 +1,3 @@
----
-title: hooks-guide
-source: https://code.claude.com/docs/en/hooks-guide.md
----
-
 # Get started with Claude Code hooks
 
 > Learn how to customize and extend Claude Code's behavior by registering shell commands

@@ -1,8 +1,3 @@
----
-title: google-vertex-ai
-source: https://code.claude.com/docs/en/google-vertex-ai.md
----
-
 # Claude Code on Google Vertex AI
 
 > Learn about configuring Claude Code through Google Vertex AI, including setup, IAM configuration, and troubleshooting.

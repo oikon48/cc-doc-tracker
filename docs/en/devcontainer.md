@@ -1,8 +1,3 @@
----
-title: devcontainer
-source: https://code.claude.com/docs/en/devcontainer.md
----
-
 # Development containers
 
 > Learn about the Claude Code development container for teams that need consistent, secure environments.

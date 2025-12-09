@@ -1,8 +1,3 @@
----
-title: mcp
-source: https://code.claude.com/docs/en/mcp.md
----
-
 # Connect Claude Code to tools via MCP
 
 > Learn how to connect Claude Code to your tools with the Model Context Protocol.

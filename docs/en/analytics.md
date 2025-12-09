@@ -1,8 +1,3 @@
----
-title: analytics
-source: https://code.claude.com/docs/en/analytics.md
----
-
 # Analytics
 
 > View detailed usage insights and productivity metrics for your organization's Claude Code deployment.
