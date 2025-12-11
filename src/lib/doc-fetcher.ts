@@ -348,4 +348,67 @@ source: ${docInfo.url}
 
     console.log('\n✨ Documentation fetch complete!');
   }
+
+  /**
+   * Get current statistics from metadata
+   * Used by CLI status command
+   */
+  async getStats(): Promise<{
+    totalDocs: number;
+    successfulFetch: number;
+    failedFetch: number;
+    failedFiles?: string[];
+    deletedFiles?: number;
+    lastMapUpdate?: string;
+  } | null> {
+    const metadataPath = path.join(this.metadataDir, 'last_update.json');
+
+    try {
+      const content = await fs.readFile(metadataPath, 'utf-8');
+      return JSON.parse(content);
+    } catch {
+      // File doesn't exist or is invalid
+      return null;
+    }
+  }
+
+  /**
+   * List all fetched documents
+   * Used by CLI list command
+   */
+  async listDocs(): Promise<Array<{ title: string; filename: string }>> {
+    const docs: Array<{ title: string; filename: string }> = [];
+
+    try {
+      const files = await fs.readdir(this.docsDir);
+
+      for (const file of files) {
+        if (!file.endsWith('.md')) continue;
+
+        try {
+          const content = await fs.readFile(
+            path.join(this.docsDir, file),
+            'utf-8'
+          );
+
+          // Extract title from front matter
+          const titleMatch = content.match(/^---\s*\ntitle:\s*(.+)\n/);
+          const title = titleMatch ? titleMatch[1].trim() : file.replace('.md', '');
+
+          docs.push({ title, filename: file });
+        } catch {
+          // If we can't read a file, still include it with filename as title
+          docs.push({ title: file.replace('.md', ''), filename: file });
+        }
+      }
+
+      // Sort by title
+      docs.sort((a, b) => a.title.localeCompare(b.title));
+
+      return docs;
+    } catch {
+      // Directory doesn't exist
+      return [];
+    }
+  }
 }
