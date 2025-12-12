@@ -10,7 +10,7 @@ source: https://code.claude.com/docs/en/interactive-mode.md
 ## Keyboard shortcuts
 
 <Note>
-  Keyboard shortcuts may vary by platform and terminal. Press `?` to see available shortcuts for your environment.
+  Keyboard shortcuts may vary by platform and terminal. Press `?` to see available shortcuts for your environment. For example, Option key combinations on macOS may require configuring your terminal to use Option as a meta/escape key.
 </Note>
 
 ### General controls
