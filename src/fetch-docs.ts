@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { ClaudeDocsFetcher } from './lib/doc-fetcher';
+import { ClaudeDocsFetcher } from './lib/doc-fetcher.js';
 
 /**
  * Main entry point for fetching Claude Code documentation
