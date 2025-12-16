@@ -23,12 +23,6 @@ To install Claude Code, use one of the following methods:
 
 <Tabs>
   <Tab title="Native Install (Recommended)">
-    **Homebrew (macOS, Linux):**
-
-    ```sh  theme={null}
-    brew install --cask claude-code
-    ```
-
     **macOS, Linux, WSL:**
 
     ```bash  theme={null}
@@ -45,6 +39,12 @@ To install Claude Code, use one of the following methods:
 
     ```batch  theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+    ```
+  </Tab>
+
+  <Tab title="Homebrew">
+    ```sh  theme={null}
+    brew install --cask claude-code
     ```
   </Tab>
 
