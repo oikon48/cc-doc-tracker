@@ -21,20 +21,24 @@ Automatically fetch and track changes in Claude Code's official documentation us
 ### System Architecture
 
 ```
-1. Fetch docs_map.md
-   ├── Parse all documentation links
-   └── Extract metadata (last updated time)
+1. Fetch Sources in Parallel
+   ├── llms.txt (authoritative URL list)
+   └── docs_map.md (titles and structure)
 
-2. Sync Local Files
-   ├── Compare docs_map with local files
-   └── Delete orphaned files (not in docs_map)
+2. Merge & Dedupe
+   ├── Combine both sources
+   └── Remove duplicate URLs
 
-3. Fetch Each Document
+3. Sync Local Files
+   ├── Compare merged list with local files
+   └── Delete orphaned files (not in sources)
+
+4. Fetch Each Document
    ├── Direct Markdown fetch (no HTML conversion)
    ├── Add minimal frontmatter (title, source)
    └── Save to docs/en/[filename].md
 
-4. Git Tracking
+5. Git Tracking
    ├── New files → "Added [file]"
    ├── Changed files → "Modified [file]"
    └── Deleted files → "Deleted [file]"
@@ -43,23 +47,28 @@ Automatically fetch and track changes in Claude Code's official documentation us
 ### Data Flow
 
 ```
-https://code.claude.com/docs/en/claude_code_docs_map.md
-                    ↓
-            [Parse Links: 46 docs]
-                    ↓
-         [Sync: Remove orphaned files]
-                    ↓
-        [Fetch: Get Markdown directly]
-                    ↓
-          [Git: Track all changes]
+┌─ llms.txt (authoritative) ─┐   ┌─ docs_map.md (titles) ─┐
+│  48 URLs                   │   │  44 URLs + metadata    │
+└────────────┬───────────────┘   └──────────┬─────────────┘
+             └──────────┬─────────────────────┘
+                        ↓
+               [Merge & Dedupe: 48 docs]
+                        ↓
+              [Sync: Remove orphaned files]
+                        ↓
+             [Fetch: Get Markdown directly]
+                        ↓
+               [Git: Track all changes]
 ```
 
 ### Key Components
 
 | Component | Purpose |
 |-----------|---------|
-| `docs_map.md` | Master list of all documentation |
-| `syncLocalFiles()` | Remove files not in docs_map |
+| `llms.txt` | Authoritative URL list (always up-to-date) |
+| `docs_map.md` | Titles and structure (may become stale) |
+| `mergeDocLists()` | Merge and dedupe both sources |
+| `syncLocalFiles()` | Remove files not in merged list |
 | `fetchDoc()` | Fetch and save individual docs |
 | `metadata/` | Track statistics and failures |
 
@@ -75,13 +84,13 @@ Manual trigger: Actions tab → "Run workflow"
 
 ## 📈 Statistics
 
-Current success rate: **97.8%** (45/46 documents)
+Current success rate: **100%** (48/48 documents)
 
 ```json
 {
-  "totalDocs": 46,
-  "successfulFetch": 45,
-  "failedFetch": 1,
+  "totalDocs": 48,
+  "successfulFetch": 48,
+  "failedFetch": 0,
   "deletedFiles": 0
 }
 ```
@@ -96,6 +105,12 @@ Current success rate: **97.8%** (45/46 documents)
 ## 📝 License
 
 MIT
+
+## ⚠️ Known Limitations
+
+- `claude_code_docs_map.md` may become stale (last observed: 2025-11-06)
+- `llms.txt` is treated as the authoritative source for URLs
+- Subdirectory paths (e.g., `sdk/migration-guide.md`) are supported
 
 ## ⚠️ Disclaimer
 
