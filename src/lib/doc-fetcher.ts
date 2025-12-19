@@ -22,6 +22,7 @@ interface FetchResult {
 export class ClaudeDocsFetcher {
   private readonly baseUrl = 'https://code.claude.com/docs/en';
   private readonly docsMapUrl = `${this.baseUrl}/claude_code_docs_map.md`;
+  private readonly llmsUrl = 'https://code.claude.com/docs/llms.txt';
   private readonly docsDir: string;
   private readonly metadataDir: string;
   private readonly maxRetries = 3;
@@ -95,14 +96,123 @@ export class ClaudeDocsFetcher {
   }
 
   /**
+   * Fetch llms.txt to get list of all documentation URLs
+   */
+  async fetchLlmsTxt(): Promise<DocInfo[]> {
+    console.log('📥 Fetching llms.txt...');
+
+    try {
+      const response = await this.fetchWithRetry(this.llmsUrl);
+      const content = await response.text();
+
+      // Save the llms.txt
+      await fs.writeFile(
+        path.join(this.metadataDir, 'llms.txt'),
+        content,
+        'utf-8'
+      );
+
+      // Parse to extract document URLs
+      const docs = this.parseLlmsTxt(content);
+      console.log(`✅ Found ${docs.length} pages in llms.txt`);
+
+      return docs;
+    } catch (error) {
+      console.warn('⚠️  Failed to fetch llms.txt:', error);
+      // Return empty array on failure (fallback to docs_map only)
+      return [];
+    }
+  }
+
+  /**
+   * Parse llms.txt to extract documentation URLs
+   */
+  private parseLlmsTxt(content: string): DocInfo[] {
+    const docs: DocInfo[] = [];
+
+    // Match full URLs ending with .md
+    const urlRegex = /https:\/\/code\.claude\.com\/docs\/en\/([^\s\)]+\.md)/g;
+
+    let match;
+    while ((match = urlRegex.exec(content)) !== null) {
+      const url = match[0];
+      const pathPart = match[1]; // e.g., "sdk/migration-guide.md" or "chrome.md"
+
+      // Extract title from path (remove .md and convert to readable format)
+      const title = pathPart
+        .replace(/\.md$/, '')
+        .split('/')
+        .pop() || pathPart;
+
+      docs.push({ title, url });
+    }
+
+    return docs;
+  }
+
+  /**
+   * Merge document lists from multiple sources
+   * llms.txt is considered the authoritative source for URLs
+   * Detects filename duplicates (e.g., migration-guide.md vs sdk/migration-guide.md)
+   */
+  private mergeDocLists(docsMapDocs: DocInfo[], llmsDocs: DocInfo[]): DocInfo[] {
+    const urlMap = new Map<string, DocInfo>();
+    const filenameMap = new Map<string, string>(); // filename -> url
+
+    // Add llms.txt entries first (authoritative paths)
+    for (const doc of llmsDocs) {
+      const key = doc.url.toLowerCase();
+      const filename = this.getFilenameFromUrl(doc.url).split('/').pop() || '';
+      urlMap.set(key, doc);
+      filenameMap.set(filename.toLowerCase(), key);
+    }
+
+    // Add docs_map entries (better titles, but check for path conflicts)
+    for (const doc of docsMapDocs) {
+      const key = doc.url.toLowerCase();
+      const filename = this.getFilenameFromUrl(doc.url).split('/').pop() || '';
+      const filenameKey = filename.toLowerCase();
+
+      if (urlMap.has(key)) {
+        // Same URL exists - update title if docs_map has a better one
+        const existing = urlMap.get(key)!;
+        if (doc.title && doc.title !== existing.title) {
+          urlMap.set(key, { ...existing, title: doc.title });
+        }
+      } else if (filenameMap.has(filenameKey)) {
+        // Same filename but different path - llms.txt path is authoritative, skip
+        // But update the title if docs_map has a better one
+        const existingUrl = filenameMap.get(filenameKey)!;
+        const existing = urlMap.get(existingUrl)!;
+        if (doc.title && doc.title !== existing.title) {
+          urlMap.set(existingUrl, { ...existing, title: doc.title });
+        }
+      } else {
+        // New document not in llms.txt
+        urlMap.set(key, doc);
+        filenameMap.set(filenameKey, key);
+      }
+    }
+
+    return Array.from(urlMap.values());
+  }
+
+  /**
    * Fetch a single documentation page
    */
   async fetchDoc(docInfo: DocInfo): Promise<FetchResult> {
     const filename = this.getFilenameFromUrl(docInfo.url);
+    const filePath = path.join(this.docsDir, filename);
 
     console.log(`📄 Fetching: ${docInfo.title} (${filename})`);
 
     try {
+      // Create subdirectory if needed (e.g., for sdk/migration-guide.md)
+      const fileDir = path.dirname(filePath);
+      if (fileDir !== this.docsDir) {
+        await fs.mkdir(fileDir, { recursive: true });
+      }
+
       const response = await this.fetchWithRetry(docInfo.url);
       const markdown = await response.text();
 
@@ -111,7 +221,6 @@ export class ClaudeDocsFetcher {
       const fullContent = frontMatter + markdown;
 
       // Save the file
-      const filePath = path.join(this.docsDir, filename);
       await fs.writeFile(filePath, fullContent, 'utf-8');
 
       return {
@@ -142,16 +251,21 @@ source: ${docInfo.url}
   }
 
   /**
-   * Get filename from URL
+   * Get filename from URL, preserving subdirectory structure
+   * e.g., https://code.claude.com/docs/en/sdk/migration-guide.md -> sdk/migration-guide.md
    */
   private getFilenameFromUrl(url: string): string {
+    // Extract path after /docs/en/
+    const match = url.match(/\/docs\/en\/(.+\.md)/);
+    if (match) {
+      // Remove query parameters and hash
+      return match[1].split('?')[0].split('#')[0];
+    }
+
+    // Fallback: existing logic
     const urlParts = url.split('/');
     const lastPart = urlParts[urlParts.length - 1];
-
-    // Remove query parameters and hash
     const filename = lastPart.split('?')[0].split('#')[0];
-
-    // Ensure it has .md extension
     return filename.endsWith('.md') ? filename : `${filename}.md`;
   }
 
@@ -230,24 +344,47 @@ source: ${docInfo.url}
   }
 
   /**
-   * Sync local files with docs_map (remove files not in docs_map)
+   * Get all markdown files recursively from a directory
+   */
+  private async getAllMarkdownFiles(dir: string, prefix = ''): Promise<string[]> {
+    const files: string[] = [];
+
+    try {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
+
+        if (entry.isDirectory()) {
+          const subFiles = await this.getAllMarkdownFiles(
+            path.join(dir, entry.name),
+            relativePath
+          );
+          files.push(...subFiles);
+        } else if (entry.name.endsWith('.md')) {
+          files.push(relativePath);
+        }
+      }
+    } catch {
+      // Directory doesn't exist
+    }
+
+    return files;
+  }
+
+  /**
+   * Sync local files with expected docs (remove files not in expected list)
    */
   async syncLocalFiles(expectedDocs: DocInfo[]): Promise<number> {
-    // Get list of expected files from docs_map
+    // Get list of expected files
     const expectedFiles = new Set(
       expectedDocs.map(doc => this.getFilenameFromUrl(doc.url))
     );
 
-    // Get list of actual files in docs directory
-    let actualFiles: string[] = [];
-    try {
-      actualFiles = await fs.readdir(this.docsDir);
-    } catch (error) {
-      // Directory doesn't exist yet, nothing to clean
-      return 0;
-    }
+    // Get all .md files recursively
+    const actualFiles = await this.getAllMarkdownFiles(this.docsDir);
 
-    // Find files to delete (exist locally but not in docs_map)
+    // Find files to delete (exist locally but not in expected list)
     const filesToDelete = actualFiles.filter(file => !expectedFiles.has(file));
 
     // Delete orphaned files
@@ -272,6 +409,7 @@ source: ${docInfo.url}
 
   /**
    * Fetch all documentation
+   * Fetches both docs_map and llms.txt in parallel for comprehensive coverage
    */
   async fetchAllDocs(): Promise<void> {
     console.log('🚀 Starting documentation fetch...');
@@ -279,15 +417,23 @@ source: ${docInfo.url}
     // Initialize directories
     await this.init();
 
-    // Get list of all docs
-    const docs = await this.fetchDocsMap();
+    // Fetch both docs_map and llms.txt in parallel
+    console.log('📥 Fetching documentation sources in parallel...');
+    const [docsMapDocs, llmsDocs] = await Promise.all([
+      this.fetchDocsMap(),
+      this.fetchLlmsTxt()
+    ]);
+
+    // Merge document lists (docs_map has better titles, llms.txt may have newer docs)
+    const docs = this.mergeDocLists(docsMapDocs, llmsDocs);
+    console.log(`📋 Total unique documents after merge: ${docs.length}`);
 
     if (docs.length === 0) {
-      console.warn('⚠️  No documentation pages found in docs map');
+      console.warn('⚠️  No documentation pages found');
       return;
     }
 
-    // Sync local files (remove files not in docs_map)
+    // Sync local files (remove files not in merged list)
     const deletedCount = await this.syncLocalFiles(docs);
 
     // Fetch documents in batches to avoid overwhelming the server

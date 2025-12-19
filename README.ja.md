@@ -21,20 +21,24 @@ Claude Codeの公式ドキュメントを自動取得し、変更を追跡する
 ### システムアーキテクチャ
 
 ```
-1. docs_map.md取得
-   ├── 全ドキュメントリンクを解析
-   └── メタデータ抽出（最終更新時刻）
+1. ソースを並行取得
+   ├── llms.txt（正のURL一覧）
+   └── docs_map.md（タイトルと構造）
 
-2. ローカルファイル同期
-   ├── docs_mapとローカルファイルを比較
-   └── 孤立ファイルを削除（docs_mapにない）
+2. マージ＆重複排除
+   ├── 両ソースを統合
+   └── 重複URLを削除
 
-3. 各ドキュメント取得
+3. ローカルファイル同期
+   ├── マージ済みリストとローカルファイルを比較
+   └── 孤立ファイルを削除（ソースにない）
+
+4. 各ドキュメント取得
    ├── Markdownを直接取得（HTML変換なし）
    ├── 最小限のfrontmatter追加（title, source）
    └── docs/en/[filename].mdとして保存
 
-4. Git追跡
+5. Git追跡
    ├── 新規ファイル → "Added [file]"
    ├── 変更ファイル → "Modified [file]"
    └── 削除ファイル → "Deleted [file]"
@@ -43,23 +47,28 @@ Claude Codeの公式ドキュメントを自動取得し、変更を追跡する
 ### データフロー
 
 ```
-https://code.claude.com/docs/en/claude_code_docs_map.md
-                    ↓
-            [リンク解析: 46 docs]
-                    ↓
-         [同期: 孤立ファイル削除]
-                    ↓
-        [取得: Markdown直接取得]
-                    ↓
-          [Git: 全変更を追跡]
+┌─ llms.txt (正のソース) ─┐   ┌─ docs_map.md (タイトル) ─┐
+│  48 URLs               │   │  44 URLs + metadata     │
+└──────────┬─────────────┘   └───────────┬─────────────┘
+           └────────────┬─────────────────┘
+                        ↓
+              [マージ＆重複排除: 48 docs]
+                        ↓
+              [同期: 孤立ファイル削除]
+                        ↓
+             [取得: Markdown直接取得]
+                        ↓
+               [Git: 全変更を追跡]
 ```
 
 ### 主要コンポーネント
 
 | コンポーネント | 目的 |
 |--------------|------|
-| `docs_map.md` | 全ドキュメントのマスターリスト |
-| `syncLocalFiles()` | docs_mapにないファイルを削除 |
+| `llms.txt` | 正のURL一覧（常に最新） |
+| `docs_map.md` | タイトルと構造（更新停止の可能性あり） |
+| `mergeDocLists()` | 両ソースのマージ・重複排除 |
+| `syncLocalFiles()` | マージ済みリストにないファイルを削除 |
 | `fetchDoc()` | 個別ドキュメントの取得と保存 |
 | `metadata/` | 統計と失敗を記録 |
 
@@ -75,13 +84,13 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 
 ## 📈 統計
 
-現在の成功率：**97.8%** (45/46 ドキュメント)
+現在の成功率：**100%** (48/48 ドキュメント)
 
 ```json
 {
-  "totalDocs": 46,
-  "successfulFetch": 45,
-  "failedFetch": 1,
+  "totalDocs": 48,
+  "successfulFetch": 48,
+  "failedFetch": 0,
   "deletedFiles": 0
 }
 ```
@@ -96,6 +105,12 @@ https://code.claude.com/docs/en/claude_code_docs_map.md
 ## 📝 ライセンス
 
 MIT
+
+## ⚠️ 既知の制限事項
+
+- `claude_code_docs_map.md` は更新が停止する可能性あり（最後の確認: 2025-11-06）
+- `llms.txt` を正のURL一覧として使用
+- サブディレクトリパス（例: `sdk/migration-guide.md`）に対応
 
 ## ⚠️ 免責事項
 
