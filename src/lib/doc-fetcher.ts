@@ -153,21 +153,44 @@ export class ClaudeDocsFetcher {
   /**
    * Merge document lists from multiple sources
    * llms.txt is considered the authoritative source for URLs
+   * Detects filename duplicates (e.g., migration-guide.md vs sdk/migration-guide.md)
    */
   private mergeDocLists(docsMapDocs: DocInfo[], llmsDocs: DocInfo[]): DocInfo[] {
     const urlMap = new Map<string, DocInfo>();
+    const filenameMap = new Map<string, string>(); // filename -> url
 
-    // Add docs_map entries first (they have better titles)
-    for (const doc of docsMapDocs) {
-      urlMap.set(doc.url.toLowerCase(), doc);
-    }
-
-    // Add llms.txt entries (newer URLs, may add new docs)
+    // Add llms.txt entries first (authoritative paths)
     for (const doc of llmsDocs) {
       const key = doc.url.toLowerCase();
-      if (!urlMap.has(key)) {
-        // Only add if not already present (preserve docs_map titles)
+      const filename = this.getFilenameFromUrl(doc.url).split('/').pop() || '';
+      urlMap.set(key, doc);
+      filenameMap.set(filename.toLowerCase(), key);
+    }
+
+    // Add docs_map entries (better titles, but check for path conflicts)
+    for (const doc of docsMapDocs) {
+      const key = doc.url.toLowerCase();
+      const filename = this.getFilenameFromUrl(doc.url).split('/').pop() || '';
+      const filenameKey = filename.toLowerCase();
+
+      if (urlMap.has(key)) {
+        // Same URL exists - update title if docs_map has a better one
+        const existing = urlMap.get(key)!;
+        if (doc.title && doc.title !== existing.title) {
+          urlMap.set(key, { ...existing, title: doc.title });
+        }
+      } else if (filenameMap.has(filenameKey)) {
+        // Same filename but different path - llms.txt path is authoritative, skip
+        // But update the title if docs_map has a better one
+        const existingUrl = filenameMap.get(filenameKey)!;
+        const existing = urlMap.get(existingUrl)!;
+        if (doc.title && doc.title !== existing.title) {
+          urlMap.set(existingUrl, { ...existing, title: doc.title });
+        }
+      } else {
+        // New document not in llms.txt
         urlMap.set(key, doc);
+        filenameMap.set(filenameKey, key);
       }
     }
 
