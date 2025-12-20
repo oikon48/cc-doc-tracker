@@ -30,6 +30,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.commit_sha }}  # Checkout the specific commit that was pushed
           fetch-depth: 2  # Need previous commit for diff
 
       - name: Get changed files
