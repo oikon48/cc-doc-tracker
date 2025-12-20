@@ -1,0 +1,235 @@
+name: Notify Documentation Changes
+
+on:
+  workflow_call:
+    inputs:
+      commit_sha:
+        description: 'Commit SHA to analyze'
+        required: true
+        type: string
+      changed_files_count:
+        description: 'Number of changed files'
+        required: true
+        type: number
+      tracker_name:
+        description: 'Tracker name for display'
+        required: true
+        type: string
+    secrets:
+      DISCORD_WEBHOOK_URL:
+        required: true
+      ANTHROPIC_API_KEY:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}  # Checkout the specific commit that was pushed
+          fetch-depth: 2  # Need previous commit for diff
+
+      - name: Get changed files
+        id: get-changes
+        run: |
+          # Check if parent commit exists (handle initial commit)
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff HEAD~1 --name-only -- docs/)
+          else
+            # First commit - list all docs
+            CHANGED_FILES=$(git ls-tree --name-only -r HEAD -- docs/)
+          fi
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No doc changes found"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+          # Format file list for display (limit to 15 files)
+          FILE_LIST=$(echo "$CHANGED_FILES" | head -15 | sed 's/^/• /')
+          REMAINING=$(echo "$CHANGED_FILES" | tail -n +16 | wc -l | tr -d ' ')
+
+          if [ "$REMAINING" -gt 0 ]; then
+            FILE_LIST="${FILE_LIST}"$'\n'"... and ${REMAINING} more files"
+          fi
+
+          # Output using heredoc for multiline
+          echo "file_list<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILE_LIST" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          # Get diff stats (handle initial commit)
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            DIFF_STAT=$(git diff HEAD~1 --stat -- docs/ | tail -5)
+          else
+            DIFF_STAT="Initial commit"
+          fi
+          echo "diff_stat<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF_STAT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          # Get brief diff content for summary (limit to 200 lines)
+          # Use docs/ to include all files including subdirectories
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            DIFF_CONTENT=$(git diff HEAD~1 -- docs/ 2>/dev/null | head -200 || echo "")
+          else
+            DIFF_CONTENT="Initial commit - all files are new"
+          fi
+          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate summary with Claude Code
+        id: summarize
+        if: steps.get-changes.outputs.has_changes == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            以下のドキュメント変更を分析し、日本語で簡潔に要約してください。
+
+            ## 変更ファイル:
+            ${{ steps.get-changes.outputs.file_list }}
+
+            ## 変更統計:
+            ${{ steps.get-changes.outputs.diff_stat }}
+
+            ## 差分内容（一部）:
+            ${{ steps.get-changes.outputs.diff_content }}
+
+            以下の形式で3文以内で回答してください:
+            [変更の概要を説明。どのような機能や情報が更新/追加/削除されたか]
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --max-turns 1
+
+      - name: Extract summary text
+        id: extract-summary
+        if: steps.get-changes.outputs.has_changes == 'true'
+        run: |
+          # Default summary if AI fails
+          DEFAULT_SUMMARY="ドキュメントが更新されました。詳細はコミットをご確認ください。"
+
+          if [ -f "${{ steps.summarize.outputs.execution_file }}" ]; then
+            # Extract the last assistant message from execution log
+            SUMMARY=$(cat "${{ steps.summarize.outputs.execution_file }}" | \
+              jq -r 'map(select(.role == "assistant")) | last | .content // empty' 2>/dev/null || echo "")
+
+            # Clean up the summary (remove markdown if any)
+            SUMMARY=$(echo "$SUMMARY" | sed 's/```[^`]*```//g' | tr '\n' ' ' | head -c 1000)
+
+            if [ -z "$SUMMARY" ]; then
+              SUMMARY="$DEFAULT_SUMMARY"
+            fi
+          else
+            SUMMARY="$DEFAULT_SUMMARY"
+          fi
+
+          # Store raw summary (JSON escaping happens later in Discord step)
+          echo "summary<<EOF" >> $GITHUB_OUTPUT
+          echo "$SUMMARY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send Discord notification
+        if: steps.get-changes.outputs.has_changes == 'true'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ inputs.commit_sha }}"
+          REPO_URL="https://github.com/${{ github.repository }}"
+
+          # Get file list for embed using heredoc (safe for special characters)
+          FILE_LIST=$(cat <<'FILELIST_EOF'
+          ${{ steps.get-changes.outputs.file_list }}
+          FILELIST_EOF
+          )
+
+          # Get summary using heredoc (safe for special characters)
+          SUMMARY=$(cat <<'SUMMARY_EOF'
+          ${{ steps.extract-summary.outputs.summary }}
+          SUMMARY_EOF
+          )
+
+          # Truncate summary if too long for Discord embed (max 1024 chars per field)
+          if [ ${#SUMMARY} -gt 900 ]; then
+            SUMMARY="${SUMMARY:0:897}..."
+          fi
+
+          # Build Discord embed payload
+          cat > /tmp/discord_payload.json << 'PAYLOAD_EOF'
+          {
+            "embeds": [{
+              "title": "📝 ${{ inputs.tracker_name }} ドキュメント更新",
+              "description": "公式ドキュメントに変更が検出されました",
+              "color": 5814783,
+              "fields": [
+                {
+                  "name": "📊 変更ファイル数",
+                  "value": "${{ inputs.changed_files_count }}",
+                  "inline": true
+                },
+                {
+                  "name": "🔗 リンク",
+                  "value": "[コミット]($COMMIT_URL_PLACEHOLDER) | [リポジトリ]($REPO_URL_PLACEHOLDER)",
+                  "inline": true
+                },
+                {
+                  "name": "📋 変更ファイル",
+                  "value": "```\n$FILE_LIST_PLACEHOLDER\n```"
+                },
+                {
+                  "name": "🤖 AI要約",
+                  "value": "$SUMMARY_PLACEHOLDER"
+                }
+              ],
+              "footer": {
+                "text": "${{ inputs.tracker_name }} | GitHub Actions"
+              },
+              "timestamp": "$TIMESTAMP_PLACEHOLDER"
+            }]
+          }
+          PAYLOAD_EOF
+
+          # Replace placeholders with actual values
+          sed -i "s|\$COMMIT_URL_PLACEHOLDER|${COMMIT_URL}|g" /tmp/discord_payload.json
+          sed -i "s|\$REPO_URL_PLACEHOLDER|${REPO_URL}|g" /tmp/discord_payload.json
+          sed -i "s|\$TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" /tmp/discord_payload.json
+
+          # Handle multiline file list (escape for JSON)
+          FILE_LIST_ESCAPED=$(echo "$FILE_LIST" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+          sed -i "s|\$FILE_LIST_PLACEHOLDER|${FILE_LIST_ESCAPED}|g" /tmp/discord_payload.json
+
+          # Handle summary (escape for JSON)
+          SUMMARY_ESCAPED=$(echo "$SUMMARY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+          sed -i "s|\$SUMMARY_PLACEHOLDER|${SUMMARY_ESCAPED}|g" /tmp/discord_payload.json
+
+          # Debug: show payload
+          echo "Discord payload:"
+          cat /tmp/discord_payload.json
+
+          # Send to Discord
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d @/tmp/discord_payload.json)
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            cat /tmp/discord_response.txt
+            exit 1
+          fi
+
+      - name: Skip notification (no changes)
+        if: steps.get-changes.outputs.has_changes != 'true'
+        run: |
+          echo "ℹ️ No documentation changes detected, skipping notification"
