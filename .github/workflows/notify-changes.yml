@@ -105,10 +105,10 @@ jobs:
 
             以下の形式で3文以内で回答してください:
             [変更の概要を説明。どのような機能や情報が更新/追加/削除されたか]
-          direct_prompt: true
-          model: claude-sonnet-4-20250514
-          timeout_minutes: 5
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --max-turns 1
 
       - name: Extract summary text
         id: extract-summary
@@ -132,9 +132,7 @@ jobs:
             SUMMARY="$DEFAULT_SUMMARY"
           fi
 
-          # Escape for JSON (backslashes first, then quotes)
-          SUMMARY=$(echo "$SUMMARY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
-
+          # Store raw summary (JSON escaping happens later in Discord step)
           echo "summary<<EOF" >> $GITHUB_OUTPUT
           echo "$SUMMARY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
