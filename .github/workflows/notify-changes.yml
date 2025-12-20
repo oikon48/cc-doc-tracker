@@ -35,8 +35,13 @@ jobs:
       - name: Get changed files
         id: get-changes
         run: |
-          # Get list of changed doc files
-          CHANGED_FILES=$(git diff HEAD~1 --name-only -- docs/ 2>/dev/null || echo "")
+          # Check if parent commit exists (handle initial commit)
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff HEAD~1 --name-only -- docs/)
+          else
+            # First commit - list all docs
+            CHANGED_FILES=$(git ls-tree --name-only -r HEAD -- docs/)
+          fi
 
           if [ -z "$CHANGED_FILES" ]; then
             echo "No doc changes found"
@@ -59,14 +64,23 @@ jobs:
           echo "$FILE_LIST" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          # Get diff stats
-          DIFF_STAT=$(git diff HEAD~1 --stat -- docs/ | tail -5)
+          # Get diff stats (handle initial commit)
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            DIFF_STAT=$(git diff HEAD~1 --stat -- docs/ | tail -5)
+          else
+            DIFF_STAT="Initial commit"
+          fi
           echo "diff_stat<<EOF" >> $GITHUB_OUTPUT
           echo "$DIFF_STAT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
           # Get brief diff content for summary (limit to 200 lines)
-          DIFF_CONTENT=$(git diff HEAD~1 -- docs/*.md 2>/dev/null | head -200 || echo "")
+          # Use docs/ to include all files including subdirectories
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            DIFF_CONTENT=$(git diff HEAD~1 -- docs/ 2>/dev/null | head -200 || echo "")
+          else
+            DIFF_CONTENT="Initial commit - all files are new"
+          fi
           echo "diff_content<<EOF" >> $GITHUB_OUTPUT
           echo "$DIFF_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -74,7 +88,7 @@ jobs:
       - name: Generate summary with Claude Code
         id: summarize
         if: steps.get-changes.outputs.has_changes == 'true'
-        uses: anthropics/claude-code-base-action@beta
+        uses: anthropics/claude-code-action@v1
         with:
           prompt: |
             以下のドキュメント変更を分析し、日本語で簡潔に要約してください。
@@ -117,8 +131,8 @@ jobs:
             SUMMARY="$DEFAULT_SUMMARY"
           fi
 
-          # Escape for JSON
-          SUMMARY=$(echo "$SUMMARY" | sed 's/"/\\"/g' | sed 's/\\/\\\\/g')
+          # Escape for JSON (backslashes first, then quotes)
+          SUMMARY=$(echo "$SUMMARY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
           echo "summary<<EOF" >> $GITHUB_OUTPUT
           echo "$SUMMARY" >> $GITHUB_OUTPUT
@@ -133,11 +147,17 @@ jobs:
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ inputs.commit_sha }}"
           REPO_URL="https://github.com/${{ github.repository }}"
 
-          # Get file list for embed
-          FILE_LIST='${{ steps.get-changes.outputs.file_list }}'
+          # Get file list for embed using heredoc (safe for special characters)
+          FILE_LIST=$(cat <<'FILELIST_EOF'
+          ${{ steps.get-changes.outputs.file_list }}
+          FILELIST_EOF
+          )
 
-          # Get summary
-          SUMMARY='${{ steps.extract-summary.outputs.summary }}'
+          # Get summary using heredoc (safe for special characters)
+          SUMMARY=$(cat <<'SUMMARY_EOF'
+          ${{ steps.extract-summary.outputs.summary }}
+          SUMMARY_EOF
+          )
 
           # Truncate summary if too long for Discord embed (max 1024 chars per field)
           if [ ${#SUMMARY} -gt 900 ]; then
@@ -184,12 +204,12 @@ jobs:
           sed -i "s|\$REPO_URL_PLACEHOLDER|${REPO_URL}|g" /tmp/discord_payload.json
           sed -i "s|\$TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" /tmp/discord_payload.json
 
-          # Handle multiline file list
-          FILE_LIST_ESCAPED=$(echo "$FILE_LIST" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/"/\\"/g')
+          # Handle multiline file list (escape for JSON)
+          FILE_LIST_ESCAPED=$(echo "$FILE_LIST" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
           sed -i "s|\$FILE_LIST_PLACEHOLDER|${FILE_LIST_ESCAPED}|g" /tmp/discord_payload.json
 
-          # Handle summary
-          SUMMARY_ESCAPED=$(echo "$SUMMARY" | sed 's/"/\\"/g')
+          # Handle summary (escape for JSON)
+          SUMMARY_ESCAPED=$(echo "$SUMMARY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
           sed -i "s|\$SUMMARY_PLACEHOLDER|${SUMMARY_ESCAPED}|g" /tmp/discord_payload.json
 
           # Debug: show payload
