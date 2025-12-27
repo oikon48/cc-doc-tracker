@@ -30,6 +30,7 @@ jobs:
     permissions:
       contents: write  # Need write permission to commit changes
       issues: write    # Need write permission to create issues on failure
+      id-token: write  # Need for Claude Code Action OIDC authentication
 
     outputs:
       changed: ${{ steps.git-check.outputs.changed }}
