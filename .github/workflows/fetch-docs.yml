@@ -30,6 +30,7 @@ jobs:
     permissions:
       contents: write  # Need write permission to commit changes
       issues: write    # Need write permission to create issues on failure
+      id-token: write  # Need for Claude Code Action OIDC authentication
 
     outputs:
       changed: ${{ steps.git-check.outputs.changed }}
@@ -163,6 +164,8 @@ jobs:
   notify:
     needs: fetch-docs
     if: needs.fetch-docs.outputs.changed == 'true'
+    permissions:
+      id-token: write  # Required for reusable workflow OIDC authentication
     uses: ./.github/workflows/notify-changes.yml
     with:
       commit_sha: ${{ needs.fetch-docs.outputs.commit_sha }}
