@@ -1,9 +1,10 @@
 {
-  "lastMapUpdate": "2025-12-27 06:09:46 UTC",
-  "totalDocs": 49,
+  "lastMapUpdate": "2026-01-03 18:04:36 UTC",
+  "totalDocs": 50,
   "successfulFetch": 48,
-  "failedFetch": 1,
+  "failedFetch": 2,
   "failedFiles": [
+    "changelog.md",
     "migration-guide.md"
   ],
   "deletedFiles": 0
