@@ -119,8 +119,9 @@ jobs:
 
           if [ -f "${{ steps.summarize.outputs.execution_file }}" ]; then
             # Extract the last assistant message from execution log
+            # Note: Claude API content is an array of content blocks [{type: "text", text: "..."}]
             SUMMARY=$(cat "${{ steps.summarize.outputs.execution_file }}" | \
-              jq -r 'map(select(.role == "assistant")) | last | .content // empty' 2>/dev/null || echo "")
+              jq -r 'map(select(.role == "assistant")) | last | if .content | type == "array" then (.content[] | select(.type == "text") | .text) else .content // empty end' 2>/dev/null || echo "")
 
             # Clean up the summary (remove markdown if any)
             SUMMARY=$(echo "$SUMMARY" | sed 's/```[^`]*```//g' | tr '\n' ' ' | head -c 1000)
@@ -141,75 +142,46 @@ jobs:
         if: steps.get-changes.outputs.has_changes == 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          FILE_LIST: ${{ steps.get-changes.outputs.file_list }}
+          SUMMARY: ${{ steps.extract-summary.outputs.summary }}
+          TRACKER_NAME: ${{ inputs.tracker_name }}
+          CHANGED_FILES_COUNT: ${{ inputs.changed_files_count }}
         run: |
           TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ inputs.commit_sha }}"
           REPO_URL="https://github.com/${{ github.repository }}"
-
-          # Get file list for embed using heredoc (safe for special characters)
-          FILE_LIST=$(cat <<'FILELIST_EOF'
-          ${{ steps.get-changes.outputs.file_list }}
-          FILELIST_EOF
-          )
-
-          # Get summary using heredoc (safe for special characters)
-          SUMMARY=$(cat <<'SUMMARY_EOF'
-          ${{ steps.extract-summary.outputs.summary }}
-          SUMMARY_EOF
-          )
 
           # Truncate summary if too long for Discord embed (max 1024 chars per field)
           if [ ${#SUMMARY} -gt 900 ]; then
             SUMMARY="${SUMMARY:0:897}..."
           fi
 
-          # Build Discord embed payload
-          cat > /tmp/discord_payload.json << 'PAYLOAD_EOF'
-          {
-            "embeds": [{
-              "title": "📝 ${{ inputs.tracker_name }} ドキュメント更新",
-              "description": "公式ドキュメントに変更が検出されました",
-              "color": 5814783,
-              "fields": [
-                {
-                  "name": "📊 変更ファイル数",
-                  "value": "${{ inputs.changed_files_count }}",
-                  "inline": true
-                },
-                {
-                  "name": "🔗 リンク",
-                  "value": "[コミット]($COMMIT_URL_PLACEHOLDER) | [リポジトリ]($REPO_URL_PLACEHOLDER)",
-                  "inline": true
-                },
-                {
-                  "name": "📋 変更ファイル",
-                  "value": "```\n$FILE_LIST_PLACEHOLDER\n```"
-                },
-                {
-                  "name": "🤖 AI要約",
-                  "value": "$SUMMARY_PLACEHOLDER"
-                }
-              ],
-              "footer": {
-                "text": "${{ inputs.tracker_name }} | GitHub Actions"
-              },
-              "timestamp": "$TIMESTAMP_PLACEHOLDER"
-            }]
-          }
-          PAYLOAD_EOF
-
-          # Replace placeholders with actual values
-          sed -i "s|\$COMMIT_URL_PLACEHOLDER|${COMMIT_URL}|g" /tmp/discord_payload.json
-          sed -i "s|\$REPO_URL_PLACEHOLDER|${REPO_URL}|g" /tmp/discord_payload.json
-          sed -i "s|\$TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" /tmp/discord_payload.json
-
-          # Handle multiline file list (escape for JSON)
-          FILE_LIST_ESCAPED=$(echo "$FILE_LIST" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-          sed -i "s|\$FILE_LIST_PLACEHOLDER|${FILE_LIST_ESCAPED}|g" /tmp/discord_payload.json
-
-          # Handle summary (escape for JSON)
-          SUMMARY_ESCAPED=$(echo "$SUMMARY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
-          sed -i "s|\$SUMMARY_PLACEHOLDER|${SUMMARY_ESCAPED}|g" /tmp/discord_payload.json
+          # Build Discord embed payload using jq (auto-escapes special characters and handles newlines)
+          jq -n \
+            --arg title "📝 ${TRACKER_NAME} ドキュメント更新" \
+            --arg desc "公式ドキュメントに変更が検出されました" \
+            --arg count "$CHANGED_FILES_COUNT" \
+            --arg commit_url "$COMMIT_URL" \
+            --arg repo_url "$REPO_URL" \
+            --arg file_list "$FILE_LIST" \
+            --arg summary "$SUMMARY" \
+            --arg footer "${TRACKER_NAME} | GitHub Actions" \
+            --arg ts "$TIMESTAMP" \
+            '{
+              "embeds": [{
+                "title": $title,
+                "description": $desc,
+                "color": 5814783,
+                "fields": [
+                  {"name": "📊 変更ファイル数", "value": $count, "inline": true},
+                  {"name": "🔗 リンク", "value": ("[コミット](" + $commit_url + ") | [リポジトリ](" + $repo_url + ")"), "inline": true},
+                  {"name": "📋 変更ファイル", "value": ("```\n" + $file_list + "\n```")},
+                  {"name": "🤖 AI要約", "value": $summary}
+                ],
+                "footer": {"text": $footer},
+                "timestamp": $ts
+              }]
+            }' > /tmp/discord_payload.json
 
           # Debug: show payload
           echo "Discord payload:"
