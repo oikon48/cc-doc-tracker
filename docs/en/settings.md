@@ -481,7 +481,7 @@ Defines additional marketplaces that should be made available for the repository
 
 * **macOS**: `/Library/Application Support/ClaudeCode/managed-settings.json`
 * **Linux and WSL**: `/etc/claude-code/managed-settings.json`
-* **Windows**: `C:\ProgramData\ClaudeCode\managed-settings.json`
+* **Windows**: `C:\Program Files\ClaudeCode\managed-settings.json`
 
 **Key characteristics**:
 
