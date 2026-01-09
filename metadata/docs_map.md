@@ -882,11 +882,11 @@ This map uses a hierarchical structure:
     * Naming conventions
   * Managing MCP connections
   * MCP permissions and wildcards
-* `SlashCommand` tool
-  * `SlashCommand` tool supported commands
-  * Disable `SlashCommand` tool
+* `Skill` tool
+  * `Skill` tool supported commands
+  * Disable `Skill` tool
   * Disable specific commands only
-  * `SlashCommand` permission rules
+  * `Skill` permission rules
   * Character budget limit
 * Skills vs slash commands
   * Use slash commands for
