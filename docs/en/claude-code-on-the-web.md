@@ -321,6 +321,7 @@ When using "Limited" network access, the following domains are allowed by defaul
 * ghcr.io
 * mcr.microsoft.com
 * \*.data.mcr.microsoft.com
+* public.ecr.aws
 
 #### Cloud Platforms
 
@@ -341,6 +342,8 @@ When using "Limited" network access, the following domains are allowed by defaul
 * dot.net
 * visualstudio.com
 * dev.azure.com
+* \*.amazonaws.com
+* \*.api.aws
 * oracle.com
 * [www.oracle.com](http://www.oracle.com)
 * java.com
