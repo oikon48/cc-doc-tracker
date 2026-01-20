@@ -1,10 +1,11 @@
 {
-  "lastMapUpdate": "2026-01-20 06:11:38 UTC",
+  "lastMapUpdate": "2026-01-20 18:06:33 UTC",
   "totalDocs": 49,
-  "successfulFetch": 48,
-  "failedFetch": 1,
+  "successfulFetch": 47,
+  "failedFetch": 2,
   "failedFiles": [
-    "changelog.md"
+    "changelog.md",
+    "slash-commands.md"
   ],
   "deletedFiles": 0
 }

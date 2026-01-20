@@ -140,7 +140,7 @@ You can also ask Claude about its own capabilities:
 ```
 
 ```
-> how do I use slash commands in Claude Code?
+> how do I create custom skills in Claude Code?
 ```
 
 ```
@@ -310,7 +310,7 @@ See the [CLI reference](/en/cli-reference) for a complete list of commands.
     * Press `?` to see all available keyboard shortcuts
     * Use Tab for command completion
     * Press ↑ for command history
-    * Type `/` to see all slash commands
+    * Type `/` to see all commands and skills
   </Accordion>
 </AccordionGroup>
 

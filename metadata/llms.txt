@@ -35,16 +35,15 @@
 - [Output styles](https://code.claude.com/docs/en/output-styles.md): Adapt Claude Code for uses beyond software engineering
 - [Claude Code overview](https://code.claude.com/docs/en/overview.md): Learn about Claude Code, Anthropic's agentic coding tool that lives in your terminal and helps you turn ideas into code faster than ever before.
 - [Create and distribute a plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces.md): Build and host plugin marketplaces to distribute Claude Code extensions across teams and communities.
-- [Create plugins](https://code.claude.com/docs/en/plugins.md): Create custom plugins to extend Claude Code with slash commands, agents, hooks, Skills, and MCP servers.
+- [Create plugins](https://code.claude.com/docs/en/plugins.md): Create custom plugins to extend Claude Code with skills, agents, hooks, and MCP servers.
 - [Plugins reference](https://code.claude.com/docs/en/plugins-reference.md): Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.
 - [Quickstart](https://code.claude.com/docs/en/quickstart.md): Welcome to Claude Code!
 - [Sandboxing](https://code.claude.com/docs/en/sandboxing.md): Learn how Claude Code's sandboxed bash tool provides filesystem and network isolation for safer, more autonomous agent execution.
 - [Security](https://code.claude.com/docs/en/security.md): Learn about Claude Code's security safeguards and best practices for safe usage.
 - [Claude Code settings](https://code.claude.com/docs/en/settings.md): Configure Claude Code with global and project-level settings, and environment variables.
 - [Set up Claude Code](https://code.claude.com/docs/en/setup.md): Install, authenticate, and start using Claude Code on your development machine.
-- [Agent Skills](https://code.claude.com/docs/en/skills.md): Create, manage, and share Skills to extend Claude's capabilities in Claude Code.
+- [Extend Claude with skills](https://code.claude.com/docs/en/skills.md): Create, manage, and share skills to extend Claude's capabilities in Claude Code. Includes custom slash commands.
 - [Claude Code in Slack](https://code.claude.com/docs/en/slack.md): Delegate coding tasks directly from your Slack workspace
-- [Slash commands](https://code.claude.com/docs/en/slash-commands.md): Control Claude's behavior during an interactive session with slash commands.
 - [Status line configuration](https://code.claude.com/docs/en/statusline.md): Create a custom status line for Claude Code to display contextual information
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents.md): Create and use specialized AI subagents in Claude Code for task-specific workflows and improved context management.
 - [Optimize your terminal setup](https://code.claude.com/docs/en/terminal-config.md): Claude Code works best when your terminal is properly configured. Follow these guidelines to optimize your experience.
