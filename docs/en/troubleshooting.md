@@ -158,6 +158,8 @@ If you're experiencing authentication problems:
 2. Close Claude Code
 3. Restart with `claude` and complete the authentication process again
 
+If the browser doesn't open automatically during login, press `c` to copy the OAuth URL to your clipboard, then paste it into your browser manually.
+
 If problems persist, try:
 
 ```bash  theme={null}

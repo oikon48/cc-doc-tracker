@@ -10,7 +10,7 @@
 - [Claude Code on the web](https://code.claude.com/docs/en/claude-code-on-the-web.md): Run Claude Code tasks asynchronously on secure cloud infrastructure
 - [CLI reference](https://code.claude.com/docs/en/cli-reference.md): Complete reference for Claude Code command-line interface, including commands and flags.
 - [Common workflows](https://code.claude.com/docs/en/common-workflows.md): Learn about common workflows with Claude Code.
-- [Manage costs effectively](https://code.claude.com/docs/en/costs.md): Learn how to track and optimize token usage and costs when using Claude Code.
+- [Manage costs effectively](https://code.claude.com/docs/en/costs.md): Track token usage, set team spend limits, and reduce Claude Code costs with context management, model selection, extended thinking settings, and preprocessing hooks.
 - [Data usage](https://code.claude.com/docs/en/data-usage.md): Learn about Anthropic's data usage policies for Claude
 - [Claude Code on desktop](https://code.claude.com/docs/en/desktop.md): Run Claude Code tasks locally or on secure cloud infrastructure with the Claude desktop app
 - [Development containers](https://code.claude.com/docs/en/devcontainer.md): Learn about the Claude Code development container for teams that need consistent, secure environments.
