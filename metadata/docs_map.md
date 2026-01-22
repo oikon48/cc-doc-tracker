@@ -132,11 +132,10 @@ This map uses a hierarchical structure:
   * Configure permissions
   * Use CLI tools
   * Connect MCP servers
-  * Create custom slash commands
   * Install plugins
   * Set up hooks
+  * Create skills
   * Create custom subagents
-  * Add agent skills
 * Communicate effectively
   * Ask codebase questions
   * Let Claude interview you
