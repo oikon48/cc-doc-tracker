@@ -3,6 +3,10 @@ title: monitoring-usage
 source: https://code.claude.com/docs/en/monitoring-usage.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Monitoring
 
 > Learn how to enable and configure OpenTelemetry for Claude Code.
@@ -499,8 +503,3 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 ## Monitoring Claude Code on Amazon Bedrock
 
 For detailed Claude Code usage monitoring guidance for Amazon Bedrock, see [Claude Code Monitoring Implementation (Bedrock)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md).
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

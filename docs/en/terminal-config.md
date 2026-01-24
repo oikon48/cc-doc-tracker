@@ -3,6 +3,10 @@ title: terminal-config
 source: https://code.claude.com/docs/en/terminal-config.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Optimize your terminal setup
 
 > Claude Code works best when your terminal is properly configured. Follow these guidelines to optimize your experience.
@@ -83,8 +87,3 @@ The supported subset includes:
 * Line operations: `J` (join lines)
 
 See [Interactive mode](/en/interactive-mode#vim-editor-mode) for the complete reference.
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

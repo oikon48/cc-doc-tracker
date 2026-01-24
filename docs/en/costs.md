@@ -3,6 +3,10 @@ title: costs
 source: https://code.claude.com/docs/en/costs.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Manage costs effectively
 
 > Track token usage, set team spend limits, and reduce Claude Code costs with context management, model selection, extended thinking settings, and preprocessing hooks.
@@ -185,8 +189,3 @@ These background processes consume a small amount of tokens (typically under \$0
 ## Understanding changes in Claude Code behavior
 
 Claude Code regularly receives updates that may change how features work, including cost reporting. Run `claude --version` to check your current version. For specific billing questions, contact Anthropic support through your [Console account](https://platform.claude.com/login). For team deployments, start with a small pilot group to establish usage patterns before wider rollout.
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

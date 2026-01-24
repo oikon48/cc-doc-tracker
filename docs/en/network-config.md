@@ -3,6 +3,10 @@ title: network-config
 source: https://code.claude.com/docs/en/network-config.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Enterprise network configuration
 
 > Configure Claude Code for enterprise environments with proxy servers, custom Certificate Authorities (CA), and mutual Transport Layer Security (mTLS) authentication.
@@ -93,8 +97,3 @@ Ensure these URLs are allowlisted in your proxy configuration and firewall rules
 * [Claude Code settings](/en/settings)
 * [Environment variables reference](/en/settings#environment-variables)
 * [Troubleshooting guide](/en/troubleshooting)
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

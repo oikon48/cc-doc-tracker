@@ -3,6 +3,10 @@ title: slack
 source: https://code.claude.com/docs/en/slack.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Claude Code in Slack
 
 > Delegate coding tasks directly from your Slack workspace
@@ -209,8 +213,3 @@ Slack workspace administrators control whether the Claude app can be installed i
     Get additional support
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

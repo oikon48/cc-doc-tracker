@@ -3,6 +3,10 @@ title: common-workflows
 source: https://code.claude.com/docs/en/common-workflows.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Common workflows
 
 > Step-by-step guides for exploring codebases, fixing bugs, refactoring, testing, and other everyday tasks with Claude Code.
@@ -863,8 +867,3 @@ Claude has built-in access to its documentation and can answer questions about i
     Clone our development container reference implementation
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

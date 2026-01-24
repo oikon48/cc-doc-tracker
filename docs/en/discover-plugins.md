@@ -3,6 +3,10 @@ title: discover-plugins
 source: https://code.claude.com/docs/en/discover-plugins.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Discover and install prebuilt plugins through marketplaces
 
 > Find and install plugins from marketplaces to extend Claude Code with new commands, agents, and capabilities.
@@ -392,8 +396,3 @@ For detailed troubleshooting with solutions, see [Troubleshooting](/en/plugin-ma
 * **Build your own plugins**: See [Plugins](/en/plugins) to create skills, agents, and hooks
 * **Create a marketplace**: See [Create a plugin marketplace](/en/plugin-marketplaces) to distribute plugins to your team or community
 * **Technical reference**: See [Plugins reference](/en/plugins-reference) for complete specifications
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

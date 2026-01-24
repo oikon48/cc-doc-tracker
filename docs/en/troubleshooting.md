@@ -3,6 +3,10 @@ title: troubleshooting
 source: https://code.claude.com/docs/en/troubleshooting.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Troubleshooting
 
 > Discover solutions to common issues with Claude Code installation and usage.
@@ -423,8 +427,3 @@ If you're experiencing issues not covered here:
    * Context usage warnings (large CLAUDE.md files, high MCP token usage, unreachable permission rules)
    * Plugin and agent loading errors
 4. Ask Claude directly about its capabilities and features - Claude has built-in access to its documentation
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

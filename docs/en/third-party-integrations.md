@@ -3,6 +3,10 @@ title: third-party-integrations
 source: https://code.claude.com/docs/en/third-party-integrations.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Enterprise deployment overview
 
 > Learn how Claude Code can integrate with various third-party services and infrastructure to meet enterprise deployment requirements.
@@ -257,8 +261,3 @@ Once you've chosen a deployment option and configured access for your team:
 1. **Roll out to your team**: Share installation instructions and have team members [install Claude Code](/en/setup) and authenticate with their credentials.
 2. **Set up shared configuration**: Create a [CLAUDE.md file](/en/memory) in your repositories to help Claude Code understand your codebase and coding standards.
 3. **Configure permissions**: Review [security settings](/en/security) to define what Claude Code can and cannot do in your environment.
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

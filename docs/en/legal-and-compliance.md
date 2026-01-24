@@ -3,6 +3,10 @@ title: legal-and-compliance
 source: https://code.claude.com/docs/en/legal-and-compliance.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Legal and compliance
 
 > Legal agreements, compliance certifications, and security information for Claude Code.
@@ -39,8 +43,3 @@ Anthropic manages our security program through HackerOne. [Use this form to repo
 ***
 
 © Anthropic PBC. All rights reserved. Use is subject to applicable Anthropic Terms of Service.
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

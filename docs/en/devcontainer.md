@@ -3,6 +3,10 @@ title: devcontainer
 source: https://code.claude.com/docs/en/devcontainer.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Development containers
 
 > Learn about the Claude Code development container for teams that need consistent, secure environments.
@@ -80,8 +84,3 @@ Mirror your devcontainer configuration in CI/CD pipelines to ensure development 
 * [VS Code devcontainers documentation](https://code.visualstudio.com/docs/devcontainers/containers)
 * [Claude Code security best practices](/en/security)
 * [Enterprise network configuration](/en/network-config)
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

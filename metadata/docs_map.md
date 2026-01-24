@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # null
 
 # Claude Code Documentation Map
@@ -1215,8 +1219,3 @@ This map uses a hierarchical structure:
 * Security and trust
   * Trust and safety
   * Security vulnerability reporting
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

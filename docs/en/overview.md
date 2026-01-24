@@ -3,6 +3,10 @@ title: overview
 source: https://code.claude.com/docs/en/overview.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Claude Code overview
 
 > Learn about Claude Code, Anthropic's agentic coding tool that lives in your terminal and helps you turn ideas into code faster than ever before.
@@ -145,8 +149,3 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
     Understand how Claude Code handles your data
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

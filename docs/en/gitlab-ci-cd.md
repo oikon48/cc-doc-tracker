@@ -3,6 +3,10 @@ title: gitlab-ci-cd
 source: https://code.claude.com/docs/en/gitlab-ci-cd.md
 ---
 
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Claude Code GitLab CI/CD
 
 > Learn about integrating Claude Code into your development workflow with GitLab CI/CD
@@ -465,8 +469,3 @@ You can guide Claude in two primary ways:
 
 1. **CLAUDE.md**: Define coding standards, security requirements, and project conventions. Claude reads this during runs and follows your rules.
 2. **Custom prompts**: Pass task-specific instructions via `prompt`/`prompt_file` in the job. Use different prompts for different jobs (for example, review, implement, refactor).
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt
