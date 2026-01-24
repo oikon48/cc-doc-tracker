@@ -1,10 +1,8 @@
 {
   "lastMapUpdate": "2026-01-23 18:05:13 UTC",
   "totalDocs": 51,
-  "successfulFetch": 50,
-  "failedFetch": 1,
-  "failedFiles": [
-    "changelog.md"
-  ],
+  "successfulFetch": 51,
+  "failedFetch": 0,
+  "failedFiles": [],
   "deletedFiles": 0
 }
