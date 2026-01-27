@@ -93,7 +93,7 @@ jobs:
         id: summarize
         if: steps.get-changes.outputs.has_changes == 'true'
         continue-on-error: true
-        uses: anthropics/claude-code-action@28f83620103c48a57093dcc2837eec89e036bb9f  # beta
+        uses: anthropics/claude-code-action@v1
         with:
           prompt: |
             以下のドキュメント変更を分析し、日本語で簡潔に要約してください。
@@ -107,45 +107,43 @@ jobs:
             ## 差分内容（一部）:
             ${{ steps.get-changes.outputs.diff_content }}
 
-            3文以内で変更の概要を説明してください。どのような機能や情報が更新/追加/削除されたかを記載してください。
+            以下の形式で3文以内で回答してください:
+            [変更の概要を説明。どのような機能や情報が更新/追加/削除されたか]
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model claude-sonnet-4-5
             --max-turns 3
-            --max-tokens 1024
-            --json-schema '{"type":"object","properties":{"summary":{"type":"string","description":"日本語での変更要約（3文以内）"}},"required":["summary"],"additionalProperties":false}'
 
       - name: Extract summary text
         id: extract-summary
         if: steps.get-changes.outputs.has_changes == 'true'
         env:
-          STRUCTURED_OUTPUT: ${{ steps.summarize.outputs.structured_output }}
           EXECUTION_FILE: ${{ steps.summarize.outputs.execution_file }}
         run: |
-          # Default summary if AI fails or returns empty
+          # Default summary if AI fails
           DEFAULT_SUMMARY="ドキュメントが更新されました。詳細はコミットをご確認ください。"
-          SUMMARY=""
 
-          # Try to extract from structured_output first (using env var to avoid quote issues)
-          if [ -n "$STRUCTURED_OUTPUT" ] && [ "$STRUCTURED_OUTPUT" != "null" ]; then
-            SUMMARY=$(echo "$STRUCTURED_OUTPUT" | jq -r '.summary // empty' 2>/dev/null || echo "")
-          fi
-
-          # Fallback to execution_file if structured_output is empty
-          if [ -z "$SUMMARY" ] && [ -n "$EXECUTION_FILE" ] && [ -f "$EXECUTION_FILE" ]; then
+          if [ -n "$EXECUTION_FILE" ] && [ -f "$EXECUTION_FILE" ]; then
+            # claude-code-action v1 execution file format:
+            # - Array of Turn objects with .type field
+            # - Result turns: .result contains final output string
+            # - Assistant turns: .message.content[] contains text objects
             SUMMARY=$(cat "$EXECUTION_FILE" | \
-              jq -r 'map(select(.role == "assistant")) | last |
-                if .content | type == "array" then
-                  (.content[] | select(.type == "text") | .text)
-                else
-                  .content // empty
-                end' 2>/dev/null || echo "")
+              jq -r '
+                # First try: get .result from result turn
+                (.[] | select(.type == "result") | .result | select(. != null and . != "")) //
+                # Fallback: get text from last assistant turn
+                ([.[] | select(.type == "assistant")] | last | [.message.content[]? | select(.type == "text") | .text] | join(" "))
+              ' 2>/dev/null || echo "")
+
             # Clean up the summary
             SUMMARY=$(echo "$SUMMARY" | sed 's/```[^`]*```//g' | tr '\n' ' ' | head -c 1000)
-          fi
+            SUMMARY=$(echo "$SUMMARY" | xargs)
 
-          # Use default if still empty
-          if [ -z "$SUMMARY" ]; then
+            if [ -z "$SUMMARY" ]; then
+              SUMMARY="$DEFAULT_SUMMARY"
+            fi
+          else
             SUMMARY="$DEFAULT_SUMMARY"
           fi
 
