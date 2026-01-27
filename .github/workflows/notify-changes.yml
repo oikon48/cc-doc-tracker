@@ -26,12 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    permissions:
+      contents: read
+      id-token: write  # Required for Claude Code Action OIDC authentication
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.commit_sha }}  # Checkout the specific commit that was pushed
-          fetch-depth: 2  # Need previous commit for diff
+          ref: ${{ inputs.commit_sha }}
+          fetch-depth: 2
 
       - name: Get changed files
         id: get-changes
@@ -75,10 +79,9 @@ jobs:
           echo "$DIFF_STAT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          # Get brief diff content for summary (limit to 200 lines)
-          # Use docs/ to include all files including subdirectories
+          # Get brief diff content for summary (limit to 50 lines to avoid GitHub Actions memory limit)
           if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            DIFF_CONTENT=$(git diff HEAD~1 -- docs/ 2>/dev/null | head -200 || echo "")
+            DIFF_CONTENT=$(git diff HEAD~1 -- docs/ 2>/dev/null | head -50 || echo "")
           else
             DIFF_CONTENT="Initial commit - all files are new"
           fi
@@ -89,7 +92,8 @@ jobs:
       - name: Generate summary with Claude Code
         id: summarize
         if: steps.get-changes.outputs.has_changes == 'true'
-        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        uses: anthropics/claude-code-action@28f83620103c48a57093dcc2837eec89e036bb9f  # beta
         with:
           prompt: |
             以下のドキュメント変更を分析し、日本語で簡潔に要約してください。
@@ -103,37 +107,48 @@ jobs:
             ## 差分内容（一部）:
             ${{ steps.get-changes.outputs.diff_content }}
 
-            以下の形式で3文以内で回答してください:
-            [変更の概要を説明。どのような機能や情報が更新/追加/削除されたか]
+            3文以内で変更の概要を説明してください。どのような機能や情報が更新/追加/削除されたかを記載してください。
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
-            --model claude-opus-4-5
-            --max-turns 1
+            --model claude-sonnet-4-5
+            --max-turns 3
+            --max-tokens 1024
+            --json-schema '{"type":"object","properties":{"summary":{"type":"string","description":"日本語での変更要約（3文以内）"}},"required":["summary"],"additionalProperties":false}'
 
       - name: Extract summary text
         id: extract-summary
         if: steps.get-changes.outputs.has_changes == 'true'
+        env:
+          STRUCTURED_OUTPUT: ${{ steps.summarize.outputs.structured_output }}
+          EXECUTION_FILE: ${{ steps.summarize.outputs.execution_file }}
         run: |
-          # Default summary if AI fails
+          # Default summary if AI fails or returns empty
           DEFAULT_SUMMARY="ドキュメントが更新されました。詳細はコミットをご確認ください。"
+          SUMMARY=""
 
-          if [ -f "${{ steps.summarize.outputs.execution_file }}" ]; then
-            # Extract the last assistant message from execution log
-            # Note: Claude API content is an array of content blocks [{type: "text", text: "..."}]
-            SUMMARY=$(cat "${{ steps.summarize.outputs.execution_file }}" | \
-              jq -r 'map(select(.role == "assistant")) | last | if .content | type == "array" then (.content[] | select(.type == "text") | .text) else .content // empty end' 2>/dev/null || echo "")
+          # Try to extract from structured_output first (using env var to avoid quote issues)
+          if [ -n "$STRUCTURED_OUTPUT" ] && [ "$STRUCTURED_OUTPUT" != "null" ]; then
+            SUMMARY=$(echo "$STRUCTURED_OUTPUT" | jq -r '.summary // empty' 2>/dev/null || echo "")
+          fi
 
-            # Clean up the summary (remove markdown if any)
+          # Fallback to execution_file if structured_output is empty
+          if [ -z "$SUMMARY" ] && [ -n "$EXECUTION_FILE" ] && [ -f "$EXECUTION_FILE" ]; then
+            SUMMARY=$(cat "$EXECUTION_FILE" | \
+              jq -r 'map(select(.role == "assistant")) | last |
+                if .content | type == "array" then
+                  (.content[] | select(.type == "text") | .text)
+                else
+                  .content // empty
+                end' 2>/dev/null || echo "")
+            # Clean up the summary
             SUMMARY=$(echo "$SUMMARY" | sed 's/```[^`]*```//g' | tr '\n' ' ' | head -c 1000)
+          fi
 
-            if [ -z "$SUMMARY" ]; then
-              SUMMARY="$DEFAULT_SUMMARY"
-            fi
-          else
+          # Use default if still empty
+          if [ -z "$SUMMARY" ]; then
             SUMMARY="$DEFAULT_SUMMARY"
           fi
 
-          # Store raw summary (JSON escaping happens later in Discord step)
           echo "summary<<EOF" >> $GITHUB_OUTPUT
           echo "$SUMMARY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -158,7 +173,7 @@ jobs:
 
           # Build Discord embed payload using jq (auto-escapes special characters and handles newlines)
           jq -n \
-            --arg title "📝 ${TRACKER_NAME} ドキュメント更新" \
+            --arg title "${TRACKER_NAME} ドキュメント更新" \
             --arg desc "公式ドキュメントに変更が検出されました" \
             --arg count "$CHANGED_FILES_COUNT" \
             --arg commit_url "$COMMIT_URL" \
@@ -173,10 +188,10 @@ jobs:
                 "description": $desc,
                 "color": 5814783,
                 "fields": [
-                  {"name": "📊 変更ファイル数", "value": $count, "inline": true},
-                  {"name": "🔗 リンク", "value": ("[コミット](" + $commit_url + ") | [リポジトリ](" + $repo_url + ")"), "inline": true},
-                  {"name": "📋 変更ファイル", "value": ("```\n" + $file_list + "\n```")},
-                  {"name": "🤖 AI要約", "value": $summary}
+                  {"name": "変更ファイル数", "value": $count, "inline": true},
+                  {"name": "リンク", "value": ("[コミット](" + $commit_url + ") | [リポジトリ](" + $repo_url + ")"), "inline": true},
+                  {"name": "変更ファイル", "value": ("```\n" + $file_list + "\n```")},
+                  {"name": "AI要約", "value": $summary}
                 ],
                 "footer": {"text": $footer},
                 "timestamp": $ts
@@ -194,9 +209,9 @@ jobs:
             -d @/tmp/discord_payload.json)
 
           if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+            echo "Discord notification sent successfully (HTTP $HTTP_CODE)"
           else
-            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "Failed to send Discord notification (HTTP $HTTP_CODE)"
             cat /tmp/discord_response.txt
             exit 1
           fi
@@ -204,4 +219,4 @@ jobs:
       - name: Skip notification (no changes)
         if: steps.get-changes.outputs.has_changes != 'true'
         run: |
-          echo "ℹ️ No documentation changes detected, skipping notification"
+          echo "No documentation changes detected, skipping notification"
