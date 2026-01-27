@@ -165,7 +165,8 @@ jobs:
     needs: fetch-docs
     if: needs.fetch-docs.outputs.changed == 'true'
     permissions:
-      id-token: write  # Required for reusable workflow OIDC authentication
+      contents: read   # Required for checkout in reusable workflow
+      id-token: write  # Required for Claude Code Action OIDC authentication
     uses: ./.github/workflows/notify-changes.yml
     with:
       commit_sha: ${{ needs.fetch-docs.outputs.commit_sha }}
