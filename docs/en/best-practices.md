@@ -524,7 +524,7 @@ For large migrations or analyses, you can distribute work across many parallel C
     ```bash  theme={null}
     for file in $(cat files.txt); do
       claude -p "Migrate $file from React to Vue. Return OK or FAIL." \
-        --allowedTools "Edit,Bash(git commit:*)"
+        --allowedTools "Edit,Bash(git commit *)"
     done
     ```
   </Step>
