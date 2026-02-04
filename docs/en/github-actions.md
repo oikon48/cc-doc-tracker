@@ -14,8 +14,8 @@ source: https://code.claude.com/docs/en/github-actions.md
 Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow. With a simple `@claude` mention in any PR or issue, Claude can analyze your code, create pull requests, implement features, and fix bugs - all while following your project's standards.
 
 <Note>
-  Claude Code GitHub Actions is built on top of the [Claude Code
-  SDK](https://docs.claude.com/en/docs/agent-sdk), which enables programmatic integration of
+  Claude Code GitHub Actions is built on top of the [Claude
+  Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), which enables programmatic integration of
   Claude Code into your applications. You can use the SDK to build custom
   automation workflows beyond GitHub Actions.
 </Note>
