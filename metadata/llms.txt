@@ -8,7 +8,7 @@
 - [Authentication](https://code.claude.com/docs/en/authentication.md): Learn how to configure user authentication and credential management for Claude Code in your organization.
 - [Best Practices for Claude Code](https://code.claude.com/docs/en/best-practices.md): Tips and patterns for getting the most out of Claude Code, from configuring your environment to scaling across parallel sessions.
 - [Changelog](https://code.claude.com/docs/en/changelog.md)
-- [Checkpointing](https://code.claude.com/docs/en/checkpointing.md): Automatically track and rewind Claude's edits to quickly recover from unwanted changes.
+- [Checkpointing](https://code.claude.com/docs/en/checkpointing.md): Track, rewind, and summarize Claude's edits and conversation to manage session state.
 - [Use Claude Code with Chrome (beta)](https://code.claude.com/docs/en/chrome.md): Connect Claude Code to your Chrome browser to test web apps, debug with console logs, automate form filling, and extract data from web pages.
 - [Claude Code on the web](https://code.claude.com/docs/en/claude-code-on-the-web.md): Run Claude Code tasks asynchronously on secure cloud infrastructure
 - [CLI reference](https://code.claude.com/docs/en/cli-reference.md): Complete reference for Claude Code command-line interface, including commands and flags.
