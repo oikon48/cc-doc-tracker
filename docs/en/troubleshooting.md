@@ -838,7 +838,7 @@ If you notice code blocks like this in generated markdown:
 function example() {
   return "hello";
 }
-```
+```text
 ````
 
 Instead of properly tagged blocks like:
@@ -848,7 +848,7 @@ Instead of properly tagged blocks like:
 function example() {
   return "hello";
 }
-```
+```text
 ````
 
 **Solutions:**
