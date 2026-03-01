@@ -52,7 +52,7 @@
 - [Configure server-managed settings (public beta)](https://code.claude.com/docs/en/server-managed-settings.md): Centrally configure Claude Code for your organization through server-delivered settings, without requiring device management infrastructure.
 - [Claude Code settings](https://code.claude.com/docs/en/settings.md): Configure Claude Code with global and project-level settings, and environment variables.
 - [Advanced setup](https://code.claude.com/docs/en/setup.md): System requirements, platform-specific installation, version management, and uninstallation for Claude Code.
-- [Extend Claude with skills](https://code.claude.com/docs/en/skills.md): Create, manage, and share skills to extend Claude's capabilities in Claude Code. Includes custom slash commands.
+- [Extend Claude with skills](https://code.claude.com/docs/en/skills.md): Create, manage, and share skills to extend Claude's capabilities in Claude Code. Includes custom commands and bundled skills.
 - [Claude Code in Slack](https://code.claude.com/docs/en/slack.md): Delegate coding tasks directly from your Slack workspace
 - [Customize your status line](https://code.claude.com/docs/en/statusline.md): Configure a custom status bar to monitor context window usage, costs, and git status in Claude Code
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents.md): Create and use specialized AI subagents in Claude Code for task-specific workflows and improved context management.
