@@ -133,7 +133,7 @@ The following examples show the environment variables to set in your shell or sh
 
 <Tabs>
   <Tab title="Corporate proxy">
-    Route Bedrock traffic through your corporate proxy by setting the following [environment variables](/en/settings#environment-variables):
+    Route Bedrock traffic through your corporate proxy by setting the following [environment variables](/en/env-vars):
 
     ```bash  theme={null}
     # Enable Bedrock
@@ -146,7 +146,7 @@ The following examples show the environment variables to set in your shell or sh
   </Tab>
 
   <Tab title="LLM Gateway">
-    Route Bedrock traffic through your LLM gateway by setting the following [environment variables](/en/settings#environment-variables):
+    Route Bedrock traffic through your LLM gateway by setting the following [environment variables](/en/env-vars):
 
     ```bash  theme={null}
     # Enable Bedrock
@@ -163,7 +163,7 @@ The following examples show the environment variables to set in your shell or sh
 
 <Tabs>
   <Tab title="Corporate proxy">
-    Route Foundry traffic through your corporate proxy by setting the following [environment variables](/en/settings#environment-variables):
+    Route Foundry traffic through your corporate proxy by setting the following [environment variables](/en/env-vars):
 
     ```bash  theme={null}
     # Enable Microsoft Foundry
@@ -177,7 +177,7 @@ The following examples show the environment variables to set in your shell or sh
   </Tab>
 
   <Tab title="LLM Gateway">
-    Route Foundry traffic through your LLM gateway by setting the following [environment variables](/en/settings#environment-variables):
+    Route Foundry traffic through your LLM gateway by setting the following [environment variables](/en/env-vars):
 
     ```bash  theme={null}
     # Enable Microsoft Foundry
@@ -194,7 +194,7 @@ The following examples show the environment variables to set in your shell or sh
 
 <Tabs>
   <Tab title="Corporate proxy">
-    Route Vertex AI traffic through your corporate proxy by setting the following [environment variables](/en/settings#environment-variables):
+    Route Vertex AI traffic through your corporate proxy by setting the following [environment variables](/en/env-vars):
 
     ```bash  theme={null}
     # Enable Vertex
@@ -208,7 +208,7 @@ The following examples show the environment variables to set in your shell or sh
   </Tab>
 
   <Tab title="LLM Gateway">
-    Route Vertex AI traffic through your LLM gateway by setting the following [environment variables](/en/settings#environment-variables):
+    Route Vertex AI traffic through your LLM gateway by setting the following [environment variables](/en/env-vars):
 
     ```bash  theme={null}
     # Enable Vertex
