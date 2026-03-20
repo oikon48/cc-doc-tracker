@@ -21,6 +21,7 @@ You can build a one-way or two-way channel. One-way channels forward alerts, web
 
 This page covers:
 
+* [Overview](#overview): how channels work
 * [What you need](#what-you-need): requirements and general steps
 * [Example: build a webhook receiver](#example-build-a-webhook-receiver): a minimal one-way walkthrough
 * [Server options](#server-options): the constructor fields
@@ -30,9 +31,18 @@ This page covers:
 
 To use an existing channel instead of building one, see [Channels](/en/channels). Telegram, Discord, and fakechat are included in the research preview.
 
+## Overview
+
+A channel is an [MCP](https://modelcontextprotocol.io) server that runs on the same machine as Claude Code. Claude Code spawns it as a subprocess and communicates over stdio. Your channel server is the bridge between external systems and the Claude Code session:
+
+* **Chat platforms** (Telegram, Discord): your plugin runs locally and polls the platform's API for new messages. When someone DMs your bot, the plugin receives the message and forwards it to Claude. No URL to expose.
+* **Webhooks** (CI, monitoring): your server listens on a local HTTP port. External systems POST to that port, and your server pushes the payload to Claude.
+
+<img src="https://mintcdn.com/claude-code/zbUxPYi8065L3Y_P/en/images/channel-architecture.svg?fit=max&auto=format&n=zbUxPYi8065L3Y_P&q=85&s=fd6b6b949eab38264043d2a96285a57c" alt="Architecture diagram showing external systems connecting to your local channel server, which communicates with Claude Code over stdio" width="600" height="220" data-path="en/images/channel-architecture.svg" />
+
 ## What you need
 
-A channel is an [MCP](https://modelcontextprotocol.io) server, so the only hard requirement is the [`@modelcontextprotocol/sdk`](https://www.npmjs.com/package/@modelcontextprotocol/sdk) package and a Node.js-compatible runtime. [Bun](https://bun.sh), [Node](https://nodejs.org), and [Deno](https://deno.com) all work. The pre-built plugins in the research preview use Bun, but your channel doesn't have to.
+The only hard requirement is the [`@modelcontextprotocol/sdk`](https://www.npmjs.com/package/@modelcontextprotocol/sdk) package and a Node.js-compatible runtime. [Bun](https://bun.sh), [Node](https://nodejs.org), and [Deno](https://deno.com) all work. The pre-built plugins in the research preview use Bun, but your channel doesn't have to.
 
 Your server needs to:
 
@@ -110,12 +120,12 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
   </Step>
 
   <Step title="Register your server with Claude Code">
-    Add the server to your `.mcp.json` so Claude Code knows how to start it. Paths are relative to the directory where `.mcp.json` lives:
+    Add the server to `.mcp.json` so Claude Code knows how to start it. If you're adding it to a project-level `.mcp.json` in the same directory, use a relative path. If you're adding it to your user-level `~/.mcp.json`, use the full absolute path:
 
     ```json title=".mcp.json" theme={null}
     {
       "mcpServers": {
-        "webhook": { "command": "bun", "args": ["./webhook-channel/webhook.ts"] }
+        "webhook": { "command": "bun", "args": ["./webhook.ts"] }
       }
     }
     ```
@@ -231,20 +241,95 @@ build failed on main: https://ci.example.com/run/1234
 
 ## Expose a reply tool
 
-If your channel is two-way, like a chat bridge rather than an alert forwarder, expose a standard [MCP tool](https://modelcontextprotocol.io/docs/concepts/tools) that Claude can call to send messages back. Nothing about the tool is channel-specific. This example registers a `reply` tool that takes a `chat_id` and `text`, with both handlers on the same `mcp` instance from the webhook example:
+If your channel is two-way, like a chat bridge rather than an alert forwarder, expose a standard [MCP tool](https://modelcontextprotocol.io/docs/concepts/tools) that Claude can call to send messages back. Nothing about the tool registration is channel-specific. A reply tool has three components:
 
-```ts  theme={null}
+1. A `tools: {}` entry in your `Server` constructor capabilities so Claude Code discovers the tool
+2. Tool handlers that define the tool's schema and implement the send logic
+3. An `instructions` string in your `Server` constructor that tells Claude when and how to call the tool
+
+To add these to the [webhook receiver above](#example-build-a-webhook-receiver):
+
+<Steps>
+  <Step title="Enable tool discovery">
+    In your `Server` constructor in `webhook.ts`, add `tools: {}` to the capabilities so Claude Code knows your server offers tools:
+
+    ```ts  theme={null}
+    capabilities: {
+      experimental: { 'claude/channel': {} },
+      tools: {},  // enables tool discovery
+    },
+    ```
+  </Step>
+
+  <Step title="Register the reply tool">
+    Add the following to `webhook.ts`. The `import` goes at the top of the file with your other imports; the two handlers go between the `Server` constructor and `mcp.connect()`. This registers a `reply` tool that Claude can call with a `chat_id` and `text`:
+
+    ```ts  theme={null}
+    // Add this import at the top of webhook.ts
+    import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js'
+
+    // Claude queries this at startup to discover what tools your server offers
+    mcp.setRequestHandler(ListToolsRequestSchema, async () => ({
+      tools: [{
+        name: 'reply',
+        description: 'Send a message back over this channel',
+        // inputSchema tells Claude what arguments to pass
+        inputSchema: {
+          type: 'object',
+          properties: {
+            chat_id: { type: 'string', description: 'The conversation to reply in' },
+            text: { type: 'string', description: 'The message to send' },
+          },
+          required: ['chat_id', 'text'],
+        },
+      }],
+    }))
+
+    // Claude calls this when it wants to invoke a tool
+    mcp.setRequestHandler(CallToolRequestSchema, async req => {
+      if (req.params.name === 'reply') {
+        const { chat_id, text } = req.params.arguments as { chat_id: string; text: string }
+        // your platform's send API
+        await yourPlatform.send(chat_id, text)
+        return { content: [{ type: 'text', text: 'sent' }] }
+      }
+      throw new Error(`unknown tool: ${req.params.name}`)
+    })
+    ```
+  </Step>
+
+  <Step title="Update the instructions">
+    Update the `instructions` string in your `Server` constructor so Claude knows to route replies back through the tool. This example tells Claude to pass `chat_id` from the inbound tag:
+
+    ```ts  theme={null}
+    instructions: 'Messages arrive as <channel source="webhook" chat_id="...">. Reply with the reply tool, passing the chat_id from the tag.'
+    ```
+  </Step>
+</Steps>
+
+Here's the complete `webhook.ts` with two-way support, combining the one-way receiver from the walkthrough with the reply tool additions:
+
+```ts title="Full webhook.ts with reply tool" expandable theme={null}
+#!/usr/bin/env bun
+import { Server } from '@modelcontextprotocol/sdk/server/index.js'
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js'
 
-// in the Server constructor, add tools: {} alongside experimental
-// capabilities: { experimental: { 'claude/channel': {} }, tools: {} }
+const mcp = new Server(
+  { name: 'webhook', version: '0.0.1' },
+  {
+    capabilities: {
+      experimental: { 'claude/channel': {} },
+      tools: {},
+    },
+    instructions: 'Messages arrive as <channel source="webhook" chat_id="...">. Reply with the reply tool, passing the chat_id from the tag.',
+  },
+)
 
-// Claude queries this at startup to discover what tools your server offers
 mcp.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [{
     name: 'reply',
     description: 'Send a message back over this channel',
-    // inputSchema tells Claude what arguments to pass
     inputSchema: {
       type: 'object',
       properties: {
@@ -256,25 +341,38 @@ mcp.setRequestHandler(ListToolsRequestSchema, async () => ({
   }],
 }))
 
-// Claude calls this when it wants to invoke a tool
 mcp.setRequestHandler(CallToolRequestSchema, async req => {
   if (req.params.name === 'reply') {
     const { chat_id, text } = req.params.arguments as { chat_id: string; text: string }
-    // your platform's send API
-    await yourPlatform.send(chat_id, text)
+    // your platform's send API — replace with your real integration
+    console.error(`Reply to ${chat_id}: ${text}`)
     return { content: [{ type: 'text', text: 'sent' }] }
   }
   throw new Error(`unknown tool: ${req.params.name}`)
 })
+
+await mcp.connect(new StdioServerTransport())
+
+let nextId = 1
+Bun.serve({
+  port: 8788,
+  hostname: '127.0.0.1',
+  async fetch(req) {
+    const body = await req.text()
+    const chat_id = String(nextId++)
+    await mcp.notification({
+      method: 'notifications/claude/channel',
+      params: {
+        content: body,
+        meta: { chat_id, path: new URL(req.url).pathname, method: req.method },
+      },
+    })
+    return new Response('ok')
+  },
+})
 ```
 
-Include usage guidance in your server's `instructions` field so Claude knows how to route replies. This example tells Claude to pass `chat_id` from the inbound tag to the reply tool:
-
-```ts  theme={null}
-instructions: 'Messages arrive as <channel source="yourserver" chat_id="...">. Reply with the reply tool, passing the chat_id from the tag.'
-```
-
-This content is added to Claude's system prompt. The [fakechat server](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/fakechat) shows the full pattern with file attachments and message editing.
+The [fakechat server](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/fakechat) shows a more complete example with file attachments and message editing.
 
 ## Gate inbound messages
 
@@ -287,7 +385,7 @@ const allowed = new Set(loadAllowlist())  // from your access.json or equivalent
 
 // inside your message handler, before emitting:
 if (!allowed.has(message.from.id)) {  // sender, not room
-  return  // drop silently; don't even ack
+  return  // drop silently
 }
 await mcp.notification({ ... })
 ```
@@ -300,7 +398,7 @@ The [Telegram](https://github.com/anthropics/claude-plugins-official/tree/main/e
 
 To make your channel installable and shareable, wrap it in a [plugin](/en/plugins) and publish it to a [marketplace](/en/plugin-marketplaces). Users install it with `/plugin install`, then enable it per session with `--channels plugin:<name>@<marketplace>`.
 
-A channel published to your own marketplace still needs the development flag to run, since it isn't on the approved allowlist. To get it added, [submit it to the official marketplace](/en/plugins#submit-your-plugin-to-the-official-marketplace). Channel plugins go through security review before being approved.
+A channel published to your own marketplace still needs `--dangerously-load-development-channels` to run, since it isn't on the [approved allowlist](/en/channels#supported-channels). To get it added, [submit it to the official marketplace](/en/plugins#submit-your-plugin-to-the-official-marketplace). Channel plugins go through security review before being approved.
 
 ## See also
 
