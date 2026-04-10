@@ -1313,6 +1313,7 @@ type ToolInputSchemas =
   | GrepInput
   | ListMcpResourcesInput
   | McpInput
+  | MonitorInput
   | NotebookEditInput
   | ReadMcpResourceInput
   | SubscribeMcpResourceInput
@@ -1379,6 +1380,21 @@ type BashInput = {
 ```
 
 Executes bash commands in a persistent shell session with optional timeout and background execution.
+
+### Monitor
+
+**Tool name:** `Monitor`
+
+```typescript  theme={null}
+type MonitorInput = {
+  command: string;
+  description: string;
+  timeout_ms?: number;
+  persistent?: boolean;
+};
+```
+
+Runs a background script and delivers each stdout line to Claude as an event so it can react without polling. Set `persistent: true` for session-length watches such as log tails. Monitor follows the same permission rules as Bash. See the [Monitor tool reference](/en/tools-reference#monitor-tool) for behavior and provider availability.
 
 ### TaskOutput
 
@@ -1634,6 +1650,7 @@ type ToolOutputSchemas =
   | GlobOutput
   | GrepOutput
   | ListMcpResourcesOutput
+  | MonitorOutput
   | NotebookEditOutput
   | ReadMcpResourceOutput
   | TaskStopOutput
@@ -1729,6 +1746,20 @@ type BashOutput = {
 ```
 
 Returns command output with stdout/stderr split. Background commands include a `backgroundTaskId`.
+
+### Monitor
+
+**Tool name:** `Monitor`
+
+```typescript  theme={null}
+type MonitorOutput = {
+  taskId: string;
+  timeoutMs: number;
+  persistent?: boolean;
+};
+```
+
+Returns the background task ID for the running monitor. Use this ID with `TaskStop` to cancel the watch early.
 
 ### Edit
 
@@ -2406,7 +2437,7 @@ type SDKStatusMessage = {
 
 ### `SDKTaskNotificationMessage`
 
-Notification when a background task completes, fails, or is stopped.
+Notification when a background task completes, fails, or is stopped. Background tasks include `run_in_background` Bash commands, [Monitor](#monitor) watches, and background subagents.
 
 ```typescript  theme={null}
 type SDKTaskNotificationMessage = {
@@ -2531,7 +2562,7 @@ type SDKAuthStatusMessage = {
 
 ### `SDKTaskStartedMessage`
 
-Emitted when a background task begins.
+Emitted when a background task begins. The `task_type` field is `"local_bash"` for background Bash commands and [Monitor](#monitor) watches, `"local_agent"` for subagents, or `"remote_agent"`.
 
 ```typescript  theme={null}
 type SDKTaskStartedMessage = {
