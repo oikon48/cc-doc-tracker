@@ -35,7 +35,7 @@ To add custom tools, connect an [MCP server](/en/mcp). To extend Claude with reu
 | `CronList`             | Lists all scheduled tasks in the session                                                                                                                                                                                                                     | No                  |
 | `Edit`                 | Makes targeted edits to specific files                                                                                                                                                                                                                       | Yes                 |
 | `EnterPlanMode`        | Switches to plan mode to design an approach before coding                                                                                                                                                                                                    | No                  |
-| `EnterWorktree`        | Creates an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) and switches into it                                                                                                                           | No                  |
+| `EnterWorktree`        | Creates an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) and switches into it. Pass a `path` to switch into an existing worktree of the current repository instead of creating a new one                | No                  |
 | `ExitPlanMode`         | Presents a plan for approval and exits plan mode                                                                                                                                                                                                             | Yes                 |
 | `ExitWorktree`         | Exits a worktree session and returns to the original directory                                                                                                                                                                                               | No                  |
 | `Glob`                 | Finds files based on pattern matching                                                                                                                                                                                                                        | No                  |
@@ -104,7 +104,7 @@ The Monitor tool lets Claude watch something in the background and react when it
 
 Claude writes a small script for the watch, runs it in the background, and receives each output line as it arrives. You keep working in the same session and Claude interjects when an event lands. Stop a monitor by asking Claude to cancel it or by ending the session.
 
-Monitor uses the same [permission rules as Bash](/en/permissions#tool-specific-permission-rules), so `allow` and `deny` patterns you have set for Bash apply here too. It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry.
+Monitor uses the same [permission rules as Bash](/en/permissions#tool-specific-permission-rules), so `allow` and `deny` patterns you have set for Bash apply here too. It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. It is also not available when `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set.
 
 ## PowerShell tool
 
