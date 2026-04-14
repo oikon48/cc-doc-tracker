@@ -91,6 +91,7 @@
 - [Plugins reference](https://code.claude.com/docs/en/plugins-reference.md): Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.
 - [Quickstart](https://code.claude.com/docs/en/quickstart.md): Welcome to Claude Code!
 - [Continue local sessions from any device with Remote Control](https://code.claude.com/docs/en/remote-control.md): Continue a local Claude Code session from your phone, tablet, or any browser using Remote Control. Works with claude.ai/code and the Claude mobile app.
+- [Automate work with routines](https://code.claude.com/docs/en/routines.md): Put Claude Code on autopilot. Define routines that run on a schedule, trigger on API calls, or react to GitHub events from Anthropic-managed cloud infrastructure.
 - [Sandboxing](https://code.claude.com/docs/en/sandboxing.md): Learn how Claude Code's sandboxed bash tool provides filesystem and network isolation for safer, more autonomous agent execution.
 - [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks.md): Use /loop and the cron scheduling tools to run prompts repeatedly, poll for status, or set one-time reminders within a Claude Code session.
 - [Security](https://code.claude.com/docs/en/security.md): Learn about Claude Code's security safeguards and best practices for safe usage.
@@ -109,7 +110,6 @@
 - [Voice dictation](https://code.claude.com/docs/en/voice-dictation.md): Use push-to-talk voice dictation to speak your prompts instead of typing them in the Claude Code CLI.
 - [Use Claude Code in VS Code](https://code.claude.com/docs/en/vs-code.md): Install and configure the Claude Code extension for VS Code. Get AI coding assistance with inline diffs, @-mentions, plan review, and keyboard shortcuts.
 - [Get started with Claude Code on the web](https://code.claude.com/docs/en/web-quickstart.md): Run Claude Code in the cloud from your browser or phone. Connect a GitHub repository, submit a task, and review the PR without local setup.
-- [Schedule tasks on the web](https://code.claude.com/docs/en/web-scheduled-tasks.md): Schedule recurring Claude Code tasks on a cron-like interval. Automate PR reviews, dependency audits, and CI triage in cloud sessions.
 - [Week 13 · March 23–27, 2026](https://code.claude.com/docs/en/whats-new/2026-w13.md): Auto mode for hands-off permissions, computer use built in, PR auto-fix in the cloud, transcript search, and a PowerShell tool for Windows.
 - [Week 14 · March 30 – April 3, 2026](https://code.claude.com/docs/en/whats-new/2026-w14.md): Computer use in the CLI, interactive in-product lessons, flicker-free rendering, per-tool MCP result-size overrides, and plugin executables on PATH.
 - [Week 15 · April 6–10, 2026](https://code.claude.com/docs/en/whats-new/2026-w15.md): Ultraplan cloud planning, the Monitor tool with self-pacing /loop, /team-onboarding for packaging your setup, and /autofix-pr from your terminal.

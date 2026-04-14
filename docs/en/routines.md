@@ -1,6 +1,6 @@
 ---
-title: web-scheduled-tasks
-source: https://code.claude.com/docs/en/web-scheduled-tasks.md
+title: routines
+source: https://code.claude.com/docs/en/routines.md
 ---
 
 > ## Documentation Index
