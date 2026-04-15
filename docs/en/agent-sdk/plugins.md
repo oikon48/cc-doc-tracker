@@ -262,7 +262,7 @@ Here's a full example demonstrating plugin loading and usage:
 
 A plugin directory must contain a `.claude-plugin/plugin.json` manifest file. It can optionally include:
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json          # Required: plugin manifest
@@ -289,7 +289,7 @@ For detailed information on creating plugins, see:
 
 Load plugins during development without installing them globally:
 
-```typescript  theme={null}
+```typescript theme={null}
 plugins: [{ type: "local", path: "./dev-plugins/my-plugin" }];
 ```
 
@@ -297,7 +297,7 @@ plugins: [{ type: "local", path: "./dev-plugins/my-plugin" }];
 
 Include plugins in your project repository for team-wide consistency:
 
-```typescript  theme={null}
+```typescript theme={null}
 plugins: [{ type: "local", path: "./project-plugins/team-workflows" }];
 ```
 
@@ -305,7 +305,7 @@ plugins: [{ type: "local", path: "./project-plugins/team-workflows" }];
 
 Combine plugins from different locations:
 
-```typescript  theme={null}
+```typescript theme={null}
 plugins: [
   { type: "local", path: "./local-plugin" },
   { type: "local", path: "~/.claude/custom-plugins/shared-plugin" }

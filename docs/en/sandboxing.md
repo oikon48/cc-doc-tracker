@@ -80,13 +80,13 @@ On **Linux and WSL2**, install the required packages first:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo apt-get install bubblewrap socat
     ```
   </Tab>
 
   <Tab title="Fedora">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo dnf install bubblewrap socat
     ```
   </Tab>
@@ -96,7 +96,7 @@ On **Linux and WSL2**, install the required packages first:
 
 You can enable sandboxing by running the `/sandbox` command:
 
-```text  theme={null}
+```text theme={null}
 /sandbox
 ```
 
@@ -126,7 +126,7 @@ Customize sandbox behavior through your `settings.json` file. See [Settings](/en
 
 By default, sandboxed commands can only write to the current working directory. If subprocess commands like `kubectl`, `terraform`, or `npm` need to write outside the project directory, use `sandbox.filesystem.allowWrite` to grant access to specific paths:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -155,7 +155,7 @@ You can also deny write or read access using `sandbox.filesystem.denyWrite` and 
 
 For example, to block reading from the entire home directory while still allowing reads from the current project, add this to your project's `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -271,7 +271,7 @@ For organizations requiring advanced network security, you can implement a custo
 * Log all network requests
 * Integrate with existing security infrastructure
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "network": {
@@ -302,7 +302,7 @@ The sandboxed bash tool works alongside:
 
 The sandbox runtime is available as an open source npm package for use in your own agent projects. This enables the broader AI agent community to build safer, more secure autonomous systems. This can also be used to sandbox other programs you may wish to run. For example, to sandbox an MCP server you could run:
 
-```bash  theme={null}
+```bash theme={null}
 npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 ```
 

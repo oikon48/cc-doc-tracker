@@ -94,7 +94,7 @@ If you already use the GitHub CLI (`gh`), you can set up Claude Code on the web 
   <Step title="Authenticate with the GitHub CLI">
     In your shell, authenticate the GitHub CLI if you haven't already:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     gh auth login
     ```
   </Step>
@@ -106,7 +106,7 @@ If you already use the GitHub CLI (`gh`), you can set up Claude Code on the web 
   <Step title="Run /web-setup">
     In the Claude Code CLI, run:
 
-    ```text  theme={null}
+    ```text theme={null}
     /web-setup
     ```
 

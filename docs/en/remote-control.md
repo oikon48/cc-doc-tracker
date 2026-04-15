@@ -47,7 +47,7 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
   <Tab title="Server mode">
     Navigate to your project directory and run:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude remote-control
     ```
 
@@ -68,13 +68,13 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
   <Tab title="Interactive session">
     To start a normal interactive Claude Code session with Remote Control enabled, use the `--remote-control` flag (or `--rc`):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --remote-control
     ```
 
     Optionally pass a name for the session:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --remote-control "My Project"
     ```
 
@@ -84,13 +84,13 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
   <Tab title="From an existing session">
     If you're already in a Claude Code session and want to continue it remotely, use the `/remote-control` (or `/rc`) command:
 
-    ```text  theme={null}
+    ```text theme={null}
     /remote-control
     ```
 
     Pass a name as an argument to set a custom session title:
 
-    ```text  theme={null}
+    ```text theme={null}
     /remote-control My Project
     ```
 
@@ -100,7 +100,7 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
   <Tab title="VS Code">
     In the [Claude Code VS Code extension](/en/vs-code), type `/remote-control` or `/rc` in the prompt box, or open the command menu with `/` and select it. Requires Claude Code v2.1.79 or later.
 
-    ```text  theme={null}
+    ```text theme={null}
     /remote-control
     ```
 
@@ -193,7 +193,7 @@ This error has three distinct causes. Run `/status` first to see which login met
 
 Claude Code could not obtain a short-lived credential from the Anthropic API to establish the connection. Re-run with `--verbose` to see the full error:
 
-```bash  theme={null}
+```bash theme={null}
 claude remote-control --verbose
 ```
 

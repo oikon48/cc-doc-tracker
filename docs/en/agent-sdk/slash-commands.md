@@ -186,7 +186,7 @@ Each custom command is a markdown file where:
 
 Create `.claude/commands/refactor.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 Refactor the selected code to improve readability and maintainability.
 Focus on clean code principles and best practices.
 ```
@@ -197,7 +197,7 @@ This creates the `/refactor` command that you can use through the SDK.
 
 Create `.claude/commands/security-check.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 allowed-tools: Read, Grep, Glob
 description: Run security vulnerability scan
@@ -277,7 +277,7 @@ Custom commands support dynamic arguments using placeholders:
 
 Create `.claude/commands/fix-issue.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 argument-hint: [issue-number] [priority]
 description: Fix a GitHub issue
@@ -328,7 +328,7 @@ Custom commands can execute bash commands and include their output:
 
 Create `.claude/commands/git-commit.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
 description: Create a git commit
@@ -350,7 +350,7 @@ Include file contents using the `@` prefix:
 
 Create `.claude/commands/review-config.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 description: Review configuration files
 ---
@@ -367,7 +367,7 @@ Check for security issues, outdated dependencies, and misconfigurations.
 
 Organize commands in subdirectories for better structure:
 
-```bash  theme={null}
+```bash theme={null}
 .claude/commands/
 ├── frontend/
 │   ├── component.md      # Creates /component (project:frontend)
@@ -386,7 +386,7 @@ The subdirectory appears in the command description but doesn't affect the comma
 
 Create `.claude/commands/code-review.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 allowed-tools: Read, Grep, Glob, Bash(git diff:*)
 description: Comprehensive code review
@@ -414,7 +414,7 @@ Provide specific, actionable feedback organized by priority.
 
 Create `.claude/commands/test.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 allowed-tools: Bash, Read, Edit
 argument-hint: [test-pattern]

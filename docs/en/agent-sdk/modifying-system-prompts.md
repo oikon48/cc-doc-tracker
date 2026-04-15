@@ -60,7 +60,7 @@ CLAUDE.md files use plain markdown and can contain:
 
 #### Example CLAUDE.md
 
-```markdown  theme={null}
+```markdown theme={null}
 # Project Guidelines
 
 ## Code Style

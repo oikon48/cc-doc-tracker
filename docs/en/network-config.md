@@ -23,7 +23,7 @@ Claude Code supports various enterprise network and security configurations thro
 
 Claude Code respects standard proxy environment variables:
 
-```bash  theme={null}
+```bash theme={null}
 # HTTPS proxy (recommended)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
@@ -46,7 +46,7 @@ export NO_PROXY="*"
 
 If your proxy requires basic authentication, include credentials in the proxy URL:
 
-```bash  theme={null}
+```bash theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
@@ -70,13 +70,13 @@ By default, Claude Code trusts both its bundled Mozilla CA certificates and your
 
 To trust only the bundled Mozilla CA set:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_CERT_STORE=bundled
 ```
 
 To trust only the OS certificate store:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_CERT_STORE=system
 ```
 
@@ -88,7 +88,7 @@ export CLAUDE_CODE_CERT_STORE=system
 
 If your enterprise environment uses a custom CA, configure Claude Code to trust it directly:
 
-```bash  theme={null}
+```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 ```
 
@@ -96,7 +96,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 
 For enterprise environments requiring client certificate authentication:
 
-```bash  theme={null}
+```bash theme={null}
 # Client certificate for authentication
 export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
 

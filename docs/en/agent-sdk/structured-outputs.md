@@ -23,7 +23,7 @@ Consider a recipe app where an agent searches the web and brings back recipes. W
 
 <AccordionGroup>
   <Accordion title="Without structured outputs">
-    ```text  theme={null}
+    ```text theme={null}
     Here's a classic chocolate chip cookie recipe!
 
     **Chocolate Chip Cookies**
@@ -39,7 +39,7 @@ Consider a recipe app where an agent searches the web and brings back recipes. W
   </Accordion>
 
   <Accordion title="With structured outputs">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "name": "Chocolate Chip Cookies",
       "prep_time_minutes": 15,

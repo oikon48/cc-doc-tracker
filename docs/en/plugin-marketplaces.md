@@ -32,7 +32,7 @@ This example creates a marketplace with one plugin: a `/quality-review` skill fo
 
 <Steps>
   <Step title="Create the directory structure">
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/skills/quality-review
@@ -93,7 +93,7 @@ This example creates a marketplace with one plugin: a `/quality-review` skill fo
   <Step title="Add and install">
     Add the marketplace and install the plugin.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add ./my-marketplace
     /plugin install quality-review-plugin@my-plugins
     ```
@@ -102,7 +102,7 @@ This example creates a marketplace with one plugin: a `/quality-review` skill fo
   <Step title="Try it out">
     Select some code in your editor and run your new skill.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /quality-review
     ```
   </Step>
@@ -122,7 +122,7 @@ Create `.claude-plugin/marketplace.json` in your repository root. This file defi
 
 Each plugin entry needs at minimum a `name` and `source` (where to fetch it from). See the [full schema](#marketplace-schema) below for all available fields.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "company-tools",
   "owner": {
@@ -246,7 +246,7 @@ Once a plugin is cloned or copied into the local machine, it is copied into the 
 
 For plugins in the same repository, use a path starting with `./`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": "./plugins/my-plugin"
@@ -261,7 +261,7 @@ Paths resolve relative to the marketplace root, which is the directory containin
 
 ### GitHub repositories
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -273,7 +273,7 @@ Paths resolve relative to the marketplace root, which is the directory containin
 
 You can pin to a specific branch, tag, or commit:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -293,7 +293,7 @@ You can pin to a specific branch, tag, or commit:
 
 ### Git repositories
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -305,7 +305,7 @@ You can pin to a specific branch, tag, or commit:
 
 You can pin to a specific branch, tag, or commit:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -327,7 +327,7 @@ You can pin to a specific branch, tag, or commit:
 
 Use `git-subdir` to point to a plugin that lives inside a subdirectory of a git repository. Claude Code uses a sparse, partial clone to fetch only the subdirectory, minimizing bandwidth for large monorepos.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -340,7 +340,7 @@ Use `git-subdir` to point to a plugin that lives inside a subdirectory of a git 
 
 You can pin to a specific branch, tag, or commit:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -366,7 +366,7 @@ The `url` field also accepts a GitHub shorthand (`owner/repo`) or SSH URLs (`git
 
 Plugins distributed as npm packages are installed using `npm install`. This works with any package on the public npm registry or a private registry your team hosts.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -378,7 +378,7 @@ Plugins distributed as npm packages are installed using `npm install`. This work
 
 To pin to a specific version, add the `version` field:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -391,7 +391,7 @@ To pin to a specific version, add the `version` field:
 
 To install from a private or internal registry, add the `registry` field:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -413,7 +413,7 @@ To install from a private or internal registry, add the `registry` field:
 
 This example shows a plugin entry using many of the optional fields, including custom paths for commands, agents, hooks, and MCP servers:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "enterprise-tools",
   "source": {
@@ -496,7 +496,7 @@ GitHub provides the easiest distribution method:
 
 Any git hosting service works, such as GitLab, Bitbucket, and self-hosted servers. Users add with the full repository URL:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
@@ -514,7 +514,7 @@ Background auto-updates run at startup without credential helpers, since interac
 
 Set the token in your shell configuration (for example, `.bashrc`, `.zshrc`) or pass it when running Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -526,7 +526,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 Test your marketplace locally before sharing:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-local-marketplace
 /plugin install test-plugin@my-local-marketplace
 ```
@@ -537,7 +537,7 @@ For the full range of add commands (GitHub, Git URLs, local paths, remote URLs),
 
 You can configure your repository so team members are automatically prompted to install your marketplace when they trust the project folder. Add your marketplace to `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "company-tools": {
@@ -552,7 +552,7 @@ You can configure your repository so team members are automatically prompted to 
 
 You can also specify which plugins should be enabled by default:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@company-tools": true,
@@ -586,7 +586,7 @@ To build a seed directory, run Claude Code once during image build, install the 
 
 To skip the copy step, set `CLAUDE_CODE_PLUGIN_CACHE_DIR` to your target seed path during the build so plugins install directly there:
 
-```bash  theme={null}
+```bash theme={null}
 CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin marketplace add your-org/plugins
 CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your-plugins
 ```
@@ -619,7 +619,7 @@ When `strictKnownMarketplaces` is configured in managed settings, the restrictio
 
 Disable all marketplace additions:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -627,7 +627,7 @@ Disable all marketplace additions:
 
 Allow specific marketplaces only:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -649,7 +649,7 @@ Allow specific marketplaces only:
 
 Allow all marketplaces from an internal git server using regex pattern matching on the host. This is the recommended approach for [GitHub Enterprise Server](/en/github-enterprise-server#plugin-marketplaces-on-ghes) or self-hosted GitLab instances:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -662,7 +662,7 @@ Allow all marketplaces from an internal git server using regex pattern matching 
 
 Allow filesystem-based marketplaces from a specific directory using regex pattern matching on the path:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -712,7 +712,7 @@ To support "stable" and "latest" release channels for your plugins, you can set 
 
 ##### Example
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "stable-tools",
   "plugins": [
@@ -728,7 +728,7 @@ To support "stable" and "latest" release channels for your plugins, you can set 
 }
 ```
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "latest-tools",
   "plugins": [
@@ -748,7 +748,7 @@ To support "stable" and "latest" release channels for your plugins, you can set 
 
 Assign each marketplace to the appropriate user group through managed settings. For example, the stable group receives:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
@@ -763,7 +763,7 @@ Assign each marketplace to the appropriate user group through managed settings. 
 
 The early-access group receives `latest-tools` instead:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "latest-tools": {
@@ -782,25 +782,25 @@ Test your marketplace before sharing.
 
 Validate your marketplace JSON syntax:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin validate .
 ```
 
 Or from within Claude Code:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin validate .
 ```
 
 Add the marketplace for testing:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace
 ```
 
 Install a test plugin to verify everything works:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install test-plugin@marketplace-name
 ```
 
@@ -814,7 +814,7 @@ Claude Code provides non-interactive `claude plugin marketplace` subcommands for
 
 Add a marketplace from a GitHub repository, git URL, remote URL, or local path.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add <source> [options]
 ```
 
@@ -831,43 +831,43 @@ claude plugin marketplace add <source> [options]
 
 Add a marketplace from GitHub using `owner/repo` shorthand:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add acme-corp/claude-plugins
 ```
 
 Pin to a specific branch or tag with `@ref`:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add acme-corp/claude-plugins@v2.0
 ```
 
 Add from a git URL on a non-GitHub host:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add https://gitlab.example.com/team/plugins.git
 ```
 
 Add from a remote URL that serves the `marketplace.json` file directly:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add https://example.com/marketplace.json
 ```
 
 Add from a local directory for testing:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add ./my-marketplace
 ```
 
 Declare the marketplace at project scope so it is shared with your team via `.claude/settings.json`:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add acme-corp/claude-plugins --scope project
 ```
 
 For a monorepo, limit the checkout to the directories that contain plugin content:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
 ```
 
@@ -875,7 +875,7 @@ claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
 
 List all configured marketplaces.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace list [options]
 ```
 
@@ -889,7 +889,7 @@ claude plugin marketplace list [options]
 
 Remove a configured marketplace. The alias `rm` is also accepted.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace remove <name>
 ```
 
@@ -905,7 +905,7 @@ claude plugin marketplace remove <name>
 
 Refresh marketplaces from their sources to retrieve new plugins and version changes.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin marketplace update [name]
 ```
 
@@ -986,7 +986,7 @@ For background auto-updates:
 
 **Solution**: Set `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` to keep the existing cache when the pull fails instead of wiping it:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
@@ -1000,7 +1000,7 @@ With this variable set, Claude Code retains the stale marketplace clone on `git 
 
 **Solution**: Increase the timeout using the `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS` environment variable. The value is in milliseconds:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 ```
 
@@ -1013,7 +1013,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 **Solutions**:
 
 * **Use external sources**: Change plugin entries to use GitHub, npm, or git URL sources instead of relative paths:
-  ```json  theme={null}
+  ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
 * **Use a Git-based marketplace**: Host your marketplace in a Git repository and add it with the git URL. Git-based marketplaces clone the entire repository, making relative paths work correctly.
