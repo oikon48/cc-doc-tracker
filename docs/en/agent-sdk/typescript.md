@@ -2078,7 +2078,7 @@ type EnterWorktreeOutput = {
 };
 ```
 
-Returns information about the created git worktree.
+Returns information about the git worktree.
 
 ## Permission Types
 
