@@ -17,6 +17,7 @@ Run `claude --version` to check your installed version.
 
 <Update label="2.1.110" description="April 15, 2026">
   * Added `/tui` command and `tui` setting — run `/tui fullscreen` to switch to flicker-free rendering in the same conversation
+  * Added push notification tool — Claude can send mobile push notifications when Remote Control and "Push when Claude decides" config are enabled
   * Changed `Ctrl+O` to toggle between normal and verbose transcript only; focus view is now toggled separately with the new `/focus` command
   * Added `autoScrollEnabled` config to disable conversation auto-scroll in fullscreen mode
   * Added option to show Claude's last response as commented context in the `Ctrl+G` external editor (enable via `/config`)
