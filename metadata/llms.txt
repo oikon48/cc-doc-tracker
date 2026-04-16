@@ -86,6 +86,7 @@
 - [Choose a permission mode](https://code.claude.com/docs/en/permission-modes.md): Control whether Claude asks before editing files or running commands. Cycle modes with Shift+Tab in the CLI or use the mode selector in VS Code, Desktop, and claude.ai.
 - [Configure permissions](https://code.claude.com/docs/en/permissions.md): Control what Claude Code can access and do with fine-grained permission rules, modes, and managed policies.
 - [Platforms and integrations](https://code.claude.com/docs/en/platforms.md): Choose where to run Claude Code and what to connect it to. Compare the CLI, Desktop, VS Code, JetBrains, web, mobile, and integrations like Chrome, Slack, and CI/CD.
+- [Constrain plugin dependency versions](https://code.claude.com/docs/en/plugin-dependencies.md): Declare version constraints on plugin dependencies so your plugin keeps working when an upstream plugin ships a breaking change.
 - [Create and distribute a plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces.md): Build and host plugin marketplaces to distribute Claude Code extensions across teams and communities.
 - [Create plugins](https://code.claude.com/docs/en/plugins.md): Create custom plugins to extend Claude Code with skills, agents, hooks, and MCP servers.
 - [Plugins reference](https://code.claude.com/docs/en/plugins-reference.md): Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.
@@ -107,6 +108,7 @@
 - [Tools reference](https://code.claude.com/docs/en/tools-reference.md): Complete reference for the tools Claude Code can use, including permission requirements.
 - [Troubleshooting](https://code.claude.com/docs/en/troubleshooting.md): Discover solutions to common issues with Claude Code installation and usage.
 - [Plan in the cloud with ultraplan](https://code.claude.com/docs/en/ultraplan.md): Start a plan from your CLI, draft it on Claude Code on the web, then execute it remotely or back in your terminal
+- [Find bugs with ultrareview](https://code.claude.com/docs/en/ultrareview.md): Run a deep, multi-agent code review in the cloud with /ultrareview to find and verify bugs before you merge.
 - [Voice dictation](https://code.claude.com/docs/en/voice-dictation.md): Use push-to-talk voice dictation to speak your prompts instead of typing them in the Claude Code CLI.
 - [Use Claude Code in VS Code](https://code.claude.com/docs/en/vs-code.md): Install and configure the Claude Code extension for VS Code. Get AI coding assistance with inline diffs, @-mentions, plan review, and keyboard shortcuts.
 - [Get started with Claude Code on the web](https://code.claude.com/docs/en/web-quickstart.md): Run Claude Code in the cloud from your browser or phone. Connect a GitHub repository, submit a task, and review the PR without local setup.
