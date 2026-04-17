@@ -15,6 +15,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.112" description="April 16, 2026">
+  * Fixed "claude-opus-4-7 is temporarily unavailable" for auto mode
+</Update>
+
 <Update label="2.1.111" description="April 16, 2026">
   * Claude Opus 4.7 xhigh is now available! Use /effort to tune speed vs. intelligence
   * Auto mode is now available for Max subscribers when using Opus 4.7
