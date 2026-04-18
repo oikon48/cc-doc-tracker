@@ -2813,6 +2813,7 @@ Network-specific configuration for sandbox mode.
 ```typescript theme={null}
 type SandboxNetworkConfig = {
   allowedDomains?: string[];
+  deniedDomains?: string[];
   allowManagedDomainsOnly?: boolean;
   allowLocalBinding?: boolean;
   allowUnixSockets?: string[];
@@ -2822,15 +2823,16 @@ type SandboxNetworkConfig = {
 };
 ```
 
-| Property                  | Type       | Default     | Description                                                       |
-| :------------------------ | :--------- | :---------- | :---------------------------------------------------------------- |
-| `allowedDomains`          | `string[]` | `[]`        | Domain names that sandboxed processes can access                  |
-| `allowManagedDomainsOnly` | `boolean`  | `false`     | Restrict network access to only the domains in `allowedDomains`   |
-| `allowLocalBinding`       | `boolean`  | `false`     | Allow processes to bind to local ports (e.g., for dev servers)    |
-| `allowUnixSockets`        | `string[]` | `[]`        | Unix socket paths that processes can access (e.g., Docker socket) |
-| `allowAllUnixSockets`     | `boolean`  | `false`     | Allow access to all Unix sockets                                  |
-| `httpProxyPort`           | `number`   | `undefined` | HTTP proxy port for network requests                              |
-| `socksProxyPort`          | `number`   | `undefined` | SOCKS proxy port for network requests                             |
+| Property                  | Type       | Default     | Description                                                                                 |
+| :------------------------ | :--------- | :---------- | :------------------------------------------------------------------------------------------ |
+| `allowedDomains`          | `string[]` | `[]`        | Domain names that sandboxed processes can access                                            |
+| `deniedDomains`           | `string[]` | `[]`        | Domain names that sandboxed processes cannot access. Takes precedence over `allowedDomains` |
+| `allowManagedDomainsOnly` | `boolean`  | `false`     | Restrict network access to only the domains in `allowedDomains`                             |
+| `allowLocalBinding`       | `boolean`  | `false`     | Allow processes to bind to local ports (e.g., for dev servers)                              |
+| `allowUnixSockets`        | `string[]` | `[]`        | Unix socket paths that processes can access (e.g., Docker socket)                           |
+| `allowAllUnixSockets`     | `boolean`  | `false`     | Allow access to all Unix sockets                                                            |
+| `httpProxyPort`           | `number`   | `undefined` | HTTP proxy port for network requests                                                        |
+| `socksProxyPort`          | `number`   | `undefined` | SOCKS proxy port for network requests                                                       |
 
 ### `SandboxFilesystemConfig`
 
