@@ -27,7 +27,7 @@ The Claude Agent SDK provides information about available slash commands in the 
   })) {
     if (message.type === "system" && message.subtype === "init") {
       console.log("Available slash commands:", message.slash_commands);
-      // Example output: ["/compact", "/context", "/cost"]
+      // Example output: ["/compact", "/context", "/usage"]
     }
   }
   ```
@@ -41,7 +41,7 @@ The Claude Agent SDK provides information about available slash commands in the 
       async for message in query(prompt="Hello Claude", options=ClaudeAgentOptions(max_turns=1)):
           if isinstance(message, SystemMessage) and message.subtype == "init":
               print("Available slash commands:", message.data["slash_commands"])
-              # Example output: ["/compact", "/context", "/cost"]
+              # Example output: ["/compact", "/context", "/usage"]
 
 
   asyncio.run(main())
@@ -204,7 +204,7 @@ Once defined in the filesystem, custom commands are automatically available thro
     if (message.type === "system" && message.subtype === "init") {
       // Will include both built-in and custom commands
       console.log("Available commands:", message.slash_commands);
-      // Example: ["/compact", "/context", "/cost", "/refactor", "/security-check"]
+      // Example: ["/compact", "/context", "/usage", "/refactor", "/security-check"]
     }
   }
   ```
@@ -229,7 +229,7 @@ Once defined in the filesystem, custom commands are automatically available thro
           if isinstance(message, SystemMessage) and message.subtype == "init":
               # Will include both built-in and custom commands
               print("Available commands:", message.data["slash_commands"])
-              # Example: ["/compact", "/context", "/cost", "/refactor", "/security-check"]
+              # Example: ["/compact", "/context", "/usage", "/refactor", "/security-check"]
 
 
   asyncio.run(main())
