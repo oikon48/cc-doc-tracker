@@ -1131,6 +1131,7 @@ type PostToolUseHookInput = BaseHookInput & {
   tool_input: unknown;
   tool_response: unknown;
   tool_use_id: string;
+  duration_ms?: number;
 };
 ```
 
@@ -1144,6 +1145,7 @@ type PostToolUseFailureHookInput = BaseHookInput & {
   tool_use_id: string;
   error: string;
   is_interrupt?: boolean;
+  duration_ms?: number;
 };
 ```
 
@@ -2275,6 +2277,7 @@ type SlashCommand = {
   name: string;
   description: string;
   argumentHint: string;
+  aliases?: string[];
 };
 ```
 
