@@ -113,7 +113,8 @@
 - [Configure your terminal for Claude Code](https://code.claude.com/docs/en/terminal-config.md): Fix Shift+Enter for newlines, get a terminal bell when Claude finishes, configure tmux, match the color theme, and enable Vim mode in the Claude Code CLI.
 - [Enterprise deployment overview](https://code.claude.com/docs/en/third-party-integrations.md): Learn how Claude Code can integrate with various third-party services and infrastructure to meet enterprise deployment requirements.
 - [Tools reference](https://code.claude.com/docs/en/tools-reference.md): Complete reference for the tools Claude Code can use, including permission requirements.
-- [Troubleshooting](https://code.claude.com/docs/en/troubleshooting.md): Discover solutions to common issues with Claude Code installation and usage.
+- [Troubleshoot installation and login](https://code.claude.com/docs/en/troubleshoot-install.md): Fix command not found, PATH, permission, network, and authentication errors when installing or signing in to Claude Code.
+- [Troubleshooting](https://code.claude.com/docs/en/troubleshooting.md): Fix high CPU or memory usage, hangs, auto-compact thrashing, and search problems in Claude Code, and find the right page for other issues.
 - [Plan in the cloud with ultraplan](https://code.claude.com/docs/en/ultraplan.md): Start a plan from your CLI, draft it on Claude Code on the web, then execute it remotely or back in your terminal
 - [Find bugs with ultrareview](https://code.claude.com/docs/en/ultrareview.md): Run a deep, multi-agent code review in the cloud with /ultrareview to find and verify bugs before you merge.
 - [Voice dictation](https://code.claude.com/docs/en/voice-dictation.md): Speak your prompts in the Claude Code CLI with hold-to-record or tap-to-record voice dictation.
