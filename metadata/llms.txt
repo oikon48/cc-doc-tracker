@@ -32,7 +32,7 @@
 - [Todo Lists](https://code.claude.com/docs/en/agent-sdk/todo-tracking.md): Track and display todos using the Claude Agent SDK for organized task management
 - [Scale to many tools with tool search](https://code.claude.com/docs/en/agent-sdk/tool-search.md): Scale your agent to thousands of tools by discovering and loading only what's needed, on demand.
 - [Agent SDK reference - TypeScript](https://code.claude.com/docs/en/agent-sdk/typescript.md): Complete API reference for the TypeScript Agent SDK, including all functions, types, and interfaces.
-- [TypeScript SDK V2 interface (preview)](https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview.md): Preview of the simplified V2 TypeScript Agent SDK, with session-based send/stream patterns for multi-turn conversations.
+- [TypeScript SDK V2 session API (deprecated)](https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview.md): Reference for the deprecated V2 TypeScript Agent SDK session API, with session-based send/stream patterns for multi-turn conversations.
 - [Handle approvals and user input](https://code.claude.com/docs/en/agent-sdk/user-input.md): Surface Claude's approval requests and clarifying questions to users, then return their decisions to the SDK.
 - [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams.md): Coordinate multiple Claude Code instances working together as a team, with shared tasks, inter-agent messaging, and centralized management.
 - [Claude Code on Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md): Learn about configuring Claude Code through Amazon Bedrock, including setup, IAM configuration, and troubleshooting.
