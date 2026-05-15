@@ -953,7 +953,7 @@ User input message.
 type SDKUserMessage = {
   type: "user";
   uuid?: UUID;
-  session_id: string;
+  session_id?: string;
   message: MessageParam; // From Anthropic SDK
   parent_tool_use_id: string | null;
   isSynthetic?: boolean;
