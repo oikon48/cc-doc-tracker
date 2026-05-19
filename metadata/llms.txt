@@ -68,7 +68,7 @@
 - [Schedule recurring tasks in Claude Code Desktop](https://code.claude.com/docs/en/desktop-scheduled-tasks.md): Set up scheduled tasks in Claude Code Desktop to run Claude automatically on a recurring basis for daily code reviews, dependency audits, or morning briefings.
 - [Development containers](https://code.claude.com/docs/en/devcontainer.md): Run Claude Code inside a dev container for consistent, isolated environments across your team.
 - [Discover and install prebuilt plugins through marketplaces](https://code.claude.com/docs/en/discover-plugins.md): Find and install plugins from marketplaces to extend Claude Code with new skills, agents, and capabilities.
-- [Environment variables](https://code.claude.com/docs/en/env-vars.md): Complete reference for environment variables that control Claude Code behavior.
+- [Environment variables](https://code.claude.com/docs/en/env-vars.md): Reference for environment variables that control Claude Code behavior.
 - [Error reference](https://code.claude.com/docs/en/errors.md): Look up Claude Code runtime error messages with what each one means and how to fix it.
 - [Speed up responses with fast mode](https://code.claude.com/docs/en/fast-mode.md): Get faster Opus responses in Claude Code by toggling fast mode.
 - [Extend Claude Code](https://code.claude.com/docs/en/features-overview.md): Understand when to use CLAUDE.md, Skills, subagents, hooks, MCP, and plugins.
@@ -103,6 +103,7 @@
 - [Create and distribute a plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces.md): Build and host plugin marketplaces to distribute Claude Code extensions across teams and communities.
 - [Create plugins](https://code.claude.com/docs/en/plugins.md): Create custom plugins to extend Claude Code with skills, agents, hooks, and MCP servers.
 - [Plugins reference](https://code.claude.com/docs/en/plugins-reference.md): Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.
+- [How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md): Claude Code manages prompt caching automatically. See why a model switch triggers a slow uncached turn, what `/compact` costs, why CLAUDE.md edits don't apply mid-session, and how to check your cache hit rate.
 - [Quickstart](https://code.claude.com/docs/en/quickstart.md): Welcome to Claude Code!
 - [Continue local sessions from any device with Remote Control](https://code.claude.com/docs/en/remote-control.md): Continue a local Claude Code session from your phone, tablet, or any browser using Remote Control. Works with claude.ai/code and the Claude mobile app.
 - [Automate work with routines](https://code.claude.com/docs/en/routines.md): Put Claude Code on autopilot. Define routines that run on a schedule, trigger on API calls, or react to GitHub events from Anthropic-managed cloud infrastructure.
@@ -133,6 +134,7 @@
 - [Week 17 · April 20–24, 2026](https://code.claude.com/docs/en/whats-new/2026-w17.md): /ultrareview opens as a research preview, automatic session recaps when you return to a terminal, custom color themes you can build and ship in plugins, and a redesigned Claude Code on the web.
 - [Week 18 · April 27 – May 1, 2026](https://code.claude.com/docs/en/whats-new/2026-w18.md): Claude Code on Windows runs without Git Bash, claude auth login accepts a pasted OAuth code when the browser callback can't reach localhost, claude project purge cleans up local state per project, and pasting a PR URL into /resume finds the session that created it.
 - [Week 19 · May 4–8, 2026](https://code.claude.com/docs/en/whats-new/2026-w19.md): Load plugins from .zip archives and URLs, search command history across every project with Ctrl+R, branch new worktrees from local HEAD or the remote default, and block actions unconditionally with auto mode hard deny rules.
+- [Week 20 · May 11–15, 2026](https://code.claude.com/docs/en/whats-new/2026-w20.md): Manage every Claude Code session from one screen with agent view, keep Claude working toward a goal until a condition holds, and run fast mode on Opus 4.7 by default.
 - [What's new](https://code.claude.com/docs/en/whats-new/index.md): A weekly digest of notable Claude Code features, with code snippets, demos, and context on why they matter.
 - [Run parallel sessions with worktrees](https://code.claude.com/docs/en/worktrees.md): Isolate parallel Claude Code sessions in separate git worktrees so changes don't collide. Covers the `--worktree` flag, subagent isolation, `.worktreeinclude`, cleanup, and non-git VCS hooks.
 - [Zero data retention](https://code.claude.com/docs/en/zero-data-retention.md): Learn about Zero Data Retention (ZDR) for Claude Code on Claude for Enterprise, including scope, disabled features, and how to request enablement.
