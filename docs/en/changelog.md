@@ -15,6 +15,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.148" description="May 22, 2026">
+  * Fixed the Bash tool returning exit code 127 on every command for some users (a regression introduced in 2.1.147)
+</Update>
+
 <Update label="2.1.147" description="May 21, 2026">
   * Pinned background sessions (`Ctrl+T` in `claude agents`) now stay alive when idle, are restarted in place to apply Claude Code updates, and are shed under memory pressure only after non-pinned sessions
   * Renamed `/simplify` to `/code-review`. It now reports correctness bugs at a chosen effort level (e.g., `/code-review high`); pass `--comment` to post findings as inline GitHub PR comments. The old cleanup-and-fix behavior has been removed

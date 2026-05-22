@@ -541,12 +541,11 @@ Update Claude Desktop to the latest version to fix this issue.
 
 ### Claude Code on Windows requires either Git for Windows (for bash) or PowerShell
 
-Claude Code on native Windows needs at least one shell: either [Git for Windows](https://git-scm.com/downloads/win) for Bash, or PowerShell. When neither is found, this error appears at startup. If only PowerShell is found, Claude Code uses the PowerShell tool instead of Bash.
+Git for Windows is optional. Claude Code uses the [PowerShell tool](/en/tools-reference#powershell-tool) when Git Bash is absent, so this error means neither shell was found.
 
-**If neither is installed**, install one:
+**If PowerShell is missing from your PATH**, its default location is `C:\Windows\System32\WindowsPowerShell\v1.0\`. Add that directory to your `PATH`, or install [PowerShell 7](https://aka.ms/powershell), which provides `pwsh`.
 
-* Git for Windows: download from [git-scm.com/downloads/win](https://git-scm.com/downloads/win). During setup, select "Add to PATH." Restart your terminal after installing.
-* PowerShell 7: download from [aka.ms/powershell](https://aka.ms/powershell).
+**To install Git for Windows instead**, download it from [git-scm.com/downloads/win](https://git-scm.com/downloads/win). During setup, select "Add to PATH." Restart your terminal after installing. Installing it enables the Bash tool, useful when working with Bash-based scripts and tooling.
 
 **If Git is already installed** but Claude Code can't find it, set the path in your [settings.json file](/en/settings):
 
