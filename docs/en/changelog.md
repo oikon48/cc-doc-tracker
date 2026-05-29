@@ -15,6 +15,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.156" description="May 29, 2026">
+  * Fixed an issue when using Opus 4.8 where thinking blocks were modified, leading to API errors.
+</Update>
+
 <Update label="2.1.154" description="May 28, 2026">
   * Opus 4.8 is here! Now defaults to high effort · /effort xhigh for your hardest tasks
   * Introducing dynamic workflows: ask Claude to create a workflow and it orchestrates work across tens to hundreds of agents in the background, so you can take on larger, more complex tasks. Run `/workflows` to view your runs
