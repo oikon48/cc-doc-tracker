@@ -256,7 +256,7 @@ argument-hint: [issue-number] [priority]
 description: Fix a GitHub issue
 ---
 
-Fix issue #$1 with priority $2.
+Fix issue #$0 with priority $1.
 Check the issue description and implement the necessary changes.
 ```
 
@@ -271,7 +271,7 @@ Use in SDK:
     prompt: "/fix-issue 123 high",
     options: { maxTurns: 5 }
   })) {
-    // Command will process with $1="123" and $2="high"
+    // Command will process with $0="123" and $1="high"
     if (message.type === "result" && message.subtype === "success") {
       console.log("Issue fixed:", message.result);
     }
@@ -286,7 +286,7 @@ Use in SDK:
   async def main():
       # Pass arguments to custom command
       async for message in query(prompt="/fix-issue 123 high", options=ClaudeAgentOptions(max_turns=5)):
-          # Command will process with $1="123" and $2="high"
+          # Command will process with $0="123" and $1="high"
           if isinstance(message, ResultMessage):
               print("Issue fixed:", message.result)
 
