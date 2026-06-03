@@ -79,7 +79,7 @@ source: https://code.claude.com/docs/en/interactive-mode.md
 | Paste mode       | Paste directly | For code blocks, logs                                                                              |
 
 <Tip>
-  Shift+Enter works without configuration in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, and Windows Terminal. For VS Code, Cursor, Windsurf, Alacritty, and Zed, run `/terminal-setup` to install the binding.
+  Shift+Enter works without configuration in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, and Windows Terminal. For VS Code, Cursor, Devin Desktop, Alacritty, and Zed, run `/terminal-setup` to install the binding.
 </Tip>
 
 ### Quick commands
