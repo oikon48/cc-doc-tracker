@@ -7,7 +7,7 @@ source: https://code.claude.com/docs/en/changelog.md
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Changelog
+# Claude Code changelog
 
 > Release notes for Claude Code, including new features, improvements, and bug fixes by version.
 
