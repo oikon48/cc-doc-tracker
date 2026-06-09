@@ -322,6 +322,7 @@ Environments run behind an HTTP/HTTPS network proxy for security and abuse preve
 * Protection against malicious requests
 * Rate limiting and abuse prevention
 * Content filtering for enhanced security
+* A DNS-level audit trail of requested hostnames
 
 ### Default allowed domains
 
@@ -793,7 +794,7 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 
 * Run `/login` locally to refresh your credentials, then reconnect
 * Confirm you are signed in to the same account that owns the session
-* If you see `Remote Control may not be available for this organization`, your admin has not enabled remote sessions for your plan
+* If you see `Remote Control may not be available for this organization`, your admin has not enabled cloud sessions for your plan
 
 ### Environment expired
 

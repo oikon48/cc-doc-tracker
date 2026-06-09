@@ -21,7 +21,7 @@ Your code's security is paramount. Claude Code is built with security at its cor
 
 Claude Code uses strict read-only permissions by default. When additional actions are needed (editing files, running tests, executing commands), Claude Code requests explicit permission. Users control whether to approve actions once or allow them automatically.
 
-We designed Claude Code to be transparent and secure. For example, we require approval for bash commands before executing them, giving you direct control. This approach enables users and organizations to configure permissions directly.
+Claude Code requires approval before running Bash commands that can modify your system. A built-in set of read-only commands such as `ls`, `cat`, and `git status` runs without a prompt. This approach lets users and organizations configure permissions directly.
 
 For detailed permission configuration, see [Permissions](/en/permissions).
 
@@ -47,7 +47,7 @@ Prompt injection is a technique where an attacker attempts to override or manipu
 * **Permission system**: Sensitive operations require explicit approval
 * **Context-aware analysis**: Detects potentially harmful instructions by analyzing the full request
 * **Input sanitization**: Prevents command injection by processing user inputs
-* **Command blocklist**: Blocks risky commands that fetch arbitrary content from the web like `curl` and `wget` by default. When explicitly allowed, be aware of [permission pattern limitations](/en/permissions#tool-specific-permission-rules)
+* **Network command approval**: Commands that fetch content from the web such as `curl` and `wget` are not auto-approved by default. They prompt like any other non-read-only Bash command, so you can still approve once or add an explicit allow rule like `Bash(curl *)`. To block them entirely, add them to [`permissions.deny`](/en/permissions#tool-specific-permission-rules)
 
 ### Privacy safeguards
 
@@ -64,12 +64,12 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 * **Network request approval**: Tools that make network requests require user approval by default
 * **Isolated context windows**: Web fetch uses a separate context window to avoid injecting potentially malicious prompts
 * **Trust verification**: First-time codebase runs and new MCP servers require trust verification
-  * Note: Trust verification is disabled when running non-interactively with the `-p` flag. The exception is [`--worktree`](/en/worktrees), which still requires that trust has been accepted for the directory
+  * Note: Trust verification is disabled when running non-interactively with the `-p` flag
   * Note: When you start Claude Code directly in your home directory, trust acceptance is held for the current session only and is not written to disk, so the prompt reappears on each launch. There is no setting to persist it. Start Claude Code from a project subdirectory instead, where trust acceptance is saved per directory
 * **Command injection detection**: Suspicious bash commands require manual approval even if previously allowlisted
 * **Fail-closed matching**: Unmatched commands default to requiring manual approval
 * **Natural language descriptions**: Complex bash commands include explanations for user understanding
-* **Secure credential storage**: API keys and tokens are encrypted. See [Credential Management](/en/authentication#credential-management)
+* **Secure credential storage**: API keys and tokens are stored in the macOS Keychain when available, and protected by file permissions on Windows and Linux. See [Credential Management](/en/authentication#credential-management)
 
 <Warning>
   **Windows WebDAV security risk**: When running Claude Code on Windows, we recommend against enabling WebDAV or allowing Claude Code to access paths such as `\\*` that may contain WebDAV subdirectories. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.

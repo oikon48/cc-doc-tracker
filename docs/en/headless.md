@@ -69,7 +69,7 @@ Bare mode skips OAuth and keychain reads. Anthropic authentication must come fro
 
 ### Background tasks at exit
 
-If Claude starts a [background Bash task](/en/tools-reference#bash-tool-behavior) during a `claude -p` run, for example a dev server or a watch build, that task is terminated about five seconds after Claude returns its final result and stdin closes. The grace period lets a task that finishes right after the result still deliver its output. Before v2.1.163, a never-exiting background process would hold the `claude -p` invocation open indefinitely.
+If Claude starts a [background Bash task](/en/tools-reference#bash-tool-behavior) during a `claude -p` run, for example a dev server or a watch build, that task is terminated about five seconds after Claude has returned its final result and stdin has closed. The grace period lets a task that finishes right after the result still deliver its output. Before v2.1.163, a never-exiting background process would hold the `claude -p` invocation open indefinitely.
 
 ## Examples
 
@@ -221,7 +221,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 The `--allowedTools` flag uses [permission rule syntax](/en/settings#permission-rule-syntax). The trailing ` *` enables prefix matching, so `Bash(git diff *)` allows any command starting with `git diff`. The space before `*` is important: without it, `Bash(git diff*)` would also match `git diff-index`.
 
 <Note>
-  User-invoked [skills](/en/skills) like `/code-review` and [built-in commands](/en/commands) are only available in interactive mode. In `-p` mode, describe the task you want to accomplish instead.
+  User-invoked [skills](/en/skills) and custom commands work in `-p` mode: include `/skill-name` in the prompt string and Claude Code expands it before running. Built-in commands that open an interactive dialog, such as `/config` and `/login`, are not available in `-p` mode.
 </Note>
 
 ### Customize the system prompt

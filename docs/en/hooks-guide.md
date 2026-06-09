@@ -489,7 +489,7 @@ Each hook has a `type` that determines how it runs. Most hooks use `"type": "com
 
 When multiple hooks match the same event, every hook's command runs to completion before Claude Code merges the results. One hook returning `deny` does not stop sibling hooks from executing. Don't rely on one hook's `deny` to suppress side effects in another hook.
 
-After all matching hooks finish, Claude Code combines their outputs. For `PreToolUse` permission decisions, the most restrictive answer wins: `deny` overrides `ask`, which overrides `allow`. Text from `additionalContext` is kept from every hook and passed to Claude together.
+After all matching hooks finish, Claude Code combines their outputs. For `PreToolUse` permission decisions, the most restrictive answer wins, in the order `deny`, `defer`, `ask`, `allow`. Text from `additionalContext` is kept from every hook and passed to Claude together.
 
 The example below registers two `PreToolUse` hooks on `Bash`. The first appends every command to a log file and exits 0. The second runs a script that exits 2 to deny when the command contains `rm -rf`:
 
@@ -747,13 +747,13 @@ For example, to run a hook only when Claude uses `git` commands rather than all 
 
 Whether your hook command runs depends on the shape of your `if` pattern and the Bash command Claude is invoking:
 
-| `if` pattern       | Bash command           | Hook runs? | Why                                                                                    |
-| :----------------- | :--------------------- | :--------- | :------------------------------------------------------------------------------------- |
-| `Bash(git *)`      | `git push`             | yes        | command name matches                                                                   |
-| `Bash(git *)`      | `npm test && git push` | yes        | each subcommand is checked; `git push` matches                                         |
-| `Bash(git *)`      | `echo $(git log)`      | yes        | commands inside `$()` and backticks are checked; `git log` matches                     |
-| `Bash(git *)`      | `echo $(date)`         | no         | no subcommand matches `git *`                                                          |
-| `Bash(git push *)` | `echo $(date)`         | yes        | patterns that constrain past the command name fail open on `$()`, backticks, or `$VAR` |
+| `if` pattern       | Bash command           | Hook runs? | Why                                                                                                 |
+| :----------------- | :--------------------- | :--------- | :-------------------------------------------------------------------------------------------------- |
+| `Bash(git *)`      | `git push`             | yes        | command name matches                                                                                |
+| `Bash(git *)`      | `npm test && git push` | yes        | each subcommand is checked; `git push` matches                                                      |
+| `Bash(git *)`      | `echo $(git log)`      | yes        | commands inside `$()` and backticks are checked; `git log` matches                                  |
+| `Bash(git *)`      | `echo $(date)`         | no         | no subcommand matches `git *`                                                                       |
+| `Bash(git push *)` | `echo $(date)`         | yes        | patterns that specify more than the command name run the hook anyway on `$()`, backticks, or `$VAR` |
 
 The filter also fails open, running your hook regardless of pattern, when the Bash command cannot be parsed. Because the filter is best-effort, use the [permission system](/en/permissions) rather than a hook to enforce a hard allow or deny.
 
@@ -774,7 +774,7 @@ Where you add a hook determines its scope:
 | [Plugin](/en/plugins) `hooks/hooks.json`                   | When plugin is enabled             | Yes, bundled with the plugin       |
 | [Skill](/en/skills) or [agent](/en/sub-agents) frontmatter | While the skill or agent is active | Yes, defined in the component file |
 
-Run [`/hooks`](/en/hooks#the-hooks-menu) in Claude Code to browse all configured hooks grouped by event. To disable hooks, set `"disableAllHooks": true` in your settings file. Hooks configured in managed settings still run unless `disableAllHooks` is also set there.
+Run [`/hooks`](/en/hooks#the-%2Fhooks-menu) in Claude Code to browse all configured hooks grouped by event. To disable hooks, set `"disableAllHooks": true` in your settings file. Hooks configured in managed settings still run unless `disableAllHooks` is also set there.
 
 If you edit settings files directly while Claude Code is running, the file watcher normally picks up hook changes automatically.
 
