@@ -11,10 +11,6 @@ source: https://code.claude.com/docs/en/legal-and-compliance.md
 
 > Legal agreements, compliance certifications, and security information for Claude Code.
 
-<Note>
-  Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.
-</Note>
-
 ## Legal agreements
 
 ### License
