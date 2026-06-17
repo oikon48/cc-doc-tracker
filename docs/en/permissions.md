@@ -84,6 +84,27 @@ Add a specifier in parentheses to match specific tool uses:
 | `Read(./.env)`                 | Matches reading the `.env` file in the current directory |
 | `WebFetch(domain:example.com)` | Matches fetch requests to example.com                    |
 
+### Match by input parameter
+
+Deny and ask rules can match a top-level input parameter on any tool with `Tool(param:value)`. The rule matches when Claude calls the tool with that parameter set to that exact value. This syntax is for deny and ask rules; an allow rule for one parameter value would not establish that the call is safe overall, so allow rules continue to use each tool's own specifier syntax. This works for any scalar parameter the tool accepts:
+
+| Rule                           | Matches                                      |
+| :----------------------------- | :------------------------------------------- |
+| `Agent(model:opus)`            | Agent calls that request the Opus model tier |
+| `Agent(isolation:worktree)`    | Agent calls that request a git worktree      |
+| `Bash(run_in_background:true)` | Bash calls that run in the background        |
+
+Parameter matching follows these rules:
+
+* The parameter name must be a direct field of the tool's input, such as `model` on the Agent tool. Fields nested inside an object or array are not matchable
+* Each rule names one parameter. To gate on both `model` and `isolation`, write two rules, `Agent(model:opus)` and `Agent(isolation:worktree)`, rather than combining them in one rule
+* The value supports `*` as a wildcard that matches any sequence of characters, so `Agent(isolation:*)` matches any explicit isolation value. Without `*` the match is exact
+* A parameter the model omits is never matched, so `Agent(model:*)` does not match a call that leaves `model` unset
+* The value is compared against the literal input Claude sends, before any normalization. `Agent(model:opus)` matches the alias `opus` but not a full model ID. Run with [`--verbose`](/en/cli-reference) to see the exact parameter names and values in each tool call
+* Whitespace around the colon is ignored
+
+Fields that a tool already matches with its own canonicalizing rules are not matchable this way: `command` for Bash and PowerShell, `file_path` for Read, Edit, and Write, `path` for Grep and Glob, `notebook_path` for NotebookEdit, and `url` for WebFetch. A rule like `Bash(command:rm *)` would be bypassable by a compound command, so Claude Code ignores it and emits a startup warning. Use `Bash(rm *)`, `Read(./path)`, or `WebFetch(domain:host)` instead.
+
 ### Wildcard patterns
 
 Bash rules support glob patterns with `*`. Wildcards can appear at any position in the command. This configuration allows npm and git commit commands while blocking git push:
@@ -267,7 +288,7 @@ WebFetch rules use a `domain:` prefix and match against the hostname of the requ
 * `WebFetch(domain:*.example.com)` matches any subdomain at any depth, such as `api.example.com` or `a.b.example.com`, but not `example.com` itself
 * `WebFetch(domain:*)` matches every domain and is equivalent to a bare `WebFetch` rule
 
-A `*` matches across a `.` only as a leading `*.` or as the entire pattern. Elsewhere it stays within one label, so `WebFetch(domain:github.*)` matches `github.io` but not `github.evil.com`, a domain an attacker could register. When an exact rule and a wildcard rule in the same allow, ask, or deny list both match a hostname, the exact rule is the one matched. Evaluation order is unchanged: deny rules still run before ask and allow rules regardless of specificity.
+In any position other than a leading `*.` or a bare `*`, the wildcard matches only the text between two dots. `WebFetch(domain:example.*)` matches `example.org`, where `*` becomes `org`, but not `example.evil.com`, where `*` would have to become `evil.com` and cross a dot. This keeps a trailing wildcard from matching domains an attacker could register.
 
 ### MCP
 
@@ -340,10 +361,11 @@ The following configuration types are loaded from `--add-dir` directories:
 | Configuration                                                          | Loaded from `--add-dir`                                                                                                                                            |
 | :--------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Skills](/en/skills) in `.claude/skills/`                              | Yes, with live reload                                                                                                                                              |
+| [Subagents](/en/sub-agents) in `.claude/agents/`                       | Yes                                                                                                                                                                |
 | Plugin settings in `.claude/settings.json`                             | `enabledPlugins` and `extraKnownMarketplaces` only                                                                                                                 |
 | [CLAUDE.md](/en/memory) files, `.claude/rules/`, and `CLAUDE.local.md` | Only when `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` is set. `CLAUDE.local.md` additionally requires the `local` setting source, which is enabled by default |
 
-Subagents, commands, and output styles are discovered from the current working directory and its parents, your user directory at `~/.claude/`, and managed settings. Hooks and other `settings.json` keys load from the current working directory's `.claude/` folder with no parent-directory fallback, alongside your user `~/.claude/settings.json` and managed settings. To share that configuration across projects, use one of these approaches:
+Commands and output styles are discovered from the current working directory and its parents, your user directory at `~/.claude/`, and managed settings. Hooks and other `settings.json` keys load from the current working directory's `.claude/` folder with no parent-directory fallback, alongside your user `~/.claude/settings.json` and managed settings. To share that configuration across projects, use one of these approaches:
 
 * **User-level configuration**: place files in `~/.claude/agents/`, `~/.claude/output-styles/`, or `~/.claude/settings.json` to make them available in every project
 * **Plugins**: package and distribute configuration as a [plugin](/en/plugins) that teams can install
