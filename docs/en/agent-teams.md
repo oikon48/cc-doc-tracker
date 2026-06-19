@@ -87,7 +87,13 @@ one on UX, one on technical architecture, one playing devil's advocate.
 
 From there, Claude populates a [shared task list](/en/interactive-mode#task-list), spawns teammates for each perspective, has them explore the problem, and synthesizes findings when finished.
 
-The lead's terminal lists all teammates and what they're working on. Use Shift+Down to cycle through teammates and message them directly. After the last teammate, Shift+Down wraps back to the lead.
+The lead's terminal lists teammates in the agent panel below the prompt input. From the panel:
+
+* **Up and down arrows**: select a teammate
+* **Enter**: open the selected teammate's transcript and message it directly
+* **Escape**: interrupt the selected teammate's current turn
+
+{/* min-version: 2.1.181 */}As of v2.1.181, an idle teammate's row hides after 30 seconds and reappears on its next turn. The teammate stays running and addressable while hidden.
 
 If you want each teammate in its own split pane, see [Choose a display mode](#choose-a-display-mode).
 
@@ -99,25 +105,25 @@ Tell the lead what you want in natural language. It handles team coordination, t
 
 Agent teams support two display modes:
 
-* **In-process**: all teammates run inside your main terminal. Use Shift+Down to cycle through teammates and type to message them directly. Works in any terminal, no extra setup required.
+* **In-process**: all teammates run inside your main terminal. Use the up and down arrow keys in the agent panel to select a teammate, then press Enter to view it and type to message it directly. Works in any terminal, no extra setup required.
 * **Split panes**: each teammate gets its own pane. You can see everyone's output at once and click into a pane to interact directly. Requires tmux, or iTerm2.
 
 <Note>
   `tmux` has known limitations on certain operating systems and traditionally works best on macOS. Using `tmux -CC` in iTerm2 is the suggested entrypoint into `tmux`.
 </Note>
 
-The default is `"auto"`, which uses split panes if you're already running inside a tmux session or your terminal is iTerm2, and in-process otherwise. The `"tmux"` setting enables split-pane mode and auto-detects whether to use tmux or iTerm2 based on your terminal. To override, set [`teammateMode`](/en/settings#available-settings) in `~/.claude/settings.json`:
+The default is `"in-process"`. Before v2.1.179 the default was `"auto"`, so upgraded sessions that previously opened split panes now stay in one terminal unless you set the mode explicitly. Set `"auto"` to enable split panes when you're already running inside a tmux session or your terminal is iTerm2, falling back to in-process otherwise. The `"tmux"` setting enables split-pane mode and auto-detects whether to use tmux or iTerm2 based on your terminal. To override, set [`teammateMode`](/en/settings#available-settings) in `~/.claude/settings.json`:
 
 ```json theme={null}
 {
-  "teammateMode": "in-process"
+  "teammateMode": "auto"
 }
 ```
 
-To force in-process mode for a single session, pass it as a flag:
+To set the mode for a single session, pass it as a flag:
 
 ```bash theme={null}
-claude --teammate-mode in-process
+claude --teammate-mode auto
 ```
 
 Split-pane mode requires either [tmux](https://github.com/tmux/tmux/wiki) or iTerm2 with the [`it2` CLI](https://github.com/mkusaka/it2). To install manually:
@@ -153,7 +159,7 @@ The lead makes approval decisions autonomously. To influence the lead's judgment
 
 Each teammate is a full, independent Claude Code session. You can message any teammate directly to give additional instructions, ask follow-up questions, or redirect their approach.
 
-* **In-process mode**: use Shift+Down to cycle through teammates, then type to send them a message. Press Enter to view a teammate's session, then Escape to interrupt their current turn. Press Ctrl+T to toggle the task list.
+* **In-process mode**: use the up and down arrow keys in the agent panel to select a teammate, then press Enter to view its session and type to send it a message. Press `x` on a selected teammate to stop it. Press Ctrl+T to toggle the task list.
 * **Split-pane mode**: click into a teammate's pane to interact with their session directly. Each teammate has a full view of their own terminal.
 
 ### Assign and claim tasks
@@ -363,8 +369,9 @@ Check in on teammates' progress, redirect approaches that aren't working, and sy
 
 If teammates aren't appearing after you ask Claude to spawn them:
 
-* In in-process mode, teammates may already be running but not visible. Press Shift+Down to cycle through active teammates.
-* Check that the task you gave Claude was complex enough to warrant teammates. Claude decides whether to spawn them based on the task.
+* In in-process mode, teammates appear in the agent panel below the prompt input. Use the up and down arrow keys to select one, then press Enter to view it.
+* A teammate row that disappeared after sitting idle has been hidden, not stopped. Idle rows hide after 30 seconds and reappear on the teammate's next turn. Send the teammate a message by name to bring it back.
+* Check that the task you gave Claude was complex enough to warrant a team. Claude decides whether to spawn teammates based on the task.
 * If you explicitly requested split panes, ensure tmux is installed and available in your PATH:
   ```bash theme={null}
   which tmux
@@ -377,7 +384,7 @@ Teammate permission requests bubble up to the lead, which can create friction. P
 
 ### Teammates stopping on errors
 
-Teammates may stop after encountering errors instead of recovering. Check their output using Shift+Down in in-process mode or by clicking the pane in split mode, then either:
+Teammates may stop after encountering errors instead of recovering. Check their output by selecting the teammate in the agent panel and pressing Enter in in-process mode, or by clicking the pane in split mode, then either:
 
 * Give them additional instructions directly
 * Spawn a replacement teammate to continue the work

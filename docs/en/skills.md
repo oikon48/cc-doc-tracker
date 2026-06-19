@@ -162,7 +162,7 @@ The `SKILL.md` contains the main instructions and is required. Other files are o
 
 The `--add-dir` flag and `/add-dir` command [grant file access](/en/permissions#additional-directories-grant-file-access-not-configuration) rather than configuration discovery, but skills are an exception: `.claude/skills/` within an added directory is loaded automatically. This exception applies only to `--add-dir` and `/add-dir`. The `permissions.additionalDirectories` setting in `settings.json` grants file access only and does not load skills. See [Live change detection](#live-change-detection) for how edits are picked up during a session.
 
-Other `.claude/` configuration such as subagents, commands, and output styles is not loaded from additional directories. See the [exceptions table](/en/permissions#additional-directories-grant-file-access-not-configuration) for the complete list of what is and isn't loaded, and the recommended ways to share configuration across projects.
+Other `.claude/` configuration such as commands and output styles is not loaded from additional directories. See the [exceptions table](/en/permissions#additional-directories-grant-file-access-not-configuration) for the complete list of what is and isn't loaded, and the recommended ways to share configuration across projects.
 
 <Note>
   CLAUDE.md files from `--add-dir` directories are not loaded by default. To load them, set `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. See [Load from additional directories](/en/memory#load-from-additional-directories).
@@ -589,6 +589,34 @@ A skill that is absent from `skillOverrides` is treated as `"on"`. The example b
 
 Plugin skills are not affected by `skillOverrides`. Manage those through `/plugin` instead.
 
+## Evaluate and iterate on a skill
+
+Seeing a skill trigger tells you Claude found it, not that it did what you intended. To know a skill is working, measure two things separately: whether Claude invokes it on the prompts it should, and whether the output matches what you expect when it does.
+
+The check for both is a baseline comparison. Collect a few realistic prompts, run each one in a fresh session with the skill available and again with it [disabled](#override-skill-visibility-from-settings), and compare the results. A fresh session matters because leftover context from authoring the skill will mask gaps in the written instructions.
+
+### Run evals with skill-creator
+
+The [`skill-creator` plugin](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) automates the comparison loop inside Claude Code. Install it from the official marketplace:
+
+```text theme={null}
+/plugin install skill-creator@claude-plugins-official
+```
+
+If Claude Code reports that the plugin is not found in any marketplace, your marketplace is either missing or outdated. Run `/plugin marketplace update claude-plugins-official` to refresh it, or `/plugin marketplace add anthropics/claude-plugins-official` if you haven't added it before. Then retry the install.
+
+After installing, run `/reload-plugins` to make the plugin's skills available in the current session. Then ask Claude to evaluate an existing skill, for example `evaluate my summarize-changes skill with skill-creator`. The plugin walks you through writing test cases and runs the loop:
+
+* **Test cases**: stores prompts, input files, and expected behavior in `evals/evals.json` inside the skill directory
+* **Isolated runs**: spawns a [subagent](/en/sub-agents) per test case so each run starts with a clean context, and records token count and duration
+* **Grading**: checks each assertion against the output and writes pass or fail with evidence to `grading.json`
+* **Benchmark**: aggregates pass rate, time, and tokens for with-skill versus without-skill into `benchmark.json` so you can compare the pass-rate improvement against the token and time overhead
+* **Version comparison**: runs a blind A/B between two versions of the skill so you can confirm an edit is an improvement before committing it
+* **Description tuning**: generates should-trigger and should-not-trigger prompts, measures the hit rate, and proposes description edits when the skill activates on the wrong requests
+* **Review viewer**: opens an HTML report where you inspect each output and record qualitative feedback that the next iteration reads
+
+For the eval file format and the full iteration workflow, see [Evaluating skill output quality](https://agentskills.io/skill-creation/evaluating-skills) on agentskills.io. For background on the benchmark and comparison modes, see the [skill-creator announcement](https://claude.com/blog/improving-skill-creator-test-measure-and-refine-agent-skills).
+
 ## Share skills
 
 Skills can be distributed at different scopes depending on your audience:
@@ -815,6 +843,8 @@ To raise the budget, set the [`skillListingBudgetFraction`](/en/settings#availab
 ## Related resources
 
 * **[Debug your configuration](/en/debug-your-config)**: diagnose why a skill isn't appearing or triggering
+* **[Evaluating skill output quality](https://agentskills.io/skill-creation/evaluating-skills)**: the eval file format and iteration workflow on agentskills.io
+* **[Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)**: writing guidance that applies across Claude products
 * **[Subagents](/en/sub-agents)**: delegate tasks to specialized agents
 * **[Plugins](/en/plugins)**: package and distribute skills with other extensions
 * **[Hooks](/en/hooks)**: automate workflows around tool events

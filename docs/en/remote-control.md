@@ -118,7 +118,7 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
 
 In an interactive terminal session, a `/rc active` indicator sits in the footer below the input box while the connection is up, and is hidden if the terminal is too narrow to fit it. The indicator text is a link to the session on claude.ai. Select it with the down arrow key and press Enter, or run `/remote-control` again, to open a status panel with the session URL and a QR code you can use to [connect from another device](#connect-from-another-device).
 
-If the connection fails, the indicator turns red and reads `/rc failed`. Select it with the down arrow key and press Enter to see the failure reason and a dismiss option, or run `/remote-control` again to retry.
+If the connection fails, a notification appears with the failure reason and the indicator disappears from the footer. Run `/remote-control` again to retry.
 
 ### Connect from another device
 
@@ -195,13 +195,18 @@ If notifications don't arrive:
 * On iOS, Focus modes and notification summaries can suppress or delay pushes. Check Settings → Notifications → Claude.
 * On Android, aggressive battery optimization can delay delivery. Exempt the Claude app from battery optimization in system settings.
 
+Claude Code skips mobile push notifications while you are typing in or focused on the connected terminal. {/* min-version: 2.1.181 */}As of v2.1.181, you can set [`CLAUDE_CLIENT_PRESENCE_FILE`](/en/env-vars) to a marker file path to extend this to any time you are at the machine, even in another window: notifications are skipped while the file exists. Configure a screen-lock listener or similar tool to create the file when your screen unlocks and delete it when your screen locks.
+
 ## Limitations
 
 * **One remote session per interactive process**: outside of server mode, each Claude Code instance supports one remote session at a time. Use [server mode](#start-a-remote-control-session) to run multiple concurrent sessions from a single process.
 * **Local process must keep running**: Remote Control runs as a local process. If you close the terminal, quit VS Code, or otherwise stop the `claude` process, the session ends.
 * **Extended network outage**: if your machine is awake but unable to reach the network for more than roughly 10 minutes, the session times out and the process exits. Run `claude remote-control` again to start a new session.
 * **Ultraplan disconnects Remote Control**: starting an [ultraplan](/en/ultraplan) session disconnects any active Remote Control session because both features occupy the claude.ai/code interface and only one can be connected at a time.
-* **Some commands are local-only**: commands that open an interactive picker in the terminal, such as `/plugin` or `/resume`, work only from the local CLI. Commands that produce text output, including `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap`, and `/reload-plugins`, work from mobile and web. {/* min-version: 2.1.166 */}As of v2.1.166, `/mcp` also works from mobile and web: it returns a text summary of server status instead of opening the picker, and accepts the same `reconnect`, `enable`, and `disable` [subcommands](/en/commands#all-commands) as the local CLI, with one difference: from mobile and web, `/mcp reconnect` with no server name reconnects every server that has failed or needs authentication, while the local CLI requires a server name for `reconnect`.
+* **Some commands are local-only**: commands that open an interactive picker in the terminal, such as `/plugin` or `/resume`, work only from the local CLI. The following work from mobile and web:
+  * Text-output commands: `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap`, `/reload-plugins`
+  * {/* min-version: 2.1.166 */}`/mcp`, from v2.1.166: returns a text summary of server status instead of opening the picker, and accepts the `reconnect`, `enable`, and `disable` [subcommands](/en/commands#all-commands). Unlike the local CLI, `/mcp reconnect` without a server name reconnects every server that has failed or needs authentication.
+  * {/* min-version: 2.1.181 */}`/config`, from v2.1.181: pass `key=value` to set a setting, or run it with no argument to list the keys you can set.
 
 ## Troubleshooting
 
