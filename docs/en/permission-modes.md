@@ -222,6 +222,9 @@ The classifier trusts your working directory and your repo's configured remotes.
 * Modifying shared infrastructure
 * Irreversibly destroying files that existed before the session
 * Force push, or pushing directly to `main`
+* {/* min-version: 2.1.182 */}`git reset --hard`, `git checkout -- .`, `git restore .`, `git clean -fd`, `git stash drop`, or `git stash clear`, which the classifier presumes would discard uncommitted changes
+* `git commit --amend` when the commit at HEAD was not created in this session
+* `terraform destroy`, `pulumi destroy`, `cdk destroy`, or `terragrunt destroy`, and applying a plan that destroys resources
 
 **Allowed by default**:
 
