@@ -237,6 +237,8 @@ If your SSO credentials expire mid-session, configure [`awsAuthRefresh`](/en/ama
 }
 ```
 
+With `awsAuthRefresh` configured, `/login` shows a **Claude Platform on AWS · refresh credentials** option under **Using 3rd-party platforms**. Selecting it runs the configured command and re-reads your AWS credentials without restarting Claude Code.
+
 **Option B: Workspace API key**
 
 A workspace API key is a long-lived secret, useful when you don't want to manage federated AWS credentials. Generate one in the AWS Console under **Claude Platform on AWS → API keys** and set it as `ANTHROPIC_AWS_API_KEY`:
@@ -250,7 +252,7 @@ The key is sent as `x-api-key` and takes precedence over SigV4, so any AWS crede
 Treat workspace API keys like any other production credential. The [user settings file](/en/settings) `env` block is a convenient way to scope the key to your machine without exporting it globally.
 
 <Note>
-  The `/login` and `/logout` commands don't change Claude Platform on AWS authentication. Authentication runs through your AWS credentials or workspace API key, not through a Claude.ai subscription.
+  The `/login` and `/logout` commands don't sign you into a Claude.ai subscription for Claude Platform on AWS. Authentication runs through your AWS credentials or workspace API key. The exception is the **refresh credentials** option `/login` shows when `awsAuthRefresh` is configured, which re-reads your AWS credentials as described above.
 </Note>
 
 ### 2. Configure Claude Code
