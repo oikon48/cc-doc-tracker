@@ -262,7 +262,7 @@ Prefix or mention parts of the prompt to control how the session starts:
 | `#<number>` or a pull request URL | If a session is already working on that PR, select it instead of dispatching                                                                                   |
 | `Shift+Enter`                     | Dispatch and immediately attach to the new session                                                                                                             |
 
-A small set of commands run in agent view itself instead of dispatching: `/exit` and `/quit` close agent view, and `/logout` signs you out. Every other command and skill is sent to a new background session as its first prompt.
+A small set of commands run in agent view itself instead of dispatching: `/exit` and `/quit` close agent view, `/logout` signs you out, and `/model` sets the [dispatch model](#set-the-model). Skills, your own commands, and prompt-expanding built-ins such as `/init` are sent to a new background session as their first prompt. Other built-in commands show an `attach to a session to run it` hint instead.
 
 Packaging a recurring task as a [skill](/en/skills) lets you start the same workflow from agent view repeatedly without retyping the prompt.
 
@@ -381,6 +381,15 @@ A [subagent](/en/sub-agents) the background session spawns inherits the session'
 
 The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/en/settings#available-settings) in your user settings. Set it by selecting a model in the [`/model` picker](/en/model-config), or edit the setting directly. To override it for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
+To change the dispatch default from inside agent view, type `/model` followed by a model name in the dispatch input and press `Enter`. The header updates to show that model with a `(session)` marker, and sessions you dispatch afterward use it. Type `/model default` to clear the override and return to the dispatch default. This override lasts for the rest of the current `claude agents` run, does not write to your settings file, and requires Claude Code v2.1.172 or later. {/* min-version: 2.1.172 */} The following example dispatches one session on Opus and the next on Sonnet:
+
+```text theme={null}
+/model opus
+refactor auth
+/model sonnet
+run the test suite
+```
+
 Each background session can run on a different model. To override it for one session:
 
 * From the shell, pass `--model` with `claude --bg`.
@@ -389,7 +398,9 @@ Each background session can run on a different model. To override it for one ses
 
 ### Permission mode, model, and effort
 
-A background session reads its [settings](/en/settings) from the directory it runs in, the same as if you had started `claude` there.
+A background session reads its [settings](/en/settings) from the directory it runs in, the same as if you had started `claude` there. This includes [`env` values](/en/settings#available-settings) in project settings, so an `ANTHROPIC_MODEL` or provider variable set there applies to background sessions in that directory.
+
+Cloud provider selection, such as `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX`, and `ANTHROPIC_DEFAULT_*_MODEL` aliases follow the shell that dispatched the session. Gateway endpoint variables such as `ANTHROPIC_BASE_URL` and its paired `ANTHROPIC_AUTH_TOKEN` do not. See [the supervisor process](#the-supervisor-process) for how background sessions source provider settings and credentials.
 
 The [permission mode](/en/permissions) depends on how you started the session. Backgrounding an existing session with `/bg` or `←` keeps the current permission mode, so a session you switched to `acceptEdits` or `auto` stays in that mode after detaching. Dispatching from the agent view input or running `claude --bg` from your shell uses the `defaultMode` from that directory's settings, or the `permissionMode` from the dispatched [subagent's frontmatter](/en/sub-agents#supported-frontmatter-fields).
 
@@ -467,7 +478,11 @@ Every session listed in agent view is considered a background session, whether o
 
 Background sessions are hosted by a per-user supervisor process, separate from your terminal and from agent view. The supervisor starts automatically the first time you background a session or open agent view, and you don't manage it directly.
 
-The supervisor and its sessions authenticate with the same credentials as your interactive sessions and make no additional network connections beyond the model API.
+The supervisor keeps one pre-warmed worker process ready so a dispatch from agent view or `claude --bg` starts without the delay of a cold launch. When you dispatch, the supervisor assigns the pre-warmed worker to your session, applies that session's directory, settings, and credentials to it, and then starts a replacement for the next dispatch. If no healthy pre-warmed worker is available, the supervisor launches a fresh process instead.
+
+The supervisor and its sessions authenticate with the same stored credentials as your interactive sessions and make no additional network connections beyond the model API. Provider selection variables such as `CLAUDE_CODE_USE_BEDROCK` and `ANTHROPIC_DEFAULT_*_MODEL` aliases are read from the shell that dispatched each session and are applied to its worker.
+
+{/* min-version: 2.1.174 */}A background session does not inherit gateway endpoint variables such as `ANTHROPIC_BASE_URL`, the equivalent Bedrock, Vertex, and Foundry base URL variables, or a paired `ANTHROPIC_AUTH_TOKEN` from the shell that started the supervisor or from the dispatching shell. The session uses your stored credentials and any `env` values in the project directory's [settings](/en/settings) instead. To point background sessions in a project at an [LLM gateway](/en/llm-gateway), set `ANTHROPIC_BASE_URL` in that project's `.claude/settings.json` `env` block rather than exporting it in your shell. Before v2.1.174, a background session inherited these variables from the supervisor's launch shell, so it could use the gateway you had configured in that shell instead of the one configured for the project directory.
 
 Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. A running background shell command, subagent, dynamic workflow, or monitor counts as active work, so a long-running process such as a dev server keeps the session alive.
 
@@ -539,6 +554,18 @@ claude daemon stop --any --keep-workers
 The new supervisor reconnects to the running sessions. Without `--keep-workers`, the command ends the background sessions too. The `--any` flag confirms you want to stop a supervisor that started on demand rather than as an installed service, which is the default.
 
 On Windows, if the supervisor does not respond to the stop request, the command prints its process ID. End that process with `taskkill /PID <pid>` to finish the recovery. Background sessions are still preserved when you passed `--keep-workers`.
+
+### Dispatch fails with `Could not resolve authentication method`
+
+{/* min-version: 2.1.174 */}If a background dispatch fails with `Could not resolve authentication method` while interactive sessions authenticate normally, the worker that received the dispatch did not pick up credentials. On v2.1.174 and later the supervisor supplies a fresh credential snapshot when it assigns a [pre-warmed worker](#the-supervisor-process), so this error means no stored credential was available to the supervisor process itself. Confirm you have run `/login` or configured an API key, then stop the supervisor:
+
+```bash theme={null}
+claude daemon stop --any --keep-workers
+```
+
+The next `claude agents` or `claude --bg` starts a fresh supervisor that reads your stored credentials. If you authenticate with an environment variable such as `ANTHROPIC_API_KEY` rather than `/login`, run that next command from a shell where the variable is set.
+
+See the [error reference](/en/errors#could-not-resolve-authentication-method) for the full list of causes and fixes. Before v2.1.174, a pre-warmed worker that sat idle could surface this error when it was assigned to a dispatch even when your credentials were valid. Upgrade to recover.
 
 ### Background sessions cannot read Desktop, Documents, or Downloads on macOS
 
