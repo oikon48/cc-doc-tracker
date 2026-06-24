@@ -55,6 +55,7 @@ Fullscreen rendering captures mouse events and handles them inside Claude Code:
 
 * **Click in the prompt input** to position your cursor anywhere in the text you're typing.
 * **Click a suggestion in the `/` command or `@` file list** to accept it. Hovering highlights the row under your cursor.
+* **Click an option in a select menu** to choose it. This covers permission prompts, `/model`, `/config`, and other dialogs that show a list of options. Hovering shows a pointer on the row under your cursor. {/* min-version: 2.1.187 */}Requires Claude Code v2.1.187 or later.
 * **Click a collapsed tool result** to expand it and see the full output. Click again to collapse. The tool call and its result expand together. Only messages that have more to show are clickable.
 * **Hold `Cmd` on macOS, or `Ctrl` on Linux and Windows, and click a URL or file path** to open it. File paths in tool output, like the ones printed after an Edit or Write, open in your default application. Plain `http://` and `https://` URLs open in your browser. {/* min-version: 2.1.181 */}As of v2.1.181, a plain click without holding `Cmd` or `Ctrl` no longer opens links, matching native terminal behavior. In the VS Code integrated terminal and similar xterm.js-based terminals, Claude Code defers to the terminal's own link handler, which uses the same gesture.
 * **Click and drag** to select text anywhere in the conversation. Double-click selects a word, matching iTerm2's word boundaries so a file path selects as one unit. Triple-click selects the line.

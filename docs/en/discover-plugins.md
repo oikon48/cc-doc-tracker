@@ -301,6 +301,10 @@ From the list you can:
 
 The detail view shows the components the plugin contributes: commands, skills, agents, hooks, MCP servers, and LSP servers. The same inventory is available from the command line with `claude plugin details`.
 
+In Claude Code v2.1.187 and later, the Installed tab adds a **Not used recently** group for marketplace plugins you installed yourself but haven't invoked in at least two weeks and across at least 10 sessions, and the detail view shows a **Last used** line for each plugin. Use these to find plugins that you no longer use but that are still adding startup and context cost, then disable or uninstall them.
+
+Plugins that your organization manages or that you load with `--plugin-dir` are never listed as unused, and plugins that contribute an LSP server, theme, output style, monitor, or workflow are also never listed, since those deliver value without an invocation to track.
+
 When you install a plugin that declares dependencies, the install output lists which dependencies were auto-installed alongside it.
 
 You can also manage plugins with direct commands.

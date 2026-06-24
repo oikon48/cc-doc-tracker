@@ -58,6 +58,7 @@ Match the message you see in your terminal to a section below.
 | `Extra inputs are not permitted`                                                              | [Request errors](#extra-inputs-are-not-permitted)                                                                             |
 | `There's an issue with the selected model`                                                    | [Request errors](#there%E2%80%99s-an-issue-with-the-selected-model)                                                           |
 | `Claude Opus is not available with the Claude Pro plan`                                       | [Request errors](#claude-opus-is-not-available-with-the-claude-pro-plan)                                                      |
+| `Model ... is restricted by your organization's settings`                                     | [Request errors](#model-is-restricted-by-your-organization%E2%80%99s-settings)                                                |
 | `thinking.type.enabled is not supported for this model`                                       | [Request errors](#thinking-type-enabled-is-not-supported-for-this-model)                                                      |
 | `max_tokens must be greater than thinking.budget_tokens`                                      | [Request errors](#thinking-budget-exceeds-output-limit)                                                                       |
 | `API Error: 400 due to tool use concurrency issues`                                           | [Request errors](#tool-use-or-thinking-block-mismatch)                                                                        |
@@ -636,6 +637,20 @@ Claude Opus is not available with the Claude Pro plan · Select a different mode
 * Run `/model` and select a model your plan includes
 * If you upgraded your plan recently and still see this, run `/logout` then `/login`. The stored token reflects your plan at the time you signed in, so upgrading on the web does not take effect in an existing session until you re-authenticate.
 * See [claude.com/pricing](https://claude.com/pricing) for which models each plan includes
+
+### Model is restricted by your organization's settings
+
+Your organization admin has disabled this model in the Claude Console, or it is excluded by an [`availableModels`](/en/model-config#restrict-model-selection) allowlist in managed settings. When the restricted model was set with `--model`, `ANTHROPIC_MODEL`, or the `model` setting, Claude Code substitutes an allowed model and continues. Typing `/model <name>` for a restricted model is rejected with `Run /model to choose a different model.` and the session keeps its current model.
+
+```text theme={null}
+Model "claude-opus-4-8" is restricted by your organization's settings. Using claude-sonnet-4-6 instead.
+```
+
+**What to do:**
+
+* Run `/model` to pick from the models your organization allows. Restricted models are hidden from the picker.
+* If the restricted model was set in `--model`, `ANTHROPIC_MODEL`, or the `model` field of a settings file, remove or update that value so the notice does not recur on each launch
+* If you need access to the restricted model, ask your organization admin to enable it. See [Organization model restrictions](/en/model-config#organization-model-restrictions).
 
 ### thinking.type.enabled is not supported for this model
 

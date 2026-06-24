@@ -15,6 +15,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.190" description="June 24, 2026">
+  * Bug fixes and reliability improvements
+</Update>
+
 <Update label="2.1.187" description="June 23, 2026">
   * Added `sandbox.credentials` setting to block sandboxed commands from reading credential files and secret environment variables
   * Added org-configured model restrictions to the model picker, `--model`, `/model`, and `ANTHROPIC_MODEL`, with a "restricted by your organization's settings" message when a restricted model is selected
