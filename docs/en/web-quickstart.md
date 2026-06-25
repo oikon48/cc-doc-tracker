@@ -191,11 +191,11 @@ Cloud sessions require a connected GitHub account. Connect via the browser flow 
 
 Enterprise organizations may need an admin to enable Claude Code on the web. Contact your Anthropic account team.
 
-### `/web-setup` returns "Unknown command"
+### `/web-setup` shows "No commands match" or "Unknown command"
 
 `/web-setup` runs inside the Claude Code CLI, not your shell. Launch `claude` first, then type `/web-setup` at the prompt.
 
-If you typed it inside Claude Code and still see the error, your CLI is older than v2.1.80 or you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `claude update`, then `/login` to sign in with your claude.ai account.
+If you typed it inside Claude Code and the command menu shows `No commands match "/web-setup"`, or submitting it returns `Unknown command: /web-setup`, the command is hidden because a requirement isn't met. The cause is usually that your CLI is older than v2.1.80 or you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `claude update`, then `/login` to sign in with your claude.ai account.
 
 ### "Could not create a cloud environment" or "No cloud environment available" when using `--remote` or ultraplan
 

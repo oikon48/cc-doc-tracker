@@ -153,6 +153,61 @@ Your local Claude Code session makes outbound HTTPS requests only and never open
 
 All traffic travels through the Anthropic API over TLS, the same transport security as any Claude Code session. The connection uses multiple short-lived credentials, each scoped to a single purpose and expiring independently.
 
+## Trusted Devices
+
+<Note>
+  Trusted Devices is currently in beta. Features and functionality may evolve as the experience is refined.
+
+  Trusted Devices is available on Team and Enterprise plans. It is off by default until an admin enables it.
+</Note>
+
+Trusted Devices is an organization-wide setting that requires members to verify their device before they can view or steer Remote Control sessions from claude.ai, the Claude mobile apps, or Claude Desktop. It ties Remote Control access to a known device and a recent authentication, not just a signed-in account.
+
+When the setting is on, interacting with a Remote Control session requires both of the following:
+
+* **An enrolled device**: each browser, phone, or desktop app a member uses for Remote Control enrolls its own credential. Enrollment is only offered shortly after a full sign-in, so a device joins the trusted list as part of a real authentication rather than silently in the background.
+* **A recent sign-in**: the member's sign-in must be no more than 18 hours old. Instead of signing in again each day, members confirm presence with Face ID, Touch ID, Windows Hello, or a passkey. This biometric step-up refreshes the session immediately.
+
+Biometric checks run on the device through the operating system or browser, the same mechanism as passkey sign-in. Anthropic never receives or stores fingerprints, face data, or any other biometric information. Only the device's public key and basic metadata such as display name, platform, and enrollment time are stored.
+
+The setting applies only to Remote Control. Regular Claude chat, Claude Code in the terminal, and API usage are unaffected.
+
+### Enable Trusted Devices for your organization
+
+Admins enable the setting from the Claude Code admin console.
+
+<Steps>
+  <Step title="Open Claude Code admin settings">
+    Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). The **Require trusted devices** toggle appears under the Remote Control setting.
+  </Step>
+
+  <Step title="Turn on Require trusted devices">
+    The setting applies to every member of the organization and to Remote Control sessions started after you enable it. Sessions that were already running before the toggle was turned on are not retroactively protected and continue without the device requirement until they end. Per-team or per-project scoping is not available.
+  </Step>
+
+  <Step title="Tell members what to expect">
+    The first time a member views or steers a new Remote Control session from a browser, phone, or desktop app after the setting is enabled, they are prompted to enroll that device. Letting them know ahead of time avoids confusion.
+  </Step>
+</Steps>
+
+### What members see
+
+Enrollment is a one-time step per device. After that, the only visible change is an occasional biometric prompt.
+
+* **First use on each device**: the member is asked to enroll. If their sign-in is not recent, they sign in first through your normal flow, including SSO if configured, then confirm enrollment.
+* **Day to day**: members with an enrolled device and a recent sign-in see no prompts. When the sign-in ages past 18 hours, the next Remote Control interaction shows a single Face ID, Touch ID, Windows Hello, or passkey prompt.
+* **Unenrolled devices**: Remote Control sessions cannot be viewed or steered until the device is enrolled. Regular Claude chat on that device is unaffected.
+* **No platform authenticator**: members on a machine without Face ID, Touch ID, or Windows Hello can use a hardware security key, or sign in again instead of stepping up.
+* **In the terminal**: the machine running Claude Code receives its own credential automatically when the developer signs in to the CLI. There is no separate enrollment step in the terminal.
+
+### Manage enrolled devices
+
+Members can review and revoke their own devices from account settings.
+
+Open [claude.ai/settings/account](https://claude.ai/settings/account#trusted-devices) and find the **Trusted devices** section to see every enrolled device with its name, platform, and enrollment date. Removing a device revokes its credential immediately, and the device can re-enroll later after a fresh sign-in. Credentials also expire on their own if not renewed, so an unused device drops off the trusted list automatically.
+
+For a lost or stolen device, the member removes it from this page. If the member cannot sign in, an admin can use **Sign out everywhere** in the admin console to revoke every session and enrolled device for that member, after which the member re-enrolls the devices they still hold.
+
 ## Remote Control vs Claude Code on the web
 
 Remote Control and [Claude Code on the web](/en/claude-code-on-the-web) both use the claude.ai/code interface. The key difference is where the session runs: Remote Control executes on your machine, so your local MCP servers, tools, and project configuration stay available. Claude Code on the web executes in Anthropic-managed cloud infrastructure.
@@ -252,6 +307,14 @@ Common causes:
 * Not signed in: run `claude` and use `/login` to authenticate with your claude.ai account. API key authentication is not supported for Remote Control.
 * Network or proxy issue: a firewall or proxy may be blocking the outbound HTTPS request. Remote Control requires access to the Anthropic API on port 443.
 * Session creation failed: if you also see `Session creation failed — see debug log`, the failure happened earlier in setup. Check that your subscription is active.
+
+### "Your organization requires Trusted Devices for Remote Control, but this device is not enrolled"
+
+Your organization has [Trusted Devices](#trusted-devices) enabled and this machine has not enrolled yet. Run `/login` in Claude Code. Enrollment happens as part of sign-in, and there is no separate enrollment command.
+
+### "session expired for trusted-device check"
+
+Your sign-in is more than 18 hours old. Run `/login` in Claude Code, or confirm with Face ID, Touch ID, Windows Hello, or a passkey when claude.ai or the mobile app prompts you. See [Trusted Devices](#trusted-devices).
 
 ## Choose the right approach
 
