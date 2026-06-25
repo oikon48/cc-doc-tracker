@@ -185,6 +185,8 @@ To enable this, add the key to your managed settings configuration:
 }
 ```
 
+You can also set this key in an [endpoint-managed](/en/settings#settings-files) MDM profile or system `managed-settings.json` file to enforce fail-closed behavior on first launch, before any server payload has been delivered. As of v2.1.191, this flag is an exception to the [precedence rule](#settings-precedence) above: it is honored when set in any managed source even if a cached server-managed payload is also present, so an MDM-delivered value is not ignored when server-managed settings exist. The settings fetch also sends a `Cache-Control: no-cache` header so intermediate HTTP proxies do not serve a stale response.
+
 Before enabling this setting, ensure your network policies allow connectivity to `api.anthropic.com`. If that endpoint is unreachable, the CLI exits at startup and users cannot start Claude Code.
 
 As of v2.1.139, the `claude auth` subcommands such as `claude auth login` are exempt from this check, so users can re-authenticate when expired credentials are the reason the settings fetch fails.

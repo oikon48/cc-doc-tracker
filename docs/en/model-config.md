@@ -23,7 +23,7 @@ For the `model` setting in Claude Code, you can configure either:
   * Vertex: a version name
 
 <Note>
-  `ANTHROPIC_BASE_URL` changes where requests are sent, not which model answers them. To route Claude through an LLM gateway, see [LLM gateway configuration](/en/llm-gateway).
+  `ANTHROPIC_BASE_URL` changes where requests are sent, not which model answers them. To route Claude through an LLM gateway, see [LLM gateways](/en/llm-gateway).
 </Note>
 
 ### Model aliases
@@ -175,7 +175,7 @@ Set `enforceAvailableModels: true` alongside a non-empty `availableModels` in ma
 
 When the default model for the user's account type is not in the allowlist, the Default option instead resolves to the first `availableModels` entry that names an allowed, available model, and the `/model` picker's Default row shows that model. This applies everywhere the default is reached: session startup, selecting Default in `/model`, the `"default"` keyword in [fallback model chains](#fallback-model-chains), and the fallback used when an excluded selection is dropped.
 
-`enforceAvailableModels` has no effect when `availableModels` is unset or empty: with `availableModels: []`, the Default model for the account type remains usable, so the setting cannot lock users out of every model. When `availableModels` is non-empty but no entry resolves to an allowed and available model, enforcement degrades and Default falls through to the account-type default, with a warning visible only under `--debug`. Keep at least one guaranteed-available entry in the list to avoid this.
+`enforceAvailableModels` has no effect when `availableModels` is unset or empty: with `availableModels: []`, the Default model for the account type remains usable, so the setting cannot lock users out of every model. When `availableModels` is non-empty but no entry resolves to an allowed and available model, enforcement is skipped and Default resolves to the account-type default, with a warning visible only under `--debug`. Keep at least one guaranteed-available entry in the list to avoid this.
 
 Deploy both keys in the [highest-precedence managed source](/en/settings#settings-precedence): admin-deployed managed sources do not merge, so a pair placed in a managed settings file is ignored when the admin console delivers any settings.
 
@@ -221,7 +221,7 @@ Use the Console toggle instead of `availableModels` when your members authentica
 
 A restricted model is hidden from the `/model` picker. Selecting it by name with `--model`, the `ANTHROPIC_MODEL` environment variable, or the `model` setting shows the notice `Model "<name>" is restricted by your organization's settings. Using <model> instead.` and the session starts on an allowed model. Typing `/model <name>` for a restricted model is rejected with `Model '<name>' is restricted by your organization's settings. Run /model to choose a different model.` and the session keeps its current model.
 
-The two mechanisms compose: a model is selectable only when it is permitted by `availableModels` and not restricted by the organization. Organization restrictions are delivered to sessions on the Anthropic API and [LLM gateway](/en/llm-gateway) deployments. Sessions on Bedrock, Vertex AI, Foundry, and Claude Platform on AWS do not receive them, so use `availableModels` on those providers instead.
+Both restrictions apply together: a model is selectable only when it is permitted by `availableModels` and not restricted by the organization. Organization restrictions are delivered to sessions on the Anthropic API and [LLM gateway](/en/llm-gateway) deployments. Sessions on Bedrock, Vertex AI, Foundry, and Claude Platform on AWS do not receive them, so use `availableModels` on those providers instead.
 
 ## Special model behavior
 
@@ -293,7 +293,7 @@ Fable 5 runs with safety classifiers for cybersecurity and biology content. When
 
 The session then continues on that Opus model. To return to Fable 5, run `/model fable`.
 
-The fallback target is checked against [`availableModels`](#restrict-model-selection). When it is blocked, no fallback occurs. The refusal surfaces as a normal error and the session's model is unchanged.
+The fallback target is checked against [`availableModels`](#restrict-model-selection). When it is blocked, no fallback occurs. The refusal is shown as a normal error and the session's model is unchanged.
 
 #### Check what triggered fallback
 
@@ -443,7 +443,7 @@ You can see which model you're currently using in several ways:
 
 ## Add a custom model option
 
-Use `ANTHROPIC_CUSTOM_MODEL_OPTION` to add a single custom entry to the `/model` picker without replacing the built-in aliases. This is useful for testing model IDs that Claude Code does not list by default. For LLM gateway deployments, Claude Code can populate the picker from the gateway's `/v1/models` endpoint when `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` is set, so this variable is needed only when discovery is disabled or does not return the model you want. See [LLM gateway model selection](/en/llm-gateway#model-selection).
+Use `ANTHROPIC_CUSTOM_MODEL_OPTION` to add a single custom entry to the `/model` picker without replacing the built-in aliases. This is useful for testing model IDs that Claude Code does not list by default. For LLM gateway deployments, Claude Code can populate the picker from the gateway's `/v1/models` endpoint when `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` is set, so this variable is needed only when discovery is disabled or does not return the model you want. See [gateway model discovery](/en/llm-gateway-protocol#model-discovery).
 
 This example sets all three variables to make a gateway-routed Opus deployment selectable:
 
