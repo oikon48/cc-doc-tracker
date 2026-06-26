@@ -15,7 +15,7 @@ source: https://code.claude.com/docs/en/github-enterprise-server.md
   GitHub Enterprise Server support is available for Team and Enterprise plans.
 </Note>
 
-GitHub Enterprise Server (GHES) support lets your organization use Claude Code with repositories hosted on your self-managed GitHub instance instead of github.com. Once an admin connects your GHES instance, developers can run web sessions, get automated code reviews, and install plugins from internal marketplaces without any per-repository configuration.
+GitHub Enterprise Server (GHES) support lets your organization use Claude Code with repositories hosted on your self-managed GitHub instance instead of github.com. Once an Owner connects your GHES instance, developers can run web sessions, get automated code reviews, and install plugins from internal marketplaces without any per-repository configuration.
 
 For repositories on github.com, see [Claude Code on the web](/en/claude-code-on-the-web) and [Code Review](/en/code-review). To run Claude in your own CI infrastructure, see [GitHub Actions](/en/github-actions).
 
@@ -23,20 +23,20 @@ For repositories on github.com, see [Claude Code on the web](/en/claude-code-on-
 
 The table below shows which Claude Code features support GHES and any differences from github.com behavior.
 
-| Feature                | GHES support    | Notes                                                                                                                        |
-| :--------------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| Claude Code on the web | ✅ Supported     | Admin connects the GHES instance once; developers use `claude --remote` or [claude.ai/code](https://claude.ai/code) as usual |
-| Code Review            | ✅ Supported     | Same automated PR reviews as github.com                                                                                      |
-| Claude Security        | ✅ Supported     | Available in public beta for Enterprise plans at [claude.ai/security](https://claude.ai/security)                            |
-| Teleport sessions      | ✅ Supported     | Move sessions between web and terminal with `--teleport`                                                                     |
-| Plugin marketplaces    | ✅ Supported     | Use full git URLs instead of `owner/repo` shorthand                                                                          |
-| Contribution metrics   | ✅ Supported     | Delivered via webhooks to the [analytics dashboard](/en/analytics)                                                           |
-| GitHub Actions         | ✅ Supported     | Requires manual workflow setup; `/install-github-app` is github.com only                                                     |
-| GitHub MCP server      | ❌ Not supported | The GitHub MCP server does not work with GHES instances                                                                      |
+| Feature                | GHES support    | Notes                                                                                                                           |
+| :--------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| Claude Code on the web | ✅ Supported     | An Owner connects the GHES instance once; developers use `claude --remote` or [claude.ai/code](https://claude.ai/code) as usual |
+| Code Review            | ✅ Supported     | Same automated PR reviews as github.com                                                                                         |
+| Claude Security        | ✅ Supported     | Available in public beta for Enterprise plans at [claude.ai/security](https://claude.ai/security)                               |
+| Teleport sessions      | ✅ Supported     | Move sessions between web and terminal with `--teleport`                                                                        |
+| Plugin marketplaces    | ✅ Supported     | Use full git URLs instead of `owner/repo` shorthand                                                                             |
+| Contribution metrics   | ✅ Supported     | Delivered via webhooks to the [analytics dashboard](/en/analytics)                                                              |
+| GitHub Actions         | ✅ Supported     | Requires manual workflow setup; `/install-github-app` is github.com only                                                        |
+| GitHub MCP server      | ❌ Not supported | The GitHub MCP server does not work with GHES instances                                                                         |
 
 ## Admin setup
 
-An admin connects your GHES instance to Claude Code once. After that, developers in your organization can use GHES repositories without any additional configuration. You need admin access to your Claude organization and permission to create GitHub Apps on your GHES instance.
+An Owner connects your GHES instance to Claude Code once. After that, developers in your organization can use GHES repositories without any additional configuration. You need the Owner or Primary Owner role in your Claude organization and permission to create GitHub Apps on your GHES instance.
 
 The guided setup generates a GitHub App manifest and redirects you to your GHES instance to create the app in one click. If your environment blocks the redirect flow, an [alternative manual setup](#manual-setup) is available.
 
@@ -88,7 +88,7 @@ Your GHES instance must be reachable from Anthropic infrastructure so Claude can
 
 ## Developer workflow
 
-Once your admin has connected the GHES instance, no developer-side configuration is needed. Claude Code detects your GHES hostname automatically from the git remote in your working directory.
+Once an Owner has connected the GHES instance, no developer-side configuration is needed. Claude Code detects your GHES hostname automatically from the git remote in your working directory.
 
 Clone a repository from your GHES instance as you normally would:
 
@@ -172,7 +172,7 @@ A few features behave differently on GHES than on github.com. The [feature table
 
 ### Web session fails to clone repository
 
-If `claude --remote` fails with a clone error, verify that your admin has completed setup for your GHES instance and that the GitHub App is installed on the repository you're working in. Check with your admin that the instance hostname registered in Claude settings matches the hostname in your git remote.
+If `claude --remote` fails with a clone error, verify that an Owner has completed setup for your GHES instance and that the GitHub App is installed on the repository you're working in. Ask the Owner who connected the instance to confirm that the hostname registered in Claude settings matches the hostname in your git remote.
 
 ### Marketplace add fails with a policy error
 

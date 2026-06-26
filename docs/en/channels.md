@@ -297,7 +297,7 @@ The allowlist also gates [permission relay](/en/channels-reference#relay-permiss
 
 Admins control availability through two [managed settings](/en/settings) that users cannot override. The default depends on how you authenticate:
 
-* **claude.ai Team and Enterprise**: channels are blocked until an admin enables them.
+* **claude.ai Team and Enterprise**: channels are blocked until an Owner enables them.
 * **Anthropic Console with API key authentication**: channels are permitted by default. You only need this setting if your organization deploys managed settings.
 
 In all cases, no channel runs until a user opts it in for the session with `--channels`.
@@ -311,7 +311,7 @@ Pro and Max users without an organization skip these checks entirely: channels a
 
 ### Enable channels for your organization
 
-Admins can enable channels from [**claude.ai → Admin settings → Claude Code → Channels**](https://claude.ai/admin-settings/claude-code), or by setting `channelsEnabled` to `true` in managed settings.
+Enable channels for your organization from [**claude.ai → Admin settings → Claude Code → Channels**](https://claude.ai/admin-settings/claude-code), which requires the Owner role, or by setting `channelsEnabled` to `true` in managed settings.
 
 Once enabled, users in your organization can use `--channels` to opt channel servers into individual sessions. If the setting is disabled or unset, the MCP server still connects and its tools work, but channel messages won't arrive. A startup warning tells the user to have an admin enable the setting.
 

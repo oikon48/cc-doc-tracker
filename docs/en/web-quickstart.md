@@ -189,7 +189,7 @@ Cloud sessions require a connected GitHub account. Connect via the browser flow 
 
 ### "Not available for the selected organization"
 
-Enterprise organizations may need an admin to enable Claude Code on the web. Contact your Anthropic account team.
+Enterprise organizations may need an Owner to enable Claude Code on the web. Contact your Anthropic account team.
 
 ### `/web-setup` shows "No commands match" or "Unknown command"
 

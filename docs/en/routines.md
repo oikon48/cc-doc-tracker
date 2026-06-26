@@ -27,7 +27,7 @@ A single routine can combine triggers. For example, a PR review routine can run 
 
 Routines are available on Pro, Max, Team, and Enterprise plans with [Claude Code on the web](/en/claude-code-on-the-web) enabled. Create and manage them at [claude.ai/code/routines](https://claude.ai/code/routines), or from the CLI with `/schedule`.
 
-Team and Enterprise admins can disable routines for all members with the Routines toggle at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). When disabled, existing routines stop running and members cannot create new ones.
+Team and Enterprise Owners can disable routines for all members with the Routines toggle at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). When disabled, existing routines stop running and members cannot create new ones.
 
 This page covers creating a routine, configuring each trigger type, managing runs, and how usage limits apply.
 
@@ -384,7 +384,7 @@ You can always create and manage routines at [claude.ai/code/routines](https://c
 
 ### "Routines are disabled by your organization's policy"
 
-Your Team or Enterprise admin has likely turned off the **Routines** toggle at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). This is a server-side organization setting, so it cannot be overridden from your local configuration. Contact your admin to request that routines be enabled for your organization.
+An Owner in your Team or Enterprise organization has likely turned off the **Routines** toggle at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). This is a server-side organization setting, so it cannot be overridden from your local configuration. Ask an Owner to enable routines for your organization.
 
 ## Related resources
 
