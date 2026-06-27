@@ -159,7 +159,7 @@ Claude Code reads `id` and the optional `display_name` from each entry in the re
 {
   "data": [
     { "id": "claude-sonnet-4-6", "display_name": "Claude Sonnet 4.6" },
-    { "id": "claude-opus-4-7" }
+    { "id": "claude-opus-4-8" }
   ]
 }
 ```

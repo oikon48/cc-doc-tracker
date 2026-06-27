@@ -60,6 +60,8 @@ Subagents can be limited to specific tools, reducing the risk of unintended acti
 
 Define subagents directly in your code using the `agents` parameter. This example creates two subagents: a code reviewer with read-only access and a test runner that can execute commands. Claude invokes subagents through the `Agent` tool, so include `Agent` in `allowedTools` to auto-approve subagent invocations without a permission prompt.
 
+Most examples on this page print only the final result. To confirm that Claude delegated to a subagent rather than answering directly, see [Detecting subagent invocation](#detecting-subagent-invocation).
+
 <CodeGroup>
   ```python Python theme={null}
   import asyncio
@@ -180,7 +182,7 @@ Define subagents directly in your code using the `agents` parameter. This exampl
 | `effort`          | `'low' \| 'medium' \| 'high' \| 'xhigh' \| 'max' \| number` | No       | Reasoning effort level for this agent                                                                                                                                                                                            |
 | `permissionMode`  | `PermissionMode`                                            | No       | Permission mode for tool execution within this agent                                                                                                                                                                             |
 
-In the Python SDK, these field names use camelCase to match the wire format. See the [`AgentDefinition` reference](/en/agent-sdk/python#agentdefinition) for details.
+In the Python SDK, multi-word field names such as `disallowedTools` and `mcpServers` keep their camelCase spelling to match the wire format rather than following Python's snake\_case convention. See the [`AgentDefinition` reference](/en/agent-sdk/python#agentdefinition) for details.
 
 <Note>
   {/* min-version: 2.1.172 */}As of Claude Code v2.1.172, subagents can spawn their own subagents. A subagent five levels below the main agent cannot spawn further subagents, regardless of whether it runs in the foreground or background. To prevent a subagent from spawning others, omit `Agent` from its `tools` array or add it to `disallowedTools`. See [nested subagents](/en/sub-agents#spawn-nested-subagents) for the full depth rules.
@@ -440,20 +442,25 @@ The example below defines a custom `endpoint-finder` agent. The first query runs
       session_id = None
 
       # First invocation - run the endpoint-finder subagent
-      async for message in query(
-          prompt="Use the endpoint-finder agent to find all API endpoints in this codebase",
-          options=ClaudeAgentOptions(allowed_tools=["Read", "Grep", "Glob", "Agent"], agents=AGENTS),
-      ):
-          # Capture session_id from ResultMessage (needed to resume this session)
-          if hasattr(message, "session_id"):
-              session_id = message.session_id
-          # Search tool results for the agentId trailer
-          for block in getattr(message, "content", None) or []:
-              if isinstance(block, ToolResultBlock):
-                  agent_id = extract_agent_id(block) or agent_id
-          # Print the final result
-          if hasattr(message, "result"):
-              print(message.result)
+      try:
+          async for message in query(
+              prompt="Use the endpoint-finder agent to find all API endpoints in this codebase",
+              options=ClaudeAgentOptions(allowed_tools=["Read", "Grep", "Glob", "Agent"], agents=AGENTS),
+          ):
+              # Capture session_id from ResultMessage (needed to resume this session)
+              if hasattr(message, "session_id"):
+                  session_id = message.session_id
+              # Search tool results for the agentId trailer
+              for block in getattr(message, "content", None) or []:
+                  if isinstance(block, ToolResultBlock):
+                      agent_id = extract_agent_id(block) or agent_id
+              # Print the final result
+              if hasattr(message, "result"):
+                  print(message.result)
+      except Exception as error:
+          # A single-shot query() raises after yielding an error result,
+          # so session_id and agent_id have already been captured by the loop above.
+          print(f"Session ended with an error: {error}")
 
       # Second invocation - resume and ask follow-up
       if agent_id and session_id:
@@ -465,6 +472,8 @@ The example below defines a custom `endpoint-finder` agent. The first query runs
           ):
               if hasattr(message, "result"):
                   print(message.result)
+      else:
+          print("No agentId found in the first query, so there is no subagent to resume.")
 
 
   asyncio.run(main())
@@ -493,17 +502,23 @@ The example below defines a custom `endpoint-finder` agent. The first query runs
   let sessionId: string | undefined;
 
   // First invocation - run the endpoint-finder subagent
-  for await (const message of query({
-    prompt: "Use the endpoint-finder agent to find all API endpoints in this codebase",
-    options: { allowedTools: ["Read", "Grep", "Glob", "Agent"], agents }
-  })) {
-    // Capture session_id from ResultMessage (needed to resume this session)
-    if ("session_id" in message) sessionId = message.session_id;
-    // Search message content for the agentId (appears in Agent tool results)
-    const extractedId = extractAgentId(message);
-    if (extractedId) agentId = extractedId;
-    // Print the final result
-    if ("result" in message) console.log(message.result);
+  try {
+    for await (const message of query({
+      prompt: "Use the endpoint-finder agent to find all API endpoints in this codebase",
+      options: { allowedTools: ["Read", "Grep", "Glob", "Agent"], agents }
+    })) {
+      // Capture session_id from ResultMessage (needed to resume this session)
+      if ("session_id" in message) sessionId = message.session_id;
+      // Search message content for the agentId (appears in Agent tool results)
+      const extractedId = extractAgentId(message);
+      if (extractedId) agentId = extractedId;
+      // Print the final result
+      if ("result" in message) console.log(message.result);
+    }
+  } catch (error) {
+    // A single-shot query() throws after yielding an error result,
+    // so sessionId and agentId have already been captured by the loop above.
+    console.error(`Session ended with an error: ${error}`);
   }
 
   // Second invocation - resume and ask follow-up
@@ -514,6 +529,8 @@ The example below defines a custom `endpoint-finder` agent. The first query runs
     })) {
       if ("result" in message) console.log(message.result);
     }
+  } else {
+    console.log("No agentId found in the first query, so there is no subagent to resume.");
   }
   ```
 </CodeGroup>

@@ -60,7 +60,7 @@ To add custom tools, connect an [MCP server](/en/mcp). To extend Claude with reu
 
 ## Configure tools with permission rules and hooks
 
-For the most part, Claude decides when to use these tools and you do not need to name them yourself when interacting with Claude. You reference tool names directly when defining permissions and other configuration:
+For the most part, Claude decides when to use these tools and you don't need to name them yourself when interacting with Claude. You reference tool names directly when defining permissions and other configuration:
 
 * in [`permissions.allow` and `permissions.deny`](/en/settings#available-settings) in settings, and the `/permissions` interface
 * in the `--allowedTools` and `--disallowedTools` [CLI flags](/en/cli-reference)
@@ -84,7 +84,7 @@ All of these accept the same rule format, `ToolName(specifier)`. The specifier d
 
 Tools not listed here, such as `ExitPlanMode` or `ShareOnboardingGuide`, accept only the bare tool name with no specifier.
 
-An `Edit(...)` allow rule also grants read access to the same path, so you do not need a matching `Read(...)` rule.
+An `Edit(...)` allow rule also grants read access to the same path, so you don't need a matching `Read(...)` rule.
 
 Hook `matcher` fields use bare tool names, not the parenthesized rule format. See [matcher patterns](/en/hooks#matcher-patterns) for the matching rules. For the field names each tool passes to `tool_input` in hooks, see the [PreToolUse input reference](/en/hooks#pretooluse-input).
 
@@ -115,7 +115,7 @@ The Bash tool runs each command in a separate process with the following persist
 * When Claude runs `cd` in the main session, the new working directory carries over to later Bash commands as long as it stays inside the project directory or an [additional working directory](/en/permissions#working-directories) you added with `--add-dir`, `/add-dir`, or `additionalDirectories` in settings. Subagent sessions never carry over working directory changes.
   * If `cd` lands outside those directories, Claude Code resets to the project directory and appends `Shell cwd was reset to <dir>` to the tool result.
   * To disable this carry-over so every Bash command starts in the project directory, set `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1`.
-* Environment variables do not persist. An `export` in one command will not be available in the next.
+* Environment variables don't persist. An `export` in one command won't be available in the next.
 * Aliases and shell functions defined in your shell startup file are available. At session start, Claude Code sources `~/.zshrc`, `~/.bashrc`, or `~/.profile` depending on your shell, captures the resulting aliases, functions, and shell options, and applies them to every Bash command.
 
 Activate your virtualenv or conda environment before launching Claude Code. To make environment variables persist across Bash commands, set [`CLAUDE_ENV_FILE`](/en/env-vars) to a shell script before launching Claude Code, or use a [SessionStart hook](/en/hooks#persist-environment-variables) to populate it dynamically.
@@ -137,7 +137,7 @@ Three checks must pass for an edit to apply:
 * **Match**: `old_string` must appear in the file exactly as written. A single character of whitespace or indentation difference is enough to miss.
 * **Uniqueness**: `old_string` must appear exactly once. When it appears more than once, Claude either supplies a longer string with enough surrounding context to pin down one occurrence, or sets `replace_all: true` to replace them all.
 
-Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, or `fgrep` on a single file with no pipes or redirects. Piped output and other Bash commands do not count, and Claude must use Read before editing in those cases.
+Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, or `fgrep` on a single file with no pipes or redirects. Piped output and other Bash commands don't count, and Claude must use Read before editing in those cases.
 
 This affects edit eligibility only, not permissions. [Read and Edit deny rules](/en/permissions#tool-specific-permission-rules) also apply to file commands Claude Code recognizes in Bash, such as `cat`, `head`, `tail`, `sed`, and `grep`, but not to arbitrary subprocesses that read or write files indirectly, like a Python or Node script that opens files itself. The set of commands recognized for deny rules is not the same as the read-before-edit list above: for example, `egrep` and `fgrep` count for read-before-edit but are not checked against Read deny rules. For OS-level enforcement that covers every process, [enable the sandbox](/en/sandboxing).
 
@@ -290,7 +290,7 @@ WebFetch sets a `User-Agent` header beginning with `Claude-User`, and an `Accept
 
 WebSearch runs a query against Anthropic's [web search](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool) backend and returns result titles and URLs. It does not fetch the result pages. To read a page Claude finds in search results, it follows up with [WebFetch](#webfetch-tool-behavior).
 
-The tool may issue up to eight backend searches per call, refining the search internally before returning results. Claude can scope results with `allowed_domains` to include only certain hosts, or `blocked_domains` to exclude them. The two lists cannot be combined in a single call.
+The tool may issue up to eight backend searches per call, refining the search internally before returning results. Claude can scope results with `allowed_domains` to include only certain hosts, or `blocked_domains` to exclude them. The two lists can't be combined in a single call.
 
 The search backend is not configurable. To search with a different provider, add an [MCP server](/en/mcp) that exposes a search tool.
 

@@ -23,15 +23,7 @@ You install a channel as a plugin and configure it with your own credentials. Te
 
 When Claude replies through a channel, you see the inbound message in your terminal but not the reply text. The terminal shows the tool call and a confirmation (like "sent"), and the actual reply appears on the other platform.
 
-This page covers:
-
-* [Supported channels](#supported-channels): Telegram, Discord, and iMessage setup
-* [Install and run a channel](#quickstart) with fakechat, a localhost demo
-* [Who can push messages](#security): sender allowlists and how you pair
-* [Enable channels for your organization](#enterprise-controls) if you manage a Team, Enterprise, or Console org
-* [How channels compare](#how-channels-compare) to web sessions, Slack, MCP, and Remote Control
-
-To build your own channel, see the [Channels reference](/en/channels-reference).
+If you manage a Team, Enterprise, or Console organization, see [Enable channels for your organization](#enterprise-controls). To build your own channel, see the [Channels reference](/en/channels-reference).
 
 ## Supported channels
 

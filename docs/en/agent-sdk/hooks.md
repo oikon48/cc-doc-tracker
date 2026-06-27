@@ -19,7 +19,7 @@ Hooks are callback functions that run your code in response to agent events, lik
 * **Require human approval** for sensitive actions like database writes or API calls
 * **Track session lifecycle** to manage state, clean up resources, or send notifications
 
-This guide covers how hooks work, how to configure them, and provides examples for common patterns like blocking tools, modifying inputs, and forwarding notifications.
+This guide covers how hooks work and how to configure them, with examples for common patterns like blocking tools, modifying inputs, and forwarding notifications.
 
 ## How hooks work
 
@@ -202,10 +202,10 @@ To configure a hook, pass it in the `hooks` field of your agent options (`Claude
   ```
 </CodeGroup>
 
-The `hooks` option is a dictionary (Python) or object (TypeScript) where:
+The `hooks` option is a dictionary in Python or an object in TypeScript, where:
 
-* **Keys** are [hook event names](#available-hooks) (e.g., `'PreToolUse'`, `'PostToolUse'`, `'Stop'`)
-* **Values** are arrays of [matchers](#matchers), each containing an optional filter pattern and your [callback functions](#callback-functions)
+* **Keys**: [hook event names](#available-hooks) such as `'PreToolUse'`, `'PostToolUse'`, and `'Stop'`
+* **Values**: arrays of [matchers](#matchers), each containing an optional filter pattern and your [callback functions](#callback-functions)
 
 ### Matchers
 
@@ -219,12 +219,14 @@ SDK matchers follow the same rules as [matchers in settings files](/en/hooks#mat
 | `hooks`   | `HookCallback[]` | -           | Required. Array of callback functions to execute when the pattern matches                                                                                                                                                                                                                                                                                                          |
 | `timeout` | `number`         | `60`        | Timeout in seconds                                                                                                                                                                                                                                                                                                                                                                 |
 
-Use the `matcher` pattern to target specific tools whenever possible. A matcher with `'Bash'` only runs for Bash commands, while omitting the pattern runs your callbacks for every occurrence of the event. Note that for tool-based hooks, matchers only filter by **tool name**, not by file paths or other arguments. To filter by file path, check `tool_input.file_path` inside your callback.
+Use the `matcher` pattern to target specific tools whenever possible. A matcher with `'Bash'` only runs for Bash commands, while omitting the pattern runs your callbacks for every occurrence of the event.
+
+For tool-based hooks, matchers only filter by tool name, not by file paths or other arguments. To filter by file path, check `tool_input.file_path` inside your callback.
 
 <Tip>
   **Discovering tool names:** See [Tool Input Types](/en/agent-sdk/typescript#tool-input-types) for the full list of built-in tool names, or add a hook without a matcher to log all tool calls your session makes.
 
-  **MCP tool naming:** MCP tools always start with `mcp__` followed by the server name and action: `mcp__<server>__<action>`. For example, if you configure a server named `playwright`, its tools will be named `mcp__playwright__browser_screenshot`, `mcp__playwright__browser_click`, etc. The server name comes from the key you use in the `mcpServers` configuration.
+  **MCP tool naming:** MCP tools always start with `mcp__` followed by the server name and action: `mcp__<server>__<action>`. For example, if you configure a server named `playwright`, its tools are named `mcp__playwright__browser_screenshot`, `mcp__playwright__browser_click`, and so on. The server name comes from the key you use in the `mcpServers` configuration.
 </Tip>
 
 ### Callback functions
@@ -233,7 +235,7 @@ Use the `matcher` pattern to target specific tools whenever possible. A matcher 
 
 Every hook callback receives three arguments:
 
-* **Input data:** a typed object containing event details. Each hook type has its own input shape (for example, `PreToolUseHookInput` includes `tool_name` and `tool_input`, while `NotificationHookInput` includes `message`). See the full type definitions in the [TypeScript](/en/agent-sdk/typescript#hookinput) and [Python](/en/agent-sdk/python#hookinput) SDK references.
+* **Input data:** a typed object containing event details. Each hook type has its own input shape. For example, `PreToolUseHookInput` includes `tool_name` and `tool_input`, while `NotificationHookInput` includes `message`. See the full type definitions in the [TypeScript](/en/agent-sdk/typescript#hookinput) and [Python](/en/agent-sdk/python#hookinput) SDK references.
   * All hook inputs share `session_id`, `cwd`, and `hook_event_name`.
   * `agent_id` and `agent_type` are populated when the hook fires inside a subagent. In TypeScript, these are on the base hook input and available to all hook types. In Python, they are on `PreToolUse`, `PostToolUse`, and `PostToolUseFailure` only.
 * **Tool use ID** (`str | None` / `string | undefined`): correlates `PreToolUse` and `PostToolUse` events for the same tool call.
@@ -249,12 +251,12 @@ Your callback returns an object with two categories of fields:
 Return `{}` to allow the operation without changes. SDK callback hooks use the same JSON output format as [Claude Code shell command hooks](/en/hooks#json-output), which documents every field and event-specific option. For the SDK type definitions, see the [TypeScript](/en/agent-sdk/typescript#synchookjsonoutput) and [Python](/en/agent-sdk/python#synchookjsonoutput) SDK references.
 
 <Note>
-  When multiple hooks or permission rules apply, **deny** takes priority over **defer**, which takes priority over **ask**, which takes priority over **allow**. If any hook returns `deny`, the operation is blocked regardless of other hooks.
+  When multiple hooks or permission rules apply, `deny` takes priority over `defer`, which takes priority over `ask`, which takes priority over `allow`. If any hook returns `deny`, the operation is blocked regardless of other hooks.
 </Note>
 
 #### Asynchronous output
 
-By default, the agent waits for your hook to return before proceeding. If your hook performs a side effect (logging, sending a webhook) and doesn't need to influence the agent's behavior, you can return an async output instead. This tells the agent to continue immediately without waiting for the hook to finish:
+By default, the agent waits for your hook to return before proceeding. If your hook performs a side effect, such as logging or sending a webhook, and doesn't need to influence the agent's behavior, you can return an async output instead. This tells the agent to continue immediately without waiting for the hook to finish:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -279,7 +281,7 @@ By default, the agent waits for your hook to return before proceeding. If your h
 | `asyncTimeout` | `number` | Optional timeout in milliseconds for the background operation                                                  |
 
 <Note>
-  Async outputs cannot block, modify, or inject context into the operation since the agent has already moved on. Use them only for side effects like logging, metrics, or notifications.
+  Async outputs can't block, modify, or inject context into the operation since the agent has already moved on. Use them only for side effects like logging, metrics, or notifications.
 </Note>
 
 ## Examples
@@ -431,7 +433,7 @@ By default, the agent may prompt for permission before using certain tools. This
 
 ### Register multiple hooks
 
-When an event fires, all matching hooks run in parallel. For permission decisions, the most restrictive result wins: a single `deny` blocks the tool call regardless of what the other hooks return. Because completion order is non-deterministic, write each hook to act independently rather than relying on another hook having run first.
+When an event fires, all matching hooks run in parallel. For permission decisions, the most restrictive result applies: a single `deny` blocks the tool call regardless of what the other hooks return. Because completion order is non-deterministic, write each hook to act independently rather than relying on another hook having run first.
 
 The example below registers three independent checks for every tool call:
 
@@ -754,7 +756,7 @@ This example forwards every notification to a Slack channel. It requires a [Slac
 
 ### Matcher not filtering as expected
 
-Matchers only match **tool names**, not file paths or other arguments. To filter by file path, check `tool_input.file_path` inside your hook:
+Matchers only match tool names, not file paths or other arguments. To filter by file path, check `tool_input.file_path` inside your hook:
 
 ```typescript theme={null}
 const myHook: HookCallback = async (input, toolUseID, { signal }) => {
@@ -776,7 +778,7 @@ const myHook: HookCallback = async (input, toolUseID, { signal }) => {
 
 * Check all `PreToolUse` hooks for `permissionDecision: 'deny'` returns
 * Add logging to your hooks to see what `permissionDecisionReason` they're returning
-* Verify matcher patterns aren't too broad (an empty matcher matches all tools)
+* Verify matcher patterns aren't too broad: an empty matcher matches all tools
 
 ### Modified input not applied
 
@@ -798,7 +800,7 @@ const myHook: HookCallback = async (input, toolUseID, { signal }) => {
 
 ### Session hooks not available in Python
 
-`SessionStart` and `SessionEnd` can be registered as SDK callback hooks in TypeScript, but are not available in the Python SDK (`HookEvent` omits them). In Python, they are only available as [shell command hooks](/en/hooks#hook-events) defined in settings files (for example, `.claude/settings.json`). To load shell command hooks from your SDK application, include the appropriate setting source with [`setting_sources`](/en/agent-sdk/python#settingsource) or [`settingSources`](/en/agent-sdk/typescript#settingsource):
+`SessionStart` and `SessionEnd` can be registered as SDK callback hooks in TypeScript, but aren't available in the Python SDK because its `HookEvent` type omits them. In Python, they are only available as [shell command hooks](/en/hooks#hook-events) defined in settings files such as `.claude/settings.json`. To load shell command hooks from your SDK application, include the appropriate setting source with [`setting_sources`](/en/agent-sdk/python#settingsource) or [`settingSources`](/en/agent-sdk/typescript#settingsource):
 
 <CodeGroup>
   ```python Python theme={null}
@@ -818,7 +820,7 @@ To run initialization logic as a Python SDK callback instead, use the first mess
 
 ### Subagent permission prompts multiplying
 
-When spawning multiple subagents, each one may request permissions separately. Subagents do not automatically inherit parent agent permissions. To avoid repeated prompts, use `PreToolUse` hooks to auto-approve specific tools, or configure permission rules that apply to subagent sessions.
+When spawning multiple subagents, each one may request permissions separately. Subagents don't automatically inherit parent agent permissions. To avoid repeated prompts, use `PreToolUse` hooks to auto-approve specific tools, or configure permission rules that apply to subagent sessions.
 
 ### Recursive hook loops with subagents
 
@@ -830,7 +832,7 @@ A `UserPromptSubmit` hook that spawns subagents can create infinite loops if tho
 
 ### systemMessage not appearing in output
 
-The `systemMessage` field shows a message to the user, not the model. By default the SDK does not surface hook output in the message stream, so the message may not appear unless you set `includeHookEvents` (`include_hook_events` in Python). To pass context to the model instead, return [`additionalContext`](/en/hooks#add-context-for-claude).
+The `systemMessage` field shows a message to the user, not the model. By default the SDK doesn't surface hook output in the message stream, so the message may not appear unless you set `includeHookEvents` (`include_hook_events` in Python). To pass context to the model instead, return [`additionalContext`](/en/hooks#add-context-for-claude).
 
 If you need to surface hook decisions to your application reliably, log them separately or use a dedicated output channel.
 

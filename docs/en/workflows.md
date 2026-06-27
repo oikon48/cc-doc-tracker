@@ -21,13 +21,6 @@ A dynamic workflow is a JavaScript script that orchestrates [subagents](/en/sub-
 
 Reach for a workflow when a task needs more agents than one conversation can coordinate, or when you want the orchestration codified as a script you can read and rerun. Examples include a codebase-wide bug sweep, a 500-file migration, a research question that needs sources cross-checked against each other, and a hard plan worth drafting from several independent angles before you commit to one.
 
-This page covers how to:
-
-* Decide [when to use a workflow](#when-to-use-a-workflow) instead of subagents or skills
-* [Run a bundled workflow](#run-a-bundled-workflow) with `/deep-research`
-* [Have Claude write a workflow](#have-claude-write-a-workflow) for your task and save it
-* Understand [how a workflow runs](#how-a-workflow-runs) and [manage runs](#manage-runs)
-
 ## When to use a workflow
 
 [Subagents](/en/sub-agents), [skills](/en/skills), [agent teams](/en/agent-teams), and workflows can all run a multi-step task. The difference is who holds the plan:

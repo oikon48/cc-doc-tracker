@@ -17,7 +17,7 @@ source: https://code.claude.com/docs/en/auto-mode-config.md
   Auto mode is available to all users on the Anthropic API. On Amazon Bedrock, Google Cloud Vertex AI, and Microsoft Foundry, you must first [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](/en/permission-modes#enable-auto-mode-on-bedrock-vertex-ai-or-foundry). If Claude Code reports auto mode as unavailable for your account, check the [full requirements](/en/permission-modes#eliminate-prompts-with-auto-mode), which also cover the supported models and Owner enablement on Team and Enterprise plans.
 </Note>
 
-Out of the box, the classifier trusts only the working directory and the current repo's configured remotes. Actions like pushing to your company's source-control org or writing to a team cloud bucket are blocked until you add them to `autoMode.environment`.
+By default, the classifier trusts only the working directory and the current repo's configured remotes. Actions like pushing to your company's source-control org or writing to a team cloud bucket are blocked until you add them to `autoMode.environment`.
 
 For how to enable auto mode and what it blocks by default, see [Permission modes](/en/permission-modes#eliminate-prompts-with-auto-mode). This page is the configuration reference.
 
@@ -42,12 +42,12 @@ For rules that apply across projects, such as trusted infrastructure or organiza
 | Organization-wide              | [Managed settings](/en/server-managed-settings) | Trusted infrastructure distributed to all developers |
 | `--settings` flag or Agent SDK | Inline JSON                                     | Per-invocation overrides for automation              |
 
-The classifier does not read `autoMode` from shared project settings in `.claude/settings.json`, so a checked-in repo cannot inject its own allow rules.
+The classifier doesn't read `autoMode` from shared project settings in `.claude/settings.json`, so a checked-in repo can't inject its own allow rules.
 
-Entries from each scope are combined. A developer can extend `environment`, `allow`, `soft_deny`, and `hard_deny` with personal entries but cannot remove entries that managed settings provide. Because allow rules act as exceptions to soft block rules inside the classifier, a developer-added `allow` entry can override an organization `soft_deny` entry: the combination is additive, not a hard policy boundary.
+Entries from each scope are combined. A developer can extend `environment`, `allow`, `soft_deny`, and `hard_deny` with personal entries but can't remove entries that managed settings provide. Because allow rules act as exceptions to soft block rules inside the classifier, a developer-added `allow` entry can override an organization `soft_deny` entry: the combination is additive, not a hard policy boundary.
 
 <Note>
-  The classifier is a second gate that runs after the [permissions system](/en/permissions). For actions that must never run regardless of user intent or classifier configuration, use `permissions.deny` in managed settings, which blocks the action before the classifier is consulted and cannot be overridden.
+  The classifier is a second gate that runs after the [permissions system](/en/permissions). For actions that must never run regardless of user intent or classifier configuration, use `permissions.deny` in managed settings, which blocks the action before the classifier is consulted and can't be overridden.
 </Note>
 
 ## Define trusted infrastructure
@@ -104,20 +104,28 @@ You don't need to fill everything in at once. A reasonable rollout: start with t
 
 ## Override the block and allow rules
 
-Three additional fields let you replace the classifier's built-in rule lists: `autoMode.hard_deny` for unconditional security boundaries, `autoMode.soft_deny` for destructive actions that user intent can clear, and `autoMode.allow` for exceptions. Each is an array of prose descriptions, read as natural-language rules. For tool-pattern-based hard blocks that run before the classifier, use [`permissions.deny`](/en/permissions).
+Three additional fields let you replace the classifier's built-in rule lists:
+
+* `autoMode.hard_deny`: unconditional security boundaries
+* `autoMode.soft_deny`: destructive actions that user intent can clear
+* `autoMode.allow`: exceptions to soft block rules
+
+Each is an array of prose descriptions, read as natural-language rules. For tool-pattern-based hard blocks that run before the classifier, use [`permissions.deny`](/en/permissions).
 
 Inside the classifier, precedence works in four tiers:
 
-* `hard_deny` rules block unconditionally. User intent and `allow` exceptions do not apply.
+* `hard_deny` rules block unconditionally. User intent and `allow` exceptions don't apply.
 * `soft_deny` rules block next. User intent and `allow` exceptions can override these.
 * `allow` rules then override matching `soft_deny` rules as exceptions.
 * Explicit user intent overrides the remaining soft blocks: if the user's message directly and specifically describes the exact action Claude is about to take, the classifier allows it even when a `soft_deny` rule matches.
 
-General requests don't count as explicit intent. Asking Claude to "clean up the repo" does not authorize force-pushing, but asking Claude to "force-push this branch" does.
+General requests don't count as explicit intent. Asking Claude to "clean up the repo" doesn't authorize force-pushing, but asking Claude to "force-push this branch" does.
 
 To loosen, add to `allow` when the classifier repeatedly flags a routine pattern the default exceptions don't cover. To tighten, add to `soft_deny` for destructive risks specific to your environment that the defaults miss, or to `hard_deny` for security boundaries that must never be crossed.
 
 To keep the built-in rules while adding your own, include the literal string `"$defaults"` in the array. The default rules are spliced in at that position, so your custom rules can go before or after them, and you continue to inherit updates as the built-in list changes across releases.
+
+The following example keeps the defaults in all four lists and adds organization-specific rules to each.
 
 ```json theme={null}
 {
@@ -148,7 +156,9 @@ To keep the built-in rules while adding your own, include the literal string `"$
   Setting any of `environment`, `allow`, `soft_deny`, or `hard_deny` without `"$defaults"` replaces the entire default list for that section. A `soft_deny` array without `"$defaults"` discards every built-in soft block rule, including force push, `curl | bash`, and production deploys. A `hard_deny` array without `"$defaults"` discards the built-in data exfiltration and auto-mode bypass rules.
 </Danger>
 
-Each section is evaluated independently, so setting `environment` alone leaves the default `allow`, `soft_deny`, and `hard_deny` lists intact. Only omit `"$defaults"` when you intend to take full ownership of the list. To do that safely, run `claude auto-mode defaults` to print the built-in rules, copy them into your settings file, then review each rule against your own pipeline and risk tolerance.
+Each section is evaluated independently, so setting `environment` alone leaves the default `allow`, `soft_deny`, and `hard_deny` lists intact.
+
+Only omit `"$defaults"` when you intend to take full ownership of the list. To do that safely, run `claude auto-mode defaults` to print the built-in rules, copy them into your settings file, then review each rule against your own pipeline and risk tolerance.
 
 ## Inspect the defaults and your effective config
 
@@ -172,7 +182,9 @@ Get AI feedback on your custom `allow`, `soft_deny`, and `hard_deny` rules:
 claude auto-mode critique
 ```
 
-Run `claude auto-mode config` after saving your settings to confirm the effective rules are what you expect, with `"$defaults"` expanded in place. If you've written custom rules, `claude auto-mode critique` reviews them and flags entries that are ambiguous, redundant, or likely to cause false positives. If you need to remove or rewrite a built-in rule rather than add alongside it, save the output of `claude auto-mode defaults` to a file, edit the lists, and paste the result into your settings file in place of `"$defaults"`.
+Run `claude auto-mode config` after saving your settings to confirm the effective rules are what you expect, with `"$defaults"` expanded in place. If you've written custom rules, `claude auto-mode critique` reviews them and flags entries that are ambiguous, redundant, or likely to cause false positives.
+
+If you need to remove or rewrite a built-in rule rather than add alongside it, save the output of `claude auto-mode defaults` to a file, edit the lists, and paste the result into your settings file in place of `"$defaults"`.
 
 ## Review denials
 
