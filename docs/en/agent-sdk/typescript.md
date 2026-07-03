@@ -484,7 +484,7 @@ const result = query({
 ```
 
 * `API_TIMEOUT_MS`: per-request timeout on the Anthropic client, in milliseconds. Default `600000`. Applies to the main loop and all subagents.
-* `CLAUDE_CODE_MAX_RETRIES`: maximum API retries. Default `10`, capped at `15`. Each retry gets its own `API_TIMEOUT_MS` window, so worst-case wall time is roughly `API_TIMEOUT_MS × (CLAUDE_CODE_MAX_RETRIES + 1)` plus backoff. For unattended runs that need to wait through longer outages, set `CLAUDE_CODE_RETRY_WATCHDOG=1` to retry capacity errors indefinitely.
+* `CLAUDE_CODE_MAX_RETRIES`: maximum API retries. Default `10`, capped at `15`. Each retry gets its own `API_TIMEOUT_MS` window, so worst-case wall time is roughly `API_TIMEOUT_MS × (CLAUDE_CODE_MAX_RETRIES + 1)` plus backoff. For unattended runs that need to wait through longer outages, set `CLAUDE_CODE_RETRY_WATCHDOG=1`: it retries capacity errors indefinitely, and {/* min-version: 2.1.199 */}as of Claude Code v2.1.199 raises the default for other transient errors to `300` and removes the cap on this variable.
 * `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`: stall watchdog for subagents launched with `run_in_background`. Default `600000`. Resets on each stream event; on stall it aborts the subagent, marks the task failed, and surfaces the error to the parent with any partial result. Does not apply to synchronous subagents.
 * `CLAUDE_ENABLE_STREAM_WATCHDOG` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. The watchdog is on by default for all providers; set `CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable it. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
 
@@ -806,8 +806,9 @@ type CanUseTool = (
     decisionReason?: string;
     toolUseID: string;
     agentID?: string;
+    requestId: string;
   }
-) => Promise<PermissionResult>;
+) => Promise<PermissionResult | null>;
 ```
 
 | Option           | Type                                        | Description                                                                                                                                                                                                                                                                                                  |
@@ -818,6 +819,11 @@ type CanUseTool = (
 | `decisionReason` | `string`                                    | Explains why this permission request was triggered                                                                                                                                                                                                                                                           |
 | `toolUseID`      | `string`                                    | Unique identifier for this specific tool call within the assistant message                                                                                                                                                                                                                                   |
 | `agentID`        | `string`                                    | If running within a sub-agent, the sub-agent's ID                                                                                                                                                                                                                                                            |
+| `requestId`      | `string`                                    | The `control_request` envelope's `request_id`. A `control_response` your application sends outside the SDK, such as a signed HTTP POST, must echo this value so the Claude Code process can match the reply to the request                                                                                   |
+
+The callback normally resolves the request by returning a [`PermissionResult`](#permissionresult), which the SDK writes back over its transport as the `control_response`. Return `null` only when your application has already sent the `control_response` for this request over its own channel, echoing `requestId`; the SDK then skips writing the response to its transport. Returning `null` in any other case leaves the tool call blocked indefinitely, because no `control_response` is ever sent and permission prompts don't time out.
+
+The `requestId` option and the `null` return value require Claude Code v2.1.199 or later.
 
 ### `PermissionResult`
 
@@ -1952,7 +1958,7 @@ type TaskStopInput = {
 };
 ```
 
-Stops a running background task or shell by ID.
+Stops a running background task or shell by ID. {/* min-version: 2.1.198 */}As of v2.1.198, `task_id` also accepts an agent-team teammate or a named background agent by agent ID or name.
 
 ### NotebookEdit
 
@@ -3399,7 +3405,7 @@ type SandboxSettings = {
 | `ripgrep`                   | `{ command: string; args?: string[] }`                | `undefined` | Custom ripgrep binary configuration for sandbox environments                                                                                                                                                                            |
 
 <Note>
-  The sandbox depends on platform support and, on Linux, tools like `bubblewrap` and `socat`. When `enabled` is `true` and the sandbox can't start, `query()` reports a `result` message with `subtype: "error_during_execution"` and the reason in `errors`, then stops. Watch for that subtype rather than expecting `query()` to throw before yielding messages.
+  The sandbox depends on platform support and, on Linux, tools like `bubblewrap` and `socat`. When `enabled` is `true` and the sandbox can't start, `query()` reports a `result` message with `subtype: "error_during_execution"` and the reason in `errors`. For a single message `query()` call, the SDK throws after yielding that error result, so wrap the loop in a try block to continue past it. See [Handle the result](/en/agent-sdk/agent-loop#handle-the-result) for the error contract.
 
   To run unsandboxed instead, set `failIfUnavailable: false`.
 </Note>
@@ -3409,19 +3415,25 @@ type SandboxSettings = {
 ```typescript theme={null}
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
-for await (const message of query({
-  prompt: "Build and test my project",
-  options: {
-    sandbox: {
-      enabled: true,
-      autoAllowBashIfSandboxed: true,
-      network: {
-        allowLocalBinding: true
+try {
+  for await (const message of query({
+    prompt: "Build and test my project",
+    options: {
+      sandbox: {
+        enabled: true,
+        autoAllowBashIfSandboxed: true,
+        network: {
+          allowLocalBinding: true
+        }
       }
     }
+  })) {
+    if ("result" in message) console.log(message.result);
   }
-})) {
-  if ("result" in message) console.log(message.result);
+} catch (error) {
+  // A single-shot query() throws after yielding an error result,
+  // such as when the sandbox can't start (failIfUnavailable defaults to true).
+  console.log(`Session ended with an error: ${error}`);
 }
 ```
 
