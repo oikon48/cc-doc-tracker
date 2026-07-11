@@ -17,11 +17,11 @@ Claude Code supports fine-grained permissions so that you can specify exactly wh
 
 Claude Code uses a tiered permission system to balance power and safety:
 
-| Tool type         | Example          | Approval required | "Yes, don't ask again" behavior               |
-| :---------------- | :--------------- | :---------------- | :-------------------------------------------- |
-| Read-only         | File reads, Grep | No                | N/A                                           |
-| Bash commands     | Shell execution  | Yes               | Permanently per project directory and command |
-| File modification | Edit/write files | Yes               | Until session end                             |
+| Tool type         | Example          | Approval required                                                                   | "Yes, don't ask again" behavior               |
+| :---------------- | :--------------- | :---------------------------------------------------------------------------------- | :-------------------------------------------- |
+| Read-only         | File reads, Grep | No, within the [working directory and additional directories](#working-directories) | N/A                                           |
+| Bash commands     | Shell execution  | Yes, except a built-in set of [read-only commands](#read-only-commands)             | Permanently per project directory and command |
+| File modification | Edit/write files | Yes                                                                                 | Until session end                             |
 
 ## Manage permissions
 
@@ -50,7 +50,7 @@ Claude Code supports several permission modes that control how it approves tool 
 | `default`           | Standard behavior: prompts for permission on first use of each tool. {/* min-version: 2.1.200 */}Labeled Manual in the CLI and the VS Code and JetBrains extensions, and Claude Code accepts `manual` as an alias. The label and alias require Claude Code v2.1.200 or later |
 | `acceptEdits`       | Automatically accepts file edits and common filesystem commands such as `mkdir`, `touch`, `mv`, and `cp` for paths in the working directory or `additionalDirectories`                                                                                                       |
 | `plan`              | Claude reads files and runs read-only shell commands to explore but doesn't edit your source files. Labeled Plan in the CLI and the VS Code extension                                                                                                                        |
-| `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview                                                                                                                                             |
+| `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request                                                                                                                                                                           |
 | `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                                                                                                                                                                        |
 | `bypassPermissions` | Skips permission prompts, except those forced by explicit `ask` rules. Root and home directory removals such as `rm -rf /` also still prompt as a circuit breaker                                                                                                            |
 
