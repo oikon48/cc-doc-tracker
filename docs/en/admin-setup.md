@@ -70,6 +70,17 @@ Whichever mechanism you choose, managed values take precedence over user and pro
 
 See [Server-managed settings](/en/server-managed-settings) and [Settings files and precedence](/en/settings#settings-files).
 
+### WSL sessions in Claude Code Desktop
+
+On Windows, [Claude Code Desktop can run Code sessions inside a WSL 2 distribution](/en/desktop-wsl). The session's Claude Code process runs inside the distribution, so it resolves managed settings through the WSL discovery path above: Windows-only sources don't reach it unless `wslInheritsWindowsSettings: true` is deployed.
+
+On devices where managed settings are present, Desktop WSL sessions are unavailable by default. If your organization wants to enable them, contact your Anthropic account team. When they're enabled:
+
+* Deploy `wslInheritsWindowsSettings: true` through the HKLM registry or the `C:\Program Files\ClaudeCode` file so WSL sessions inherit the same policy as host sessions.
+* Verify by running `/status` inside a WSL session: the `Setting sources` line should show `Enterprise managed settings` with the Windows source you deployed, `(HKLM)` or `(file)`.
+
+Processes inside the WSL 2 utility VM aren't visible to Windows-side endpoint detection sensors. If you use CrowdStrike Falcon, enable the Falcon sensor for Linux on WSL 2 with the two exclusions CrowdStrike's WSL documentation requires, for the WSL virtual machine process and the VM disk image, so in-distro process and file activity is observable. Claude Code's [OpenTelemetry tool-execution telemetry](/en/monitoring-usage) is emitted identically for WSL and native sessions.
+
 ## Decide what to enforce
 
 Managed settings can lock down tools, sandbox execution, restrict MCP servers and plugin sources, and control which hooks run. Each row is a control surface with the setting keys that drive it.
@@ -97,15 +108,16 @@ For the threat model these controls defend against, see [Security](/en/security)
 
 ## Set up usage visibility
 
-Choose monitoring based on what you need to report on.
+Choose monitoring based on what you need to report on. The dashboards, APIs, and spend controls differ between Claude for Teams or Enterprise plans and Claude Console organizations, so check the Availability column before you plan your reporting around a capability.
 
-| Capability          | What you get                                         | Availability                                                                                                                                                              | Where to start                           |
-| :------------------ | :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------- |
-| Usage monitoring    | OpenTelemetry export of sessions, tools, and tokens  | All providers                                                                                                                                                             | [Monitoring usage](/en/monitoring-usage) |
-| Analytics dashboard | Per-user metrics, contribution tracking, leaderboard | Anthropic only                                                                                                                                                            | [Analytics](/en/analytics)               |
-| Cost tracking       | Spend limits, rate limits, and usage attribution     | Anthropic; on third-party clouds, a [Claude apps gateway](/en/claude-apps-gateway) provides per-user attribution and [spend limits](/en/claude-apps-gateway-spend-limits) | [Costs](/en/costs)                       |
+| Capability             | What you get                                                                                                            | Availability                                                                                                                                                                                                                                                         | Where to start                                        |
+| :--------------------- | :---------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| Usage monitoring       | OpenTelemetry export of sessions, tools, and tokens                                                                     | All providers                                                                                                                                                                                                                                                        | [Monitoring usage](/en/monitoring-usage)              |
+| Analytics dashboard    | Adoption and contribution metrics with a leaderboard on Teams / Enterprise; per-user usage and spend metrics on Console | Teams / Enterprise at [claude.ai/analytics](https://claude.ai/analytics/claude-code), Console at [platform.claude.com/claude-code](https://platform.claude.com/claude-code)                                                                                          | [Analytics](/en/analytics)                            |
+| Programmatic reporting | Per-user usage and cost data over an API                                                                                | [Enterprise Analytics API](https://support.claude.com/en/articles/13703965-claude-enterprise-analytics-api-reference-guide) for Enterprise, [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) for Console | [Costs](/en/costs#manage-costs-for-your-organization) |
+| Spend controls         | Spend limits and rate limits                                                                                            | Admin settings for Teams / Enterprise, workspace limits for Console; on third-party clouds, cloud budget controls or a [Claude apps gateway](/en/claude-apps-gateway) with per-user [spend limits](/en/claude-apps-gateway-spend-limits)                             | [Costs](/en/costs#manage-costs-for-your-organization) |
 
-Cloud providers expose spend through AWS Cost Explorer, GCP Billing, or Azure Cost Management. Claude for Teams and Enterprise plans include a usage dashboard at [claude.ai/analytics/claude-code](https://claude.ai/analytics/claude-code).
+On Teams and Enterprise, per-user usage and spend numbers come from the [spend report](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans) in your organization's analytics settings, not the analytics dashboard. Cloud providers expose spend through AWS Cost Explorer, GCP Billing, or Azure Cost Management. For planning enterprise budgets across Claude chat, Claude Code, and Cowork, see the [Claude Enterprise consumption guide](https://support.claude.com/en/articles/14782391-claude-enterprise-consumption-guide).
 
 ## Review data handling
 
