@@ -22,6 +22,8 @@ For the `model` setting in Claude Code, you can configure either:
   * Microsoft Foundry: a deployment name
   * Google Cloud's Agent Platform: a version name
 
+For guidance on which model and effort level fit different kinds of work, see [Choosing a Claude model and effort level in Claude Code](https://claude.com/blog/claude-model-and-effort-level-in-claude-code) on the blog.
+
 <Note>
   `ANTHROPIC_BASE_URL` changes where requests are sent, not which model answers them. To route Claude through an LLM gateway, see [LLM gateways](/en/llm-gateway).
 </Note>
