@@ -41,7 +41,7 @@ Learn more: [How Claude Code works](/en/how-claude-code-works#the-agentic-loop)
 
 ### Artifact
 
-A live, interactive web page Claude Code publishes from your session to a private URL on claude.ai, so you can see output visually or share it inside your organization instead of reading terminal text. The page updates in place when the session republishes. Artifacts you create from Claude Code appear in the same gallery as artifacts created in claude.ai conversations, but their sharing stops at your organization and they cannot be made public.
+A live, interactive web page Claude Code publishes from your session to a private URL on claude.ai, so you can see output visually or share it instead of reading terminal text. The page updates in place when the session republishes. Artifacts you create from Claude Code appear in the same gallery as artifacts created in claude.ai conversations. Sharing depends on your plan: on Pro and Max, a public link that anyone can open; on Team and Enterprise, sharing within your organization, plus public links once an Owner enables them.
 
 Learn more: [Share session output as artifacts](/en/artifacts)
 
@@ -195,7 +195,7 @@ Learn more: [Output styles](/en/output-styles)
 
 The baseline approval behavior for the session. Cycle with `Shift+Tab` in the CLI or use the mode selector in VS Code, Desktop, and claude.ai. Available modes are `default`, `acceptEdits`, `plan`, `auto`, `dontAsk`, and `bypassPermissions`.
 
-The `default` mode is labeled Manual in the CLI and in the VS Code and JetBrains extensions, and Claude Code accepts `manual` as an alias for the value.
+The `default` mode is labeled Manual in the CLI, in the VS Code and JetBrains extensions, and in the desktop app, and Claude Code accepts `manual` as an alias for the value.
 
 Learn more: [Choose a permission mode](/en/permission-modes)
 
