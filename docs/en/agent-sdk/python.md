@@ -2429,7 +2429,7 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
 ```python theme={null}
 {
     "command": str,  # The command to execute
-    "timeout": int | None,  # Optional timeout in milliseconds (max 600000)
+    "timeout": int | None,  # Optional timeout in milliseconds (max 600000; higher values are clamped to the max)
     "description": str | None,  # Clear, concise description (5-10 words)
     "run_in_background": bool | None,  # Set to true to run in background
 }
