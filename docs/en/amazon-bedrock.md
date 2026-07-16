@@ -149,8 +149,10 @@ export AWS_SESSION_TOKEN=your-session-token
 
 **Option C: Environment variables (SSO profile)**
 
+Replace `your-profile-name` with the name of your AWS profile before running these commands.
+
 ```bash theme={null}
-aws sso login --profile=<your-profile-name>
+aws sso login --profile=your-profile-name
 
 export AWS_PROFILE=your-profile-name
 ```
