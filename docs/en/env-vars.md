@@ -56,9 +56,31 @@ Set the variable before launching `claude`:
   </Tab>
 </Tabs>
 
+The assignment line prints nothing on success, so confirm the variable is set by printing it in the same shell before you run `claude`:
+
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    echo $API_TIMEOUT_MS
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    echo $env:API_TIMEOUT_MS
+    ```
+  </Tab>
+
+  <Tab title="Windows CMD">
+    ```batch theme={null}
+    echo %API_TIMEOUT_MS%
+    ```
+  </Tab>
+</Tabs>
+
 ### In settings files
 
-Add variables under the `env` key in a `settings.json` file. Claude Code reads them directly from the file at startup, so they take effect no matter how `claude` was launched.
+Add variables under the `env` key in a `settings.json` file, creating the file if it doesn't exist. Claude Code reads them directly from the file, so they take effect no matter how `claude` was launched. A running session applies new and changed values to its environment when you save the file, but a feature that reads its variables once at startup, such as [OpenTelemetry monitoring](/en/monitoring-usage), keeps its startup values until you relaunch. Removing a variable from the file doesn't unset it in a running session; the removal takes effect the next time you launch `claude`.
 
 ```json ~/.claude/settings.json theme={null}
 {
@@ -84,13 +106,13 @@ See [Settings files](/en/settings#settings-files) for where each file lives and 
 
 Where the same behavior has both an environment variable and a settings field, the environment variable takes precedence. For example, `ANTHROPIC_MODEL` overrides the `model` setting, and `CLAUDE_CODE_AUTO_CONNECT_IDE` overrides `autoConnectIde`. The settings field applies when the environment variable is not set.
 
-When the same variable is set in both your shell and a settings file `env` block, the settings file value applies. Claude Code writes each `env` entry into the process environment at startup, replacing the value inherited from the shell. A few variables are special-cased; the [`env` setting](/en/settings#available-settings) lists the exceptions.
+When the same variable is set in both your shell and a settings file `env` block, the settings file value applies. Claude Code writes each `env` entry into the process environment at startup and again when the file changes, replacing the value inherited from the shell. A few variables are special-cased; the [`env` setting](/en/settings#available-settings) lists the exceptions.
 
 Between settings files, `env` values follow [settings precedence](/en/settings#settings-precedence), so a managed settings entry overrides the same variable in user or project settings.
 
 How an environment variable interacts with CLI flags and in-session commands varies per feature: `--model` and `/model` override `ANTHROPIC_MODEL`, while `CLAUDE_CODE_EFFORT_LEVEL` overrides `/effort`. When a variable interacts with another configuration source, its row in the [Variables](#variables) list states the precedence or links to the page that documents it.
 
-Claude Code reads environment variables at startup, so changes take effect the next time you launch `claude`.
+Claude Code reads shell environment variables at startup, so changes to them take effect the next time you launch `claude`. Variables set under the `env` key in settings files are reapplied to a running session when the file changes, with the startup-only exception described in [In settings files](#in-settings-files).
 
 ## Variables
 
@@ -301,7 +323,6 @@ Numeric variables such as timeouts, token budgets, and retry counts accept scien
 | `CLAUDE_CODE_SYNC_SKILLS_WAIT_TIMEOUT_MS`               | Timeout in milliseconds for the first query to wait on the initial skills sync when `CLAUDE_CODE_SYNC_SKILLS` is set (default: 5000). When exceeded, the query proceeds and remaining skill downloads continue in the background                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `CLAUDE_CODE_SYNTAX_HIGHLIGHT`                          | Set to `false` to disable syntax highlighting in diff output. Useful when colors interfere with your terminal setup. To also disable highlighting in code blocks and file previews, use the [`syntaxHighlightingDisabled`](/en/settings) setting                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `CLAUDE_CODE_TASK_LIST_ID`                              | Share a task list across sessions. Set the same ID in multiple Claude Code instances to coordinate on a shared task list. See [Task list](/en/interactive-mode#task-list)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `CLAUDE_CODE_TEAM_NAME`                                 | Name of the agent team this teammate belongs to. Set automatically on [agent team](/en/agent-teams) members                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `CLAUDE_CODE_TEAM_TEARDOWN_PARK_TIMEOUT_MS`             | {/* min-version: 2.1.206 */}Override, in milliseconds, how long a non-interactive session waits at exit for its [agent team](/en/agent-teams) to finish tearing down. Accepts 1000 to 60000; an out-of-range value is ignored and the default of 10000 applies. Requires Claude Code v2.1.206 or later                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `CLAUDE_CODE_TMPDIR`                                    | Override the temp directory used for internal temp files. Claude Code appends `/claude-{uid}/` on Unix or `/claude/` on Windows to this path. Default: `/tmp` on macOS, `os.tmpdir()` on Linux and Windows. {/* min-version: 2.1.161 */}As of v2.1.161, on macOS and Linux, [sandboxed](/en/sandboxing) Bash subprocesses receive a short fallback `$TMPDIR` under the system default when your override is a long path, since some tools fail when temp paths get too long. Unsandboxed Bash commands inherit your shell's `$TMPDIR` unchanged. Claude Code's own temp files always use your override                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `CLAUDE_CODE_TMUX_TRUECOLOR`                            | Set to `1` to allow 24-bit truecolor output inside tmux. By default, Claude Code clamps to 256 colors when `$TMUX` is set because tmux does not pass through truecolor escape sequences unless configured to. Set this after adding `set -ga terminal-overrides ',*:Tc'` to your `~/.tmux.conf`. See [Terminal configuration](/en/terminal-config) for other tmux settings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
