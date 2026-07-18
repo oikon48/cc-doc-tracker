@@ -185,12 +185,12 @@ For CI pipelines, scripts, or other environments where interactive browser login
 claude setup-token
 ```
 
-The command walks you through OAuth authorization and prints a token to the terminal. It does not save the token anywhere; copy it and set it as the `CLAUDE_CODE_OAUTH_TOKEN` environment variable wherever you want to authenticate:
+The command opens the same browser authorization flow as `/login`, and the token prints to the terminal after you approve access in the browser. It does not save the token anywhere; copy it and set it as the `CLAUDE_CODE_OAUTH_TOKEN` environment variable wherever you want to authenticate:
 
 ```bash theme={null}
 export CLAUDE_CODE_OAUTH_TOKEN=your-token
 ```
 
-This token authenticates with your Claude subscription and requires a Pro, Max, Team, or Enterprise plan. It is scoped to inference only and cannot establish [Remote Control](/en/remote-control) sessions.
+This token authenticates with your Claude subscription and requires a Pro, Max, Team, or Enterprise plan. It can only make model requests, so it can't establish [Remote Control](/en/remote-control) sessions or fetch [claude.ai connectors](/en/mcp#use-mcp-servers-from-claude-ai). MCP servers you configure locally still work.
 
 [Bare mode](/en/headless#start-faster-with-bare-mode) does not read `CLAUDE_CODE_OAUTH_TOKEN`. If your script passes `--bare`, authenticate with `ANTHROPIC_API_KEY` or an `apiKeyHelper` instead.

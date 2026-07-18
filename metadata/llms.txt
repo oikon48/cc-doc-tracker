@@ -110,6 +110,7 @@
 - [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart.md): Add an MCP server to Claude Code, verify the connection, and find the configuration on disk.
 - [How Claude remembers your project](https://code.claude.com/docs/en/memory.md): Give Claude persistent instructions with CLAUDE.md files, and let Claude accumulate learnings automatically with auto memory.
 - [Claude Code on Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md): Learn about configuring Claude Code through Microsoft Foundry, including setup, configuration, and troubleshooting.
+- [Claude Code on mobile](https://code.claude.com/docs/en/mobile.md): Start, monitor, and steer Claude Code tasks from your phone with the Claude app for iOS and Android.
 - [Model configuration](https://code.claude.com/docs/en/model-config.md): Learn about the Claude Code model configuration, including model aliases like `opusplan`
 - [Monitoring](https://code.claude.com/docs/en/monitoring-usage.md): Learn how to enable and configure OpenTelemetry for Claude Code.
 - [Enterprise network configuration](https://code.claude.com/docs/en/network-config.md): Configure Claude Code for enterprise environments with proxy servers, custom Certificate Authorities (CA), and mutual Transport Layer Security (mTLS) authentication.
@@ -168,6 +169,7 @@
 - [Week 26 · June 22–26, 2026](https://code.claude.com/docs/en/whats-new/2026-w26.md): Authenticate MCP servers from your shell with claude mcp login, get a response to shell mode command output with the ! prefix, and resume a conversation from before /clear with /rewind.
 - [Week 27 · June 29 – July 3, 2026](https://code.claude.com/docs/en/whats-new/2026-w27.md): Claude Sonnet 5 becomes the default model, Claude in Chrome reaches general availability, subagents run in the background by default, Claude Desktop arrives on Linux in beta, and /radio tunes into Claude FM.
 - [Week 28 · July 6–10, 2026](https://code.claude.com/docs/en/whats-new/2026-w28.md): Browse external sites from the Desktop app's built-in browser, run a full setup checkup with /doctor, and pick up auto mode transcript protections and agent view upgrades.
+- [Week 29 · July 13–17, 2026](https://code.claude.com/docs/en/whats-new/2026-w29.md): Pull live data into published artifacts through MCP connectors, and use Claude Code with a screen reader in the new screen reader mode.
 - [What's new](https://code.claude.com/docs/en/whats-new/index.md): A weekly digest of notable Claude Code features, with code snippets, demos, and context on why they matter.
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows.md): Dynamic workflows orchestrate many subagents from a script Claude writes and you can rerun. Use them for codebase audits, large migrations, and cross-checked research.
 - [Run parallel sessions with worktrees](https://code.claude.com/docs/en/worktrees.md): Isolate parallel Claude Code sessions in separate git worktrees so changes don't collide. Covers the `--worktree` flag, subagent isolation, `.worktreeinclude`, cleanup, and non-git VCS hooks.
