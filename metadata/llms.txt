@@ -60,6 +60,7 @@
 - [Use Claude Code on the web](https://code.claude.com/docs/en/claude-code-on-the-web.md): Configure cloud environments, setup scripts, network access, and Docker in Anthropic's sandbox. Move sessions between web and terminal with `--cloud` and `--teleport`.
 - [Explore the .claude directory](https://code.claude.com/docs/en/claude-directory.md): Where Claude Code reads CLAUDE.md, settings.json, hooks, skills, commands, subagents, workflows, rules, and auto memory. Explore the .claude directory in your project and ~/.claude in your home directory.
 - [Claude Code on Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md): Configure Claude Code to use the Anthropic-operated Claude API with AWS authentication, IAM access control, and AWS Marketplace billing.
+- [Scan your codebase for vulnerabilities](https://code.claude.com/docs/en/claude-security.md): Install the Claude Security plugin to scan your codebase for vulnerabilities in a Claude Code session and turn findings into patches you review and apply.
 - [CLI reference](https://code.claude.com/docs/en/cli-reference.md): Complete reference for Claude Code command-line interface, including commands and flags.
 - [Code Review](https://code.claude.com/docs/en/code-review.md): Set up automated PR reviews that catch logic errors, security vulnerabilities, and regressions using multi-agent analysis of your full codebase
 - [Commands](https://code.claude.com/docs/en/commands.md): Complete reference for commands available in Claude Code, including built-in commands and bundled skills.
