@@ -85,21 +85,28 @@ To load CLAUDE.md, set `settingSources` to include the level your CLAUDE.md live
   ```
 
   ```python Python theme={null}
+  import asyncio
+
   from claude_agent_sdk import query, ClaudeAgentOptions
 
   messages = []
 
-  async for message in query(
-      prompt="Add a new React component for user profiles",
-      options=ClaudeAgentOptions(
-          system_prompt={
-              "type": "preset",
-              "preset": "claude_code",  # Use Claude Code's system prompt
-          },
-          setting_sources=["project"],  # Loads CLAUDE.md from project
-      ),
-  ):
-      messages.append(message)
+
+  async def main():
+      async for message in query(
+          prompt="Add a new React component for user profiles",
+          options=ClaudeAgentOptions(
+              system_prompt={
+                  "type": "preset",
+                  "preset": "claude_code",  # Use Claude Code's system prompt
+              },
+              setting_sources=["project"],  # Loads CLAUDE.md from project
+          ),
+      ):
+          messages.append(message)
+
+
+  asyncio.run(main())
 
   # Now Claude has access to your project guidelines from CLAUDE.md
   ```
@@ -179,23 +186,30 @@ You can use the Claude Code preset with an `append` property to add your custom 
   ```
 
   ```python Python theme={null}
+  import asyncio
+
   from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
 
   messages = []
 
-  async for message in query(
-      prompt="Help me write a Python function to calculate fibonacci numbers",
-      options=ClaudeAgentOptions(
-          system_prompt={
-              "type": "preset",
-              "preset": "claude_code",
-              "append": "Always include detailed docstrings and type hints in Python code.",
-          }
-      ),
-  ):
-      messages.append(message)
-      if isinstance(message, AssistantMessage):
-          print(message.content)
+
+  async def main():
+      async for message in query(
+          prompt="Help me write a Python function to calculate fibonacci numbers",
+          options=ClaudeAgentOptions(
+              system_prompt={
+                  "type": "preset",
+                  "preset": "claude_code",
+                  "append": "Always include detailed docstrings and type hints in Python code.",
+              }
+          ),
+      ):
+          messages.append(message)
+          if isinstance(message, AssistantMessage):
+              print(message.content)
+
+
+  asyncio.run(main())
   ```
 </CodeGroup>
 
@@ -231,20 +245,27 @@ The following example pairs a shared `append` block with `excludeDynamicSections
   ```
 
   ```python Python theme={null}
+  import asyncio
+
   from claude_agent_sdk import query, ClaudeAgentOptions
 
-  async for message in query(
-      prompt="Triage the open issues in this repo",
-      options=ClaudeAgentOptions(
-          system_prompt={
-              "type": "preset",
-              "preset": "claude_code",
-              "append": "You operate Acme's internal triage workflow. Label issues by component and severity.",
-              "exclude_dynamic_sections": True,
-          },
-      ),
-  ):
-      ...
+
+  async def main():
+      async for message in query(
+          prompt="Triage the open issues in this repo",
+          options=ClaudeAgentOptions(
+              system_prompt={
+                  "type": "preset",
+                  "preset": "claude_code",
+                  "append": "You operate Acme's internal triage workflow. Label issues by component and severity.",
+                  "exclude_dynamic_sections": True,
+              },
+          ),
+      ):
+          ...
+
+
+  asyncio.run(main())
   ```
 </CodeGroup>
 
@@ -284,6 +305,8 @@ You can provide a custom string as `systemPrompt` to replace the default entirel
   ```
 
   ```python Python theme={null}
+  import asyncio
+
   from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
 
   custom_prompt = """You are a Python coding specialist.
@@ -296,13 +319,18 @@ You can provide a custom string as `systemPrompt` to replace the default entirel
 
   messages = []
 
-  async for message in query(
-      prompt="Create a data processing pipeline",
-      options=ClaudeAgentOptions(system_prompt=custom_prompt),
-  ):
-      messages.append(message)
-      if isinstance(message, AssistantMessage):
-          print(message.content)
+
+  async def main():
+      async for message in query(
+          prompt="Create a data processing pipeline",
+          options=ClaudeAgentOptions(system_prompt=custom_prompt),
+      ):
+          messages.append(message)
+          if isinstance(message, AssistantMessage):
+              print(message.content)
+
+
+  asyncio.run(main())
   ```
 </CodeGroup>
 
@@ -409,28 +437,35 @@ The example below assumes a Code Reviewer output style is already active. The `a
   ```
 
   ```python Python theme={null}
+  import asyncio
+
   from claude_agent_sdk import query, ClaudeAgentOptions
 
   # Assuming "Code Reviewer" output style is active (via /config or settings)
   # Add session-specific focus areas
   messages = []
 
-  async for message in query(
-      prompt="Review this authentication module",
-      options=ClaudeAgentOptions(
-          system_prompt={
-              "type": "preset",
-              "preset": "claude_code",
-              "append": """
-              For this review, prioritize:
-              - OAuth 2.0 compliance
-              - Token storage security
-              - Session management
-              """,
-          }
-      ),
-  ):
-      messages.append(message)
+
+  async def main():
+      async for message in query(
+          prompt="Review this authentication module",
+          options=ClaudeAgentOptions(
+              system_prompt={
+                  "type": "preset",
+                  "preset": "claude_code",
+                  "append": """
+                  For this review, prioritize:
+                  - OAuth 2.0 compliance
+                  - Token storage security
+                  - Session management
+                  """,
+              }
+          ),
+      ):
+          messages.append(message)
+
+
+  asyncio.run(main())
   ```
 </CodeGroup>
 
