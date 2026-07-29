@@ -143,7 +143,7 @@
 - [Claude Code settings](https://code.claude.com/docs/en/settings.md): Configure Claude Code with global and project-level settings, and environment variables.
 - [Advanced setup](https://code.claude.com/docs/en/setup.md): System requirements, platform-specific installation, version management, and uninstallation for Claude Code.
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills.md): Create, manage, and share skills to extend Claude's capabilities in Claude Code. Includes custom commands and bundled skills.
-- [Claude Code in Slack](https://code.claude.com/docs/en/slack.md): Delegate coding tasks directly from your Slack workspace
+- [Claude Code in Slack](https://code.claude.com/docs/en/slack.md): Delegate coding tasks directly from your Slack workspace. Anthropic is retiring this earlier version for Team and Enterprise workspaces in favor of Claude Tag; it remains the setup path on Pro and Max plans.
 - [Customize your status line](https://code.claude.com/docs/en/statusline.md): Configure a custom status bar to monitor context window usage, costs, and git status in Claude Code
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents.md): Create and use specialized AI subagents in Claude Code for task-specific workflows and improved context management.
 - [Configure your terminal for Claude Code](https://code.claude.com/docs/en/terminal-config.md): Fix Shift+Enter for newlines, get a terminal bell when Claude finishes, configure tmux, match the color theme, and enable Vim mode in the Claude Code CLI.

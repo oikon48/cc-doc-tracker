@@ -331,7 +331,18 @@ Once a run starts, you manage it from the `/workflows` view, or by expanding its
 
 ### Resume after a pause
 
-If you stop a run, you can resume it: agents that already completed return their cached results, and the rest run live. An agent that was still running when you stopped isn't saved and starts over on resume, so a workflow that fans work out across many small agents preserves more progress than one long agent. Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
+If you stop a run, you can resume it. Agents that already completed usually return their cached results, and the rest run live.
+
+Two rules decide which results survive:
+
+* An agent that was still running when you stopped isn't saved, so it starts over on resume.
+* Replay follows the order agents started. Cached results stop at the first agent that didn't finish, and every agent that started after that one runs again, even if it completed.
+
+The second rule is what makes stopping mid fan-out expensive. Say a script starts four agents, A, B, C, and D, in that order, and you stop the run while B is still going. On resume, A returns from cache. B runs again because it never finished. C and D run again too, because they started after B, even though both completed before you stopped.
+
+A workflow that fans work out across many small agents therefore preserves more progress than one long agent.
+
+Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
 
 Resume works within the same Claude Code session. If you exit Claude Code while a workflow is running, the next session starts the workflow fresh.
 
@@ -339,7 +350,7 @@ Resume works within the same Claude Code session. If you exit Claude Code while 
 
 A workflow spawns many agents, so a single run can use meaningfully more tokens than working through the same task in conversation. Runs count toward your plan's usage and rate limits like any other session.
 
-To gauge the spend before committing to a large task, run the workflow on a small slice first: one directory instead of the whole repo, or a narrow question instead of a broad one. The `/workflows` view shows each agent's token usage as the run progresses, and you can stop the run there at any time without losing completed work. The runtime's [agent caps](#behavior-and-limits) limit how many agents a single run can spawn, which bounds the cost of a runaway script. To keep runs to fewer agents, choose the `small` [size guideline](#set-a-size-guideline).
+To gauge the spend before committing to a large task, run the workflow on a small slice first: one directory instead of the whole repo, or a narrow question instead of a broad one. The `/workflows` view shows each agent's token usage as the run progresses, and you can stop the run there at any time, usually without losing completed work. [Resume after a pause](#resume-after-a-pause) covers what a stopped run keeps. The runtime's [agent caps](#behavior-and-limits) limit how many agents a single run can spawn, which bounds the cost of a runaway script. To keep runs to fewer agents, choose the `small` [size guideline](#set-a-size-guideline).
 
 Claude Code also flags a run that grows unusually large. When a workflow schedules more than 25 agents, or its projected token total passes 1.5 million, its progress line in the task panel below the input box shows a `Large workflow` warning. The warning points you to [`/workflows`](#watch-the-run), where you can stop the run. Requires Claude Code v2.1.203 or later.
 

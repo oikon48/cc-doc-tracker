@@ -90,6 +90,8 @@ A JSON entry that has a `url` but no `type` is a configuration error, because Cl
   The SSE (Server-Sent Events) transport is deprecated. Use HTTP servers instead, where available.
 </Warning>
 
+Some services still expose only an SSE endpoint. Use the same command as the HTTP transport, with `--transport sse`:
+
 ```bash theme={null}
 # Basic syntax
 claude mcp add --transport sse <name> <url>
@@ -189,7 +191,7 @@ The `/mcp` panel shows the tool count next to each connected server and flags se
 
 A remote server whose configuration has an empty `url` shows as `not configured` in `/mcp`, in `claude mcp list`, and in the [`/plugin`](/docs/en/plugins) manager, and Claude Code doesn't attempt to connect to it. A plugin can include a placeholder entry like this for a connector you configure later, so Claude Code doesn't report it as an error or a setup issue. The server's detail view in `/mcp` reads `No URL configured for this server`; set the entry's `url` to connect it. Before v2.1.208, Claude Code reported an empty `url` as a configuration issue with a prompt to reconnect.
 
-If your request needs tools from a server that is still connecting in the background, Claude waits for that server before continuing. With [tool search](#scale-with-mcp-tool-search) enabled, which is the default, the wait happens inside the `ToolSearch` call. In configurations without tool search, such as Google Cloud's Agent Platform, a custom `ANTHROPIC_BASE_URL`, or `ENABLE_TOOL_SEARCH=false`, Claude uses the `WaitForMcpServers` tool instead.
+If your request needs tools from a server that is still connecting in the background, Claude waits for that server before continuing. With [tool search](#scale-with-mcp-tool-search) enabled, which is the default, the wait happens inside the `ToolSearch` call. In configurations without tool search, such as Google Cloud's Agent Platform, a custom `ANTHROPIC_BASE_URL`, or `ENABLE_TOOL_SEARCH=false`, Claude uses the `WaitForMcpServers` tool instead. A Microsoft Foundry [deployment hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options) starts on the tool-search path rather than with `WaitForMcpServers`, since Claude Code discovers the deployment's server-side rejection only from the API; after Claude Code switches that deployment to [upfront loading](#scale-with-mcp-tool-search), tools from a server that finishes connecting become available on Claude's next request.
 
 Some server names are reserved for Claude Code's built-in servers: `workspace`, `claude-in-chrome`, `computer-use`, `Claude Preview`, and `Claude Browser`. If your configuration defines a server with a reserved name, Claude Code skips it at load time and shows a warning asking you to rename it. `claude mcp add` rejects a reserved name with an error.
 
@@ -316,7 +318,7 @@ Or inline in `plugin.json`:
 
 * **Automatic lifecycle**: servers connect and disconnect at these points:
   * At session startup, Claude Code connects the servers for enabled plugins automatically
-  * If you enable or disable a plugin during a session, run `/reload-plugins` to connect or disconnect its MCP servers
+  * If you enable or disable a plugin during a session, run `/reload-plugins` to connect or disconnect its MCP servers. When you reload, Claude Code keeps the live connections of plugin servers whose configuration is unchanged, and does the same when you [replace the session's MCP server list](/docs/en/agent-sdk/typescript#mcpsetserversresult) from the Agent SDK without naming them. {/* min-version: 2.1.210 */}Before v2.1.210, Claude Code disconnected plugin-provided MCP servers that the new SDK server list didn't name
   * In [web sessions](/docs/en/claude-code-on-the-web), an MCP call to a plugin server that isn't connected yet, such as right after an idle session wakes, starts the server on demand and waits for it to connect. {/* min-version: 2.1.211 */}Before v2.1.211, plugin servers in a web session reconnected only when the next message started a turn, so MCP calls after an idle session woke failed until then
 * **Path placeholders**: `${CLAUDE_PLUGIN_ROOT}` resolves to the plugin's installation directory, `${CLAUDE_PLUGIN_DATA}` to its [persistent state](/docs/en/plugins-reference#persistent-data-directory) directory, and `${CLAUDE_PROJECT_DIR}` to the stable project root. Substitution applies to:
   * `stdio` servers: `command`, `args`, `env`
@@ -441,6 +443,8 @@ When the same server is defined in more than one place, Claude Code connects to 
 
 The three scopes match duplicates by name. Plugins and connectors match by endpoint, so one that points at the same URL or command as a server above is treated as a duplicate.
 
+If you open a local session in the [Desktop app's Code tab](/docs/en/desktop#mcp-servers-from-the-claude-desktop-chat-app) with the same stdio server name at the top level of `~/.claude.json` (user scope) and in `.mcp.json`, the Code tab uses the `~/.claude.json` definition.
+
 ### Environment variable expansion in `.mcp.json`
 
 Claude Code supports environment variable expansion in `.mcp.json` files, allowing teams to share configurations while maintaining flexibility for machine-specific paths and sensitive values like API keys.
@@ -481,6 +485,10 @@ If a referenced environment variable isn't set and has no default value, the con
 
 ### Example: Monitor errors with Sentry
 
+Sentry's remote MCP server gives Claude access to the errors your applications report to Sentry. It authenticates through OAuth rather than an API key, so you don't pass a credential when you add it.
+
+If you already added the `sentry` server in the [MCP quickstart](/docs/en/mcp-quickstart), skip this command: running `claude mcp add` again with the same server name at the same scope fails with `MCP server sentry already exists in local config`.
+
 ```bash theme={null}
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 ```
@@ -490,6 +498,8 @@ Authenticate with your Sentry account:
 ```text theme={null}
 /mcp
 ```
+
+Follow the sign-in steps in your browser. Once you're signed in, the `sentry` server shows `connected` in the `/mcp` menu.
 
 Then debug production issues:
 
@@ -532,10 +542,14 @@ Show me all open PRs assigned to me
 
 ### Example: Query your PostgreSQL database
 
+[DBHub](https://github.com/bytebase/dbhub), the `@bytebase/dbhub` package, is an MCP server that connects Claude to a relational database through the connection string you pass in `--dsn`. Use a read-only database user in the connection string so the queries Claude runs can't modify data:
+
 ```bash theme={null}
 claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
   --dsn "postgresql://readonly:pass@prod.db.com:5432/analytics"
 ```
+
+To confirm the server starts, run `/mcp` and check that `db` shows `connected`.
 
 Then query your database naturally:
 
@@ -571,7 +585,7 @@ If you configured `headers.Authorization` for the server and the server rejects 
 
 <Steps>
   <Step title="Add the server that requires authentication">
-    For example:
+    If you already added this server in the [Sentry example](#example-monitor-errors-with-sentry) or the [MCP quickstart](/docs/en/mcp-quickstart), skip this step: running `claude mcp add` again with the same server name at the same scope fails with `MCP server sentry already exists in local config`. Otherwise, run:
 
     ```bash theme={null}
     claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
@@ -1147,6 +1161,10 @@ MCP servers can expose resources that you can reference using @ mentions, simila
 
 Tool search keeps MCP context usage low by deferring tool definitions until Claude needs them. Only tool names and server instructions load at session start, so adding more MCP servers has minimal impact on your context window. Claude Code doesn't impose a fixed per-server tool cap; the practical limit is your context window budget.
 
+<Note>
+  Tool search isn't supported on Microsoft Foundry [deployments hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options), which reject it server-side: Claude Code detects the rejection and loads MCP tools upfront for that deployment instead. [`ENABLE_TOOL_SEARCH`](#configure-tool-search) can't override this, since the rejection comes from the deployment itself.
+</Note>
+
 ### How it works
 
 Tool search is enabled by default. MCP tools are deferred rather than loaded into context upfront, and Claude uses a search tool to discover relevant ones when a task needs them. Only the tools Claude actually uses enter context. From your perspective, MCP tools work exactly as before.
@@ -1175,13 +1193,13 @@ Tool search requires a model that supports `tool_reference` blocks: Claude Sonne
 
 Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 
-| Value    | Behavior                                                                                                                                                                                                                                                                 |
-| :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (unset)  | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Google Cloud's Agent Platform or when `ANTHROPIC_BASE_URL` is a non-first-party host                                                                                                       |
-| `true`   | All MCP tools deferred. Claude Code sends the beta header even on Google Cloud's Agent Platform and through proxies. Requests fail on Google Cloud's Agent Platform models earlier than Sonnet 4.5 or Opus 4.5, or on proxies that don't support `tool_reference` blocks |
-| `auto`   | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                                                                                                                                                      |
-| `auto:N` | Threshold mode with a custom percentage, where `N` is 0-100. For example, `auto:5` for 5%                                                                                                                                                                                |
-| `false`  | All MCP tools loaded upfront, no deferral                                                                                                                                                                                                                                |
+| Value    | Behavior                                                                                                                                                                                                                                                                                                                                                                                         |
+| :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (unset)  | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Google Cloud's Agent Platform, when `ANTHROPIC_BASE_URL` is a non-first-party host, or on a Microsoft Foundry deployment hosted on Azure                                                                                                                                                                           |
+| `true`   | All MCP tools deferred, except on a Microsoft Foundry deployment hosted on Azure, where the server-side rejection still forces upfront loading. Claude Code sends the beta header even on Google Cloud's Agent Platform and through proxies. Requests fail on Google Cloud's Agent Platform models earlier than Sonnet 4.5 or Opus 4.5, or on proxies that don't support `tool_reference` blocks |
+| `auto`   | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                                                                                                                                                                                                                                                                              |
+| `auto:N` | Threshold mode with a custom percentage, where `N` is 0-100. For example, `auto:5` for 5%                                                                                                                                                                                                                                                                                                        |
+| `false`  | All MCP tools loaded upfront, no deferral                                                                                                                                                                                                                                                                                                                                                        |
 
 ```bash theme={null}
 # Use a custom 5% threshold
