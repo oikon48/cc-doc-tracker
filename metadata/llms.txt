@@ -63,6 +63,7 @@
 - [Explore the .claude directory](https://code.claude.com/docs/en/claude-directory.md): Where Claude Code reads CLAUDE.md, settings.json, hooks, skills, commands, subagents, workflows, rules, and auto memory. Explore the .claude directory in your project and ~/.claude in your home directory.
 - [Claude Code on Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md): Configure Claude Code to use the Anthropic-operated Claude API with AWS authentication, IAM access control, and AWS Marketplace billing.
 - [Scan your codebase for vulnerabilities](https://code.claude.com/docs/en/claude-security.md): Install the Claude Security plugin to scan your codebase for vulnerabilities in a Claude Code session and turn findings into patches you review and apply.
+- [Claude Tag](https://code.claude.com/docs/en/claude-tag.md): Bring Claude into your team's Slack channels with Claude Tag and find its setup and usage documentation on claude.com.
 - [CLI reference](https://code.claude.com/docs/en/cli-reference.md): Complete reference for Claude Code command-line interface, including commands and flags.
 - [Configure cloud environments](https://code.claude.com/docs/en/cloud-environments.md): Configure cloud environments for Claude Code cloud sessions: network access levels, environment variables, setup scripts, and environment caching.
 - [Code Review](https://code.claude.com/docs/en/code-review.md): Set up automated PR reviews that catch logic errors, security vulnerabilities, and regressions using multi-agent analysis of your full codebase

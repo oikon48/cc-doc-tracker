@@ -156,20 +156,21 @@ When `availableModels` is set, the allowlist applies everywhere a user can speci
 * **Main session model**: `/model`, the `--model` flag, the `ANTHROPIC_MODEL` environment variable, the `model` setting, and the model restored when [resuming a session](#setting-your-model)
 * **Alias resolution**: the `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, and `ANTHROPIC_DEFAULT_FABLE_MODEL` environment variables cannot redirect an allowed alias to a model outside the list
 * **Fast mode**: `/fast` refuses to toggle when it would implicitly switch to an Opus model outside the list, with the message "is not in your organization's allowed models"
-* **Subagent models**: the `model` field in [subagent](/docs/en/sub-agents#choose-a-model) frontmatter, the Agent tool's `model` parameter, `CLAUDE_CODE_SUBAGENT_MODEL`, and, on v2.1.197 and earlier, the model picker in the `/agents` wizard&#x20;
+* **Subagent and teammate models**: the `model` field in [subagent](/docs/en/sub-agents#choose-a-model) frontmatter, the Agent tool's `model` parameter, [agent team](/docs/en/agent-teams#specify-teammates-and-models) teammate models including the `teammateDefaultModel` setting, `CLAUDE_CODE_SUBAGENT_MODEL`, and, on v2.1.197 and earlier, the model picker in the `/agents` wizard&#x20;
 * **Skill and command models**: the `model` frontmatter in [skills and commands](/docs/en/skills)
 * **Advisor model**: the configured [`advisorModel`](/docs/en/advisor) setting and the `--advisor` flag
 * **Background agent model**: the model selected in the [dispatch picker](/docs/en/agent-view)
 
 On the Anthropic API and [Claude Platform on AWS](/docs/en/claude-platform-on-aws), a model family alias, `opus`, `sonnet`, `haiku`, or `fable`, resolves to the newest version of its family that the allowlist permits. When the allowlist pins specific versions, for example `["sonnet", "claude-opus-4-6"]`, both `/model opus` and `--model opus` select Claude Opus 4.6, the newest permitted Opus, and show a notice naming both the requested and substituted models. Before v2.1.205, an alias whose newest released version was outside the list was rejected or replaced like any other blocked selection, even when the list permitted an older version.
 
-Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and [Mantle](/docs/en/amazon-bedrock#use-the-mantle-endpoint) use provider-specific deployment IDs rather than Anthropic model IDs, so a blocked alias there follows the rejection and replacement behavior below.
+The substitution needs a permitted version to land on: when the allowlist permits no version of the alias's family, the alias follows the rejection and replacement behavior below like any other blocked value. Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and [Mantle](/docs/en/amazon-bedrock#use-the-mantle-endpoint) use provider-specific deployment IDs rather than Anthropic model IDs, so a blocked alias there follows the same behavior below.
 
 Claude Code handles any other blocked selection according to where the model was set:
 
 * **`/model`**: the switch is rejected with an error
 * **`--model` flag, `ANTHROPIC_MODEL`, or the `model` setting**: the value is replaced at startup with a warning naming both the requested and substituted models, and the session starts on the default model
-* **Subagent, skill, or command override**: the override falls back to the inherited or default model rather than failing the request
+* **Subagent or teammate override**: the override falls back to the [subagent's inherited model](/docs/en/sub-agents#choose-a-model) or the [default teammate model](/docs/en/agent-teams#specify-teammates-and-models) rather than failing the request. When the blocked value is the **Default teammate model** setting itself, Claude Code runs the teammate on your provider's default Opus model, or on the lead's model when the allowlist blocks that too. On the Anthropic API and Claude Platform on AWS, a blocked family alias instead follows the substitution above, so the subagent or teammate runs on the newest permitted version of its family; on the providers with provider-specific IDs, the alias falls back like any other blocked value. Before v2.1.222, a blocked family alias fell back like any other blocked value on every provider
+* **Skill or command override**: Claude Code ignores the override, including a blocked family alias, and the skill or command runs on the session model
 * **`advisorModel` setting**: the advisor is disabled for the session
 * **`--advisor` flag**: Claude Code exits with an error at launch
 
