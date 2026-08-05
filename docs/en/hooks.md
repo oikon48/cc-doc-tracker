@@ -840,7 +840,7 @@ Exit codes only let you block or stay silent, but JSON output gives you finer-gr
 
 Your hook's stdout must contain only the JSON object. If your shell profile prints text on startup, it can interfere with JSON parsing. See [JSON validation failed](/docs/en/hooks-guide#json-validation-failed) in the troubleshooting guide.
 
-Hook output strings, including `additionalContext`, `systemMessage`, and plain stdout, are capped at 10,000 characters. Output that exceeds this limit is saved to a file and replaced with a preview and file path, the same way large tool results are handled.
+Hook output strings, including `additionalContext`, `systemMessage`, and plain stdout, are capped at 10,000 characters. Output that exceeds this limit is saved to a file and replaced with a preview and file path, the same way a large valid Bash result is handled under [Output limits](/docs/en/tools-reference#output-limits).
 
 The JSON object supports three kinds of fields:
 
@@ -1891,7 +1891,7 @@ Matches on tool name, same values as PreToolUse.
 
 #### PostToolUseFailure input
 
-PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as PostToolUse, along with error information as top-level fields:
+PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as PostToolUse, along with error information as top-level fields. For example, a failed `npm test` command might deliver:
 
 ```json theme={null}
 {
@@ -1906,17 +1906,24 @@ PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as
     "description": "Run test suite"
   },
   "tool_use_id": "toolu_01ABC123...",
-  "error": "Command exited with non-zero status code 1",
+  "error": "Exit code 1\nError: Cannot find module 'express'",
   "is_interrupt": false,
   "duration_ms": 4187
 }
 ```
 
-| Field          | Description                                                                                                   |
-| :------------- | :------------------------------------------------------------------------------------------------------------ |
-| `error`        | String describing what went wrong                                                                             |
-| `is_interrupt` | Optional boolean indicating whether the failure was caused by user interruption                               |
-| `duration_ms`  | Optional. Tool execution time in milliseconds. Excludes time spent in permission prompts and PreToolUse hooks |
+| Field          | Description                                                                                                                                                                                                                                                                                |
+| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | String describing what went wrong. The format depends on the tool that failed                                                                                                                                                                                                              |
+| `is_interrupt` | Optional boolean. True when the failure reached Claude Code as an abort rather than as an error the tool reported; the shell tools convert mid-run cancellations into ordinary exit-code errors, so an exit-code payload carries `is_interrupt: false` even when the command was cancelled |
+| `duration_ms`  | Optional. Tool execution time in milliseconds. Excludes time spent in permission prompts and PreToolUse hooks                                                                                                                                                                              |
+
+The `error` string is generally the same text Claude receives as the failed tool's result. Its format varies by tool and failure. Key your hook on `tool_name`, `is_interrupt`, and the `Exit code N` first line; treat the rest of the string as display text, not a stable format.
+
+* For Bash and PowerShell, a command that ran and exited produces a first line `Exit code N`, then any output the command produced as one block with stdout and stderr interleaved
+* The line `[Request interrupted by user for tool use]` appears when the command was cancelled while running
+* A payload may also carry a bare failure message with no exit-code line, when Claude Code could not start the shell process itself
+* Claude Code middle-truncates strings longer than 10,000 characters around a `... [N characters truncated] ...` marker, and can insert lines of its own, such as `Command timed out after 2m 0s`
 
 #### PostToolUseFailure decision control
 

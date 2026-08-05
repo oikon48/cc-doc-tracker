@@ -190,7 +190,11 @@ The percentage moves compaction earlier within the [auto-compact window](/docs/e
 
 ### Review changes
 
-Each session shows a diff indicator with lines added and removed, like `+42 -18`. Select it to open the diff view, leave inline comments on specific lines, and send them to Claude with your next message. See [Review and iterate](/docs/en/web-quickstart#review-and-iterate) for the full walkthrough including PR creation. To have Claude monitor the PR for CI failures and review comments automatically, see [Auto-fix pull requests](#auto-fix-pull-requests).
+Each session shows a diff indicator with lines added and removed, like `+42 -18`. Select it to open the diff view, leave inline comments on specific lines, and send them to Claude with your next message.
+
+Claude Code computes these diffs, including the per-file diffs shown as Claude edits, from raw git blob content, so diff drivers and `textconv` filters configured in the repository don't apply.
+
+See [Review and iterate](/docs/en/web-quickstart#review-and-iterate) for the full walkthrough including PR creation. To have Claude monitor the PR for CI failures and review comments automatically, see [Auto-fix pull requests](#auto-fix-pull-requests).
 
 ### Share sessions
 
