@@ -24,7 +24,7 @@ When you want to work more directly in any agent's session, attach to the row to
 To compare agent view with subagents, agent teams, and worktrees, see [Run agents in parallel](/docs/en/agents).
 
 <Note>
-  Agent view is in research preview and requires Claude Code v2.1.139 or later. Check your version with `claude --version`. The interface and keyboard shortcuts may change as the feature evolves.
+  Agent view is in research preview. The interface and keyboard shortcuts may change as the feature evolves.
 </Note>
 
 ## Quick start
@@ -466,7 +466,7 @@ To see the output, attach to the row, press `Space` to peek without attaching, o
 
 ### How file edits are isolated
 
-Every background session, whether started from agent view, `/bg`, or `claude --bg`, starts in your working directory. Before editing files, Claude moves the session into an isolated [git worktree](/docs/en/worktrees) under `.claude/worktrees/`, so parallel sessions can read the same checkout but each writes to its own. Once the session is in its worktree, Claude Code [blocks file edits and commands that reach the main checkout](/docs/en/worktrees#how-claude-code-enforces-isolation), for the session and for any subagents it spawns.
+Every background session, whether started from agent view, `/bg`, or `claude --bg`, starts in your working directory. Before editing files, Claude moves the session into an isolated [git worktree](/docs/en/worktrees) under `.claude/worktrees/`, so parallel sessions can read the same checkout but each writes to its own. Once the session is in its worktree, Claude Code [enforces worktree isolation](/docs/en/worktrees#how-claude-code-enforces-isolation) for the session and for any subagents it spawns.
 
 Claude skips the worktree when:
 
