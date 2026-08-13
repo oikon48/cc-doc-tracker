@@ -268,7 +268,12 @@ For details on settings file resolution, see [settings](/docs/en/settings).
 
 Hooks from settings files, managed policy settings, and plugins also run inside [subagents](/docs/en/sub-agents). When a subagent calls a tool, tool events such as `PreToolUse` and `PostToolUse` fire the same configured hooks as in the main conversation, and the input carries the `agent_id` and `agent_type` [common input fields](#common-input-fields) that identify the subagent.
 
-Enterprise administrators can use `allowManagedHooksOnly` to block user, project, and plugin hooks. Hooks from plugins force-enabled in managed settings `enabledPlugins` are exempt. See [Hook configuration](/docs/en/settings#hook-configuration).
+Enterprise administrators can use `allowManagedHooksOnly` to restrict which hooks run:
+
+* Your user, project, local, and plugin hooks are blocked. Hooks from plugins force-enabled in managed settings `enabledPlugins` are exempt
+* Claude Code also narrows your [`statusLine`](/docs/en/statusline), [`fileSuggestion`](/docs/en/settings#file-suggestion-settings), and [`subagentStatusLine`](/docs/en/statusline#subagent-status-lines) settings to managed settings
+
+See [Hook configuration](/docs/en/settings#hook-configuration).
 
 Hook entries merge across settings levels rather than replacing each other: user, project, and local settings add their own hooks without removing managed ones, and the [`disableAllHooks`](#disable-or-remove-hooks) setting can't disable managed hooks from outside managed settings.
 
