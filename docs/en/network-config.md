@@ -239,6 +239,8 @@ For self-hosted [GitHub Enterprise Server](/docs/en/github-enterprise-server) in
 
 The preceding table covers the standalone CLI. The Claude Desktop app and claude.ai in a browser load their application code and user content from additional Anthropic CDN hosts, including `assets-proxy.anthropic.com` and the `*.claudeusercontent.com` origins that serve [artifacts](/docs/en/artifacts). Allowing `claude.ai` while blocking those hosts produces a blank page rather than an error. See [network access requirements](/docs/en/desktop#network-access-requirements) on the Desktop page.
 
+An [artifact](/docs/en/artifacts) that loads a typeface from [Google Fonts](/docs/en/artifacts#improve-the-visual-design) also requests `fonts.googleapis.com` and `fonts.gstatic.com`. Both hosts are optional. If you block them, artifacts render in fallback typefaces. Block with a fast rejection rather than a silent drop so the font request fails immediately instead of delaying the page's first render.
+
 ## Additional resources
 
 * [Claude Code settings](/docs/en/settings)
