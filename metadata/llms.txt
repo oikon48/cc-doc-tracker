@@ -155,8 +155,7 @@
 - [Scale to many tools with tool search](https://code.claude.com/docs/en/agent-sdk/tool-search.md): Scale your agent to thousands of tools by discovering and loading only what's needed, on demand.
 - [Subagents in the SDK](https://code.claude.com/docs/en/agent-sdk/subagents.md): Define and invoke subagents to isolate context, run tasks in parallel, and apply specialized instructions in your Claude Agent SDK applications.
 - [Modifying system prompts](https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts.md): Choose between the `claude_code` preset and a custom system prompt, and customize behavior with CLAUDE.md, output styles, append, or a fully custom prompt.
-- [Slash Commands in the SDK](https://code.claude.com/docs/en/agent-sdk/slash-commands.md): Learn how to use slash commands to control Claude Code sessions through the SDK
-- [Agent Skills in the SDK](https://code.claude.com/docs/en/agent-sdk/skills.md): Extend Claude with specialized capabilities using Agent Skills in the Claude Agent SDK
+- [Extend agents with skills](https://code.claude.com/docs/en/agent-sdk/skills.md): Control which skills Claude can invoke in Claude Agent SDK sessions, dispatch commands by name, and author skills your sessions discover
 - [Plugins in the SDK](https://code.claude.com/docs/en/agent-sdk/plugins.md): Load custom plugins to extend Claude Code with skills, agents, hooks, and MCP servers through the Agent SDK
 - [Configure permissions](https://code.claude.com/docs/en/agent-sdk/permissions.md): Control how your agent uses tools with permission modes, hooks, and declarative allow/deny rules.
 - [Intercept and control agent behavior with hooks](https://code.claude.com/docs/en/agent-sdk/hooks.md): Intercept and customize agent behavior at key execution points with hooks
