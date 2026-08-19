@@ -1952,7 +1952,7 @@ Claude called the [Agent tool](/docs/en/tools-reference#agent-tool-behavior) wit
 
 **What to do:**
 
-* Usually nothing: the message lists the subagents the session does have, and Claude retries with one of them
+* Usually nothing: the message lists the subagents the session does have, so Claude can retry with one of them
 * If Claude keeps failing, add `general-purpose` to the `tools: Agent(...)` allowlist, or unset `CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS`
 
 Before v2.1.235, the same call failed with `Agent type 'general-purpose' not found`.
