@@ -68,7 +68,13 @@ For what the message Claude writes looks like when it arrives, including an exam
 
 The receiving Claude reads the message between tool calls during an active turn, so a running tool is never interrupted. When the receiving session is idle, Claude Code starts a new turn with the message.
 
-Between two ordinary interactive sessions with default settings, Claude Code delivers the message. Delivery isn't guaranteed in every configuration, though. Claude Code refuses a message [over the size cap](#limitations) in the sending session, before it leaves. The receiving session checks each arriving message against its own [inbound controls](#control-inbound-messages), and the check ends in one of three outcomes:
+Claude Code refuses a message in the following cases:
+
+* The message is [over the size cap](#limitations). Claude Code refuses it in the sending session, before it leaves.
+* A rapid burst to a session on this machine has reached [what that session's inbox accepts](#limitations). Claude Code refuses further messages to that session.
+* The reply target on this machine fails a safety check, such as a symlinked target or an endpoint that isn't the expected process. [Refusing to send a cross-session message](/docs/en/errors#refusing-to-send-a-cross-session-message) lists these checks.
+
+The receiving session checks each arriving message against its own [inbound controls](#control-inbound-messages), and the check ends in one of three outcomes:
 
 * **Delivered**: Claude Code passes the message to the receiving Claude.
 * **Held**: Claude Code sets the message aside undelivered. A held message reaches Claude only when you approve it or a later mode or settings change allows it.
@@ -112,9 +118,11 @@ Only the Claude in your main conversation can subscribe, and only to your sessio
 Claude finds a message's target on its own, so you don't need to run anything before asking it to send. To see for yourself which sessions Claude can reach, run the `/list-agents` command. It lists each session with the name it answers to, and that name is where Claude addresses a message. The listing covers:
 
 * **Subagents**: agents running inside the current session. [Agent team](/docs/en/agent-teams) teammates aren't listed; Claude messages them through the team's own roster.
-* **Your other local sessions**: Claude Code sessions running on the same machine, including [background sessions](/docs/en/agent-view). A session appears only when it binds an [inbox socket](#the-sessions-inbox-socket).
+* **Your other local sessions**: Claude Code sessions running on the same machine, including [background sessions](/docs/en/agent-view). A session appears only when it binds an [inbox socket](#the-sessions-inbox-socket). The worker process that the [supervisor process](/docs/en/agent-view#the-supervisor-process) keeps ready for your next background session appears once you dispatch work to it.
 * **Your cloud sessions**: your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, shown while this session is connected to [Remote Control](/docs/en/remote-control). Claude Code labels them `cloud` in the listing.
 * **Your Remote Control sessions on other machines**: shown while this session is connected to [Remote Control](/docs/en/remote-control), and labeled `Remote Control`. Claude Code shows `offline` as the status of a session whose Remote Control connection has dropped.
+
+Claude Code reads your cloud and Remote Control session lists newest first and stops after a bounded number of pages for each. If your account has more of those sessions than fit, Claude Code doesn't list the older ones, and Claude can't message them by name. When this happens, Claude Code says so in the listing, and Claude sees the same note when it sends a message.
 
 Claude addresses a session beyond this machine by name, the same as a local session. See [Message sessions on other machines](#message-sessions-on-other-machines) for how those messages travel.
 
@@ -191,9 +199,9 @@ When the default holds a message, Claude Code opens an approval dialog in the re
 * **Deny**, or dismissing the dialog, drops it.
 * When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings#available-settings) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes. While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, Claude Code closes the dialog and drops the message only if it stays unanswered for a full deadline period.
 * If this session's permission-mode class changes while messages are held, Claude Code re-applies the inbound rules, delivers the messages they now accept, and shows a notice.
-* If a change makes `refuse` apply while messages are held, Claude Code drops every held message and reports a denial to each sender it can reach.
+* If a settings change makes `refuse` apply while messages are held, Claude Code drops every held message and reports a refusal to each sender it can reach.
 
-When the sender runs on the same machine, Claude Code tells the sending session what happened. A notice appears there when the message is held, and a follow-up reports the outcome when the receiver later delivers, denies, or expires it. A message refused on arrival produces no sender-side notice.
+When the sender is an interactive session on the same machine, Claude Code shows a notice there when the receiver holds the message, and a follow-up when the receiver later delivers, denies, or expires it. If the receiver refuses it, Claude Code shows a notice there that the receiver isn't accepting cross-session messages and tells the sender's Claude not to wait or resend.
 
 Claude Code holds at most 100 messages, separately from the delivery queue, and past that drops the oldest.
 
@@ -272,7 +280,7 @@ Administrators can turn both sides off for an organization in [managed settings]
 }
 ```
 
-With this in place, Claude Code still binds each session's inbox socket, but drops every message that arrives on it without delivering anything to Claude. Denying `SendMessage` also removes messaging to subagents and agent-team teammates, since the same tool serves both. A refusing session shows no visible change, in its own `/status` or in other sessions' listings, so confirm the setting from the session's configuration.
+With this in place, Claude Code still binds each session's inbox socket, but drops every message that arrives on it without delivering anything to Claude. Denying `SendMessage` also removes messaging to subagents and agent-team teammates, since the same tool serves both. A refusing session shows no visible change, in its own `/status` or in the listings of other sessions on the same machine, so to confirm it, check the settings files that apply to that session rather than its status.
 
 ## Availability
 
@@ -290,6 +298,7 @@ To check a session, type `/list-agents`, also available as `/peers`. The result 
   * **Inbound controls**: the [receiving session's inbound controls](#control-inbound-messages) can hold or drop what you send it.
   * **Cloud session missing**: a cloud session appears only while this session is connected to [Remote Control](/docs/en/remote-control).
   * **Other-machine session missing**: a session on another of your machines appears only when it runs with [Remote Control](/docs/en/remote-control) and this session is connected as well.
+  * **Older cloud or other-machine session missing**: Claude Code [reads those session lists newest first and stops after a bounded number of pages](#see-which-sessions-claude-can-reach), so Claude can't message a session that fell past them by name.
   * **Starting a conversation**: [Message sessions on other machines](#message-sessions-on-other-machines) covers starting a conversation with a session beyond this machine.
 
 In a session with messaging, `/status` also shows a `Peer address` row with the session's own inbox address.
@@ -300,7 +309,8 @@ The limits here are properties of the messaging channel itself and apply whereve
 
 * **Plain text only**: Claude sends only plain text across sessions. Structured [agent team](/docs/en/agent-teams) protocol messages stay within a team.
 * **Same-machine message size is capped**: Claude Code refuses a message to a session on this machine once its serialized form passes about a million characters. The refusal [names the exact sizes](/docs/en/errors#message-too-large-for-cross-session-delivery). Nothing reaches the receiving session.
-* **Message loops are throttled**: Claude Code rate-limits repeated messages per sender, drops identical repeats arriving within a short window, and caps accepted messages waiting for Claude to read them at 50 per session. A message loop between two sessions therefore stops on its own.
+* **Rapid bursts to one session are refused at the sender**: once a rapid burst of messages to a session on this machine reaches what that session's inbox accepts, Claude Code refuses further sends in the sending session. The [refusal names the burst](/docs/en/errors#too-many-messages-to-this-session-just-now) and tells Claude to batch the rest into one message or wait. Before v2.1.236, Claude Code reported those sends as sent while the receiving session dropped them.
+* **Message loops are throttled**: in the receiving session, Claude Code rate-limits repeated messages per sender, drops identical repeats arriving within a short window, and queues at most 50 accepted messages for Claude to read. A message loop between two sessions therefore stops on its own. When the rate limit, repeat check, or queue cap drops a message from an interactive session on this machine, Claude Code tells that session which one dropped it and tells its Claude not to resend right away.
 
 ## Related resources
 

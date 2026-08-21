@@ -41,6 +41,7 @@ Match the message you see to a section below.
 | `Agent terminated early due to an API error`                                                                                                                                                  | [Server errors](#agent-terminated-early-due-to-an-api-error)                                                                  |
 | `You've hit your session limit` / `You've hit your weekly limit`                                                                                                                              | [Usage limits](#youve-hit-your-session-limit)                                                                                 |
 | `Usage credits required for 1M context`                                                                                                                                                       | [Usage limits](#usage-credits-required-for-1m-context)                                                                        |
+| `the prompt to confirm went unanswered — nothing was sent`                                                                                                                                    | [Usage limits](#the-prompt-to-confirm-went-unanswered)                                                                        |
 | `Server is temporarily limiting requests`                                                                                                                                                     | [Usage limits](#server-is-temporarily-limiting-requests)                                                                      |
 | `Request rejected (429)`                                                                                                                                                                      | [Usage limits](#request-rejected-429)                                                                                         |
 | `Credit balance is too low`                                                                                                                                                                   | [Usage limits](#credit-balance-is-too-low)                                                                                    |
@@ -88,6 +89,7 @@ Match the message you see to a section below.
 | `SSL certificate verification failed`                                                                                                                                                         | [Network](#ssl-certificate-errors)                                                                                            |
 | `SSL certificate error (...)` during login or startup                                                                                                                                         | [Network](#ssl-certificate-errors)                                                                                            |
 | `403` with `x-deny-reason: host_not_allowed` in a cloud or routine session                                                                                                                    | [Network](#host-not-allowed-in-a-cloud-session)                                                                               |
+| `proxy refused the connection`                                                                                                                                                                | [Network](#the-proxy-refused-the-connection)                                                                                  |
 | `403` with `This GraphQL query is not enabled for this session` in a cloud session                                                                                                            | [GitHub proxy](/docs/en/cloud-environments#github-proxy)                                                                           |
 | `Couldn't reconnect to your Remote Control session`                                                                                                                                           | [Network](#couldnt-reconnect-to-your-remote-control-session)                                                                  |
 | `N sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.`                                                                        | [Network](#sessions-ended-while-this-machine-was-offline)                                                                     |
@@ -154,6 +156,9 @@ Match the message you see to a section below.
 | `Failed to write to <name>'s inbox — nothing was sent`                                                                                                                                        | [Tool errors](#failed-to-write-to-a-teammate-inbox)                                                                           |
 | `Failed to write the plan approval request to the lead's inbox — plan not submitted`                                                                                                          | [Tool errors](#failed-to-write-to-a-teammate-inbox)                                                                           |
 | `Message too large for cross-session delivery`                                                                                                                                                | [Tool errors](#message-too-large-for-cross-session-delivery)                                                                  |
+| `Too many messages to this session just now`                                                                                                                                                  | [Tool errors](#too-many-messages-to-this-session-just-now)                                                                    |
+| `Refusing to send: reply target is a symlink` / `Refusing to send: cannot vet reply target`                                                                                                   | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
+| `Refusing to send: connected endpoint is not the expected process` / `Refusing to send: connected endpoint identity could not be read`                                                        | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
 | `Can't open MCP settings while no terminal is attached to this background session`                                                                                                            | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `Can't open MCP settings in a background session`                                                                                                                                             | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `blocked because the path is spelled in a form that cannot be safely resolved`                                                                                                                | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved)                             |
@@ -169,6 +174,7 @@ Match the message you see to a section below.
 | `Transcript saving is off — CLAUDE_CODE_SKIP_PROMPT_HISTORY is set`                                                                                                                           | [Session saving warnings](#transcript-saving-is-off-skip-prompt-history)                                                      |
 | `Transcript saving is off — inherited CLAUDE_CODE_CHILD_SESSION marker`                                                                                                                       | [Session saving warnings](#transcript-saving-is-off-child-session-marker)                                                     |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                                                                                                           | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
+| `headersHelper not run — this workspace has no persisted trust`                                                                                                                               | [Configuration warnings](#headershelper-not-run)                                                                              |
 | `... is not matched by file permission checks`                                                                                                                                                | [Configuration warnings](#is-not-matched-by-file-permission-checks)                                                           |
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT is set, but the 200K limit isn't enforced`                                                                                                                    | [Configuration warnings](#the-200k-limit-isnt-enforced)                                                                       |
 | `[claude-code:unrecognized_model]`                                                                                                                                                            | [Configuration warnings](#unrecognized-model-id-on-a-request)                                                                 |
@@ -397,7 +403,7 @@ When a rate limit, overload, or server error interrupts a foreground subagent th
 
 ## Usage limits
 
-Most errors in this section mean a quota tied to your account or plan has been reached. Two work differently: [`Server is temporarily limiting requests`](#server-is-temporarily-limiting-requests) is a server-side throttle unrelated to your plan quota, and [`Usage credits required for 1M context`](#usage-credits-required-for-1m-context) is an entitlement check rather than an exhausted quota.
+Most errors in this section mean a quota tied to your account or plan has been reached. Three work differently: [`Server is temporarily limiting requests`](#server-is-temporarily-limiting-requests) is a server-side throttle unrelated to your plan quota, [`Usage credits required for 1M context`](#usage-credits-required-for-1m-context) is an entitlement check rather than an exhausted quota, and [`The prompt to confirm went unanswered`](#the-prompt-to-confirm-went-unanswered) means a usage-credits consent prompt closed unanswered, whether or not a quota was reached.
 
 <h3 id="youve-hit-your-session-limit">
   You've hit your session limit
@@ -444,6 +450,25 @@ When this error appears mid-conversation because the context grew past 200K toke
 * Run `/usage-credits` to turn on metered billing for the 1M variant on Pro and Max, or to request it from your admin on Team and Enterprise
 * If the error persists after `/model`, a 1M model ID may be set elsewhere. See [Setting your model](/docs/en/model-config#setting-your-model) for the configuration locations to check in priority order.
 * To remove 1M variants from the model picker entirely, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars)
+
+### The prompt to confirm went unanswered
+
+On plans where Fable 5 usage [bills to usage credits](/docs/en/model-config#fable-5-and-usage-credits), Claude Code asks you to confirm before a request bills them. When nobody answers that consent prompt in a session that may have no one at its terminal, Claude Code closes the prompt and ends the turn with one of these messages:
+
+```text theme={null}
+Fable 5 limit reached · continuing on Fable 5 uses usage credits, and the prompt to confirm went unanswered — nothing was sent · answer it where this session is running, or /model to change
+Fable 5 now uses usage credits · the prompt to confirm went unanswered — nothing was sent · answer it where this session is running, or /model to change
+```
+
+This happens in [Remote Control](/docs/en/remote-control) sessions, [background sessions](/docs/en/agent-view), and [agent team](/docs/en/agent-teams) teammate sessions. Claude Code shows the consent prompt only in the session's own interactive view: the terminal where it runs, or, for a background session, the [agents view](/docs/en/agent-view) once you attach. A Remote Control client can't display it. Claude Code closes the prompt at the [`dialogExpiry`](/docs/en/settings#available-settings) deadline, five minutes by default, or as soon as a new prompt arrives while nobody has typed at that terminal, such as a prompt sent from a Remote Control client. Typing at the terminal where the session runs cancels the deadline, and Claude Code waits for your answer. In a background session's attached view, typing doesn't cancel the deadline, so answer before it passes. Claude Code sends nothing and keeps your model, so when you send your next prompt, Claude Code shows the consent prompt again.
+
+**What to do:**
+
+* At the terminal where the session runs, send another prompt and answer the consent prompt when it reappears. For a background session, attach to it from the [agents view](/docs/en/agent-view) first. Resending from a Remote Control client shows this message again, because the client can't display the prompt.
+* Run `/model` to switch to a model that doesn't bill usage credits
+* To give yourself more time to reach that terminal, set [`dialogExpiry`](/docs/en/settings#available-settings) to a longer value or `"never"`
+
+Before v2.1.236, this message didn't appear: while a Remote Control client was connected, Claude Code waited 60 seconds for an answer and then continued the turn on your default model.
 
 ### Server is temporarily limiting requests
 
@@ -1110,6 +1135,32 @@ This is not a client-side network problem. Cloud sessions and [routines](/docs/e
 * Click **Save changes**. The next run uses the updated allowlist.
 
 See [Network access](/docs/en/cloud-environments#network-access) for access levels and the default allowlist. Local CLI sessions are not affected by this policy.
+
+<h3 id="the-proxy-refused-the-connection">
+  The proxy refused the connection
+</h3>
+
+You see this message when Claude reads an [artifact](/docs/en/artifacts) through the proxy you set in `HTTPS_PROXY` or a related [proxy variable](/docs/en/network-config#environment-variables). Artifact content comes from `*.frame.claudeusercontent.com`, so Claude Code first sends the proxy a `CONNECT` request asking it to open a tunnel to that host. When the proxy refuses, nothing reaches the host, and the message carries the proxy's HTTP status:
+
+```text theme={null}
+artifact content fetch failed (proxy refused the connection: HTTP 407)
+artifact content fetch failed (proxy refused the connection: HTTP 403)
+the proxy refused the connection to the artifact's content host (HTTP 502)
+```
+
+The status is the proxy's answer to the `CONNECT`. The host never answered, so each status points at a different fix:
+
+* `HTTP 407`: the proxy requires credentials it didn't get. Put them in the proxy URL, as [Basic authentication](/docs/en/network-config#basic-authentication) shows.
+* `HTTP 403`: the proxy refuses to tunnel to `*.frame.claudeusercontent.com`. Ask whoever runs the proxy to allow that host, which [Network access requirements](/docs/en/network-config#network-access-requirements) lists.
+* Any other status, such as `HTTP 502`: the proxy didn't open the tunnel for its own reason, such as failing to reach the host. Look the status up in the proxy's logs.
+* `unreadable reply` in place of a status: whatever is at the proxy address didn't answer with an HTTP status line. Check that the address is an HTTP proxy.
+
+**What to do:**
+
+* Check the address and credentials in the proxy variable, as [Proxy configuration](/docs/en/network-config#proxy-configuration) describes, then run `curl -x http://proxy.example.com:8080 -I https://api.anthropic.com` from the shell you start Claude Code in, using your own proxy URL. On Windows PowerShell, run `curl.exe`. If this probe fails the same way, fix the proxy setup first. If it succeeds, the refusal is specific to the artifact host.
+* If your network lets Claude Code reach the artifact host directly, add `.claudeusercontent.com` to [`NO_PROXY`](/docs/en/network-config#environment-variables).
+
+Before v2.1.238, Claude Code reported a refused tunnel as a generic network error.
 
 <h3 id="couldnt-reconnect-to-your-remote-control-session">
   Couldn't reconnect to your Remote Control session
@@ -2064,6 +2115,43 @@ Resending the same text fails the same way.
 
 Before v2.1.235, Claude Code reported an oversized message as sent. The receiving session dropped it unread.
 
+### Too many messages to this session just now
+
+Claude sent a rapid burst of [cross-session messages](/docs/en/cross-session-messaging) to one of your sessions on this machine, and the burst reached what that session's inbox accepts. Claude Code refused the next send, and the receiving session got nothing from it. The refusal appears in the sending session's tool result, not as a banner in your terminal:
+
+```text wrap theme={null}
+Failed to send to api-worker: Too many messages to this session just now: 30 were sent recently and more would be dropped by its rate limit, so this one was not sent. Batch what remains into one message, or wait a little before sending more.
+```
+
+**What to do:**
+
+* Usually nothing: Claude batches the remaining content into one message, or waits before sending more
+* If you prompted the burst yourself, ask Claude to combine what's left into a single message
+
+Before v2.1.236, Claude Code reported these sends as sent. The receiving session dropped them unread.
+
+### Refusing to send a cross-session message
+
+Before Claude Code writes a [cross-session message](/docs/en/cross-session-messaging) to another of your sessions on this machine, it checks that the target session's inbox socket is the endpoint the message was addressed to. When a check fails, Claude Code refuses the send in the sending session, and the target session receives nothing. For a message Claude sends, the refusal appears in the sending session's tool result:
+
+```text theme={null}
+Failed to send to api-worker: Refusing to send: reply target is a symlink
+```
+
+The text after `Refusing to send:` names the check that failed:
+
+* `reply target is a symlink`: a symbolic link sits at the target session's socket path. Claude Code doesn't deliver through it, because a link there could redirect the message to an endpoint the target session didn't create.
+* `cannot vet reply target`: Claude Code couldn't inspect the target path at all, for example because reading it failed with a permission error.
+* `connected endpoint is not the expected process`: the process holding the socket isn't the session the message was addressed to, so the address is stale or another process replaced the socket.
+* `connected endpoint identity could not be read`: Claude Code connected but couldn't read which process holds the other end, so it couldn't confirm the target. This can be transient.
+
+**What to do:**
+
+* Usually nothing: the checks keep a message from reaching an endpoint other than the session it was addressed to, and nothing was sent
+* Ask Claude to list your sessions again and resend; a refusal caused by a stale address clears once Claude sends to the current one
+* If `reply target is a symlink` repeats for one session, check what created a link at that session's socket path, shown in its `/status` under `Peer address`
+* For `connected endpoint identity could not be read`, resend; the condition can be transient
+
 ## Background session errors
 
 [Background sessions](/docs/en/agent-view) run without an interactive terminal of their own, so commands that need one behave differently there. These messages appear in the transcript of a background session, in the terminal that attaches to one, in the session or shell you dispatch from, or, for the [worktree-guard entries](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved) below, in any session isolated in a worktree or running a worktree-isolated subagent; where a message is specific to one surface, its entry says so.
@@ -2326,6 +2414,24 @@ Ignoring 2 permissions.allow entries from .claude/settings.local.json: this work
 * Run `claude` in the directory and accept the trust dialog. [Project allow rules and workspace trust](/docs/en/permissions#project-allow-rules-and-workspace-trust) says which folder that acceptance covers.
 * In [non-interactive mode](/docs/en/headless) with `-p` no dialog is shown. Set the `hasTrustDialogAccepted` entry in `~/.claude.json` using the exact `projects` key the message prints.
 * If the message names `.claude/settings.local.json` and you started Claude Code outside a git repository or in your home directory, update to v2.1.200 or later. Versions 2.1.196 through 2.1.199 treated your own `.claude/settings.local.json` as repository-supplied in those workspaces. On v2.1.207 and later, updating isn't enough outside a git repository if you haven't trusted the folder: determining that a folder isn't inside a repository runs git, and Claude Code runs that check only after you accept the trust dialog, so use the first step. Your home directory and any other [configuration home](/docs/en/permissions#project-allow-rules-and-workspace-trust) are exempt and don't wait for the dialog. See [Project allow rules and workspace trust](/docs/en/permissions#project-allow-rules-and-workspace-trust).
+
+### headersHelper not run
+
+Claude Code connected an MCP server with its static `headers` alone and skipped the server's [`headersHelper`](/docs/en/mcp#use-dynamic-headers-for-custom-authentication), because the helper is a shell command and the folder has no saved trust. A folder gets saved trust when you set its entry in `~/.claude.json` by hand or, outside your home directory, when you accept the trust dialog for it in an interactive session. See [Trust a folder before its headersHelper runs](/docs/en/mcp#trust-a-folder-before-its-headershelper-runs) for which servers this check applies to.
+
+Claude Code writes this line in [non-interactive mode](/docs/en/headless) only, once per server. In an interactive session it writes the same refusal to the debug log instead.
+
+```text theme={null}
+MCP server 'internal-api': headersHelper not run — this workspace has no persisted trust; accept the trust dialog here once interactively, or set projects["/Users/you/project"].hasTrustDialogAccepted in /Users/you/.claude.json.
+```
+
+The `projects` key the message prints is the folder [Project allow rules and workspace trust](/docs/en/permissions#project-allow-rules-and-workspace-trust) says Claude Code keys the trust on. Accepting the trust dialog for a parent folder doesn't satisfy the check, and a `-p` or SDK session doesn't satisfy it either.
+
+**What to do:**
+
+* Run `claude` in the folder the message names, accept the trust dialog, then run your `-p` or SDK command again
+* Set the `hasTrustDialogAccepted` entry in `~/.claude.json` yourself, using the exact `projects` key the message prints
+* If you started the session in your home directory, work from a project directory you have trusted. When you accept the trust dialog in your home directory, Claude Code holds that trust for the current session only.
 
 ### Is not matched by file permission checks
 
