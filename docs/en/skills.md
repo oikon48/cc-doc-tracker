@@ -563,19 +563,19 @@ To access individual arguments by position, use `$ARGUMENTS[N]` or the shorter `
 ```yaml theme={null}
 ---
 name: migrate-component
-description: Migrate a component from one framework to another
+description: Migrate a component from one language to another
 ---
 
 Migrate the $ARGUMENTS[0] component from $ARGUMENTS[1] to $ARGUMENTS[2].
 Preserve all existing behavior and tests.
 ```
 
-Running `/migrate-component SearchBar React Vue` replaces `$ARGUMENTS[0]` with `SearchBar`, `$ARGUMENTS[1]` with `React`, and `$ARGUMENTS[2]` with `Vue`. The same skill using the `$N` shorthand:
+Running `/migrate-component SearchBar JavaScript TypeScript` replaces `$ARGUMENTS[0]` with `SearchBar`, `$ARGUMENTS[1]` with `JavaScript`, and `$ARGUMENTS[2]` with `TypeScript`. The same skill using the `$N` shorthand:
 
 ```yaml theme={null}
 ---
 name: migrate-component
-description: Migrate a component from one framework to another
+description: Migrate a component from one language to another
 ---
 
 Migrate the $0 component from $1 to $2.
