@@ -832,7 +832,7 @@ For example, this `marketplace.json` plugin entry references a plugin you commit
 
 Don't include a top-level `bin/` directory in any plugin you distribute through organization settings. claude.ai rejects a plugin that has one, whether the plugin arrives by marketplace sync or by direct upload:
 
-* **Marketplace sync**: organization sync rejects that plugin and syncs the rest of the marketplace. The error code is `marketplace_sync_bin_directory_not_allowed` and the message starts with `Plugin contains a top-level bin/ directory`.
+* **Marketplace sync**: organization sync rejects that plugin and syncs the rest of the marketplace. The error message starts with `Plugin contains a top-level bin/ directory`.
 * **Direct upload**: if you upload the plugin in [**Organization settings > Plugins**](https://claude.ai/admin-settings/plugins) instead, claude.ai rejects the upload with the same message.
 
 Keep executables in another directory, such as `scripts/`, and reference them as `${CLAUDE_PLUGIN_ROOT}/scripts/<name>` from your [skills, hooks, or MCP server configs](/docs/en/plugins-reference#environment-variables).
