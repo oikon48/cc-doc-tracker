@@ -391,7 +391,7 @@ Write the key names of Ctrl shortcuts as Latin characters even when your active 
 
 How Claude Code matches the key you press to a binding depends on the kind of layout:
 
-* Under a non-Latin layout such as Cyrillic, in a terminal that uses the Kitty keyboard protocol and reports the key's US-layout position, Claude Code matches Ctrl shortcuts by that position, so with a Russian layout active, pressing Ctrl and the physical W key triggers `ctrl+w`. In a terminal that doesn't report the position, Claude Code matches whatever the terminal sends for the keypress: an ASCII control code triggers the Latin shortcut, and a keypress that arrives as the Cyrillic character matches no binding
+* Under a non-Latin layout such as Cyrillic, Claude Code matches Ctrl shortcuts by the key's US-layout position when the terminal uses the Kitty keyboard protocol and reports that position. In such a terminal, with a Russian layout active, pressing Ctrl and the physical W key triggers `ctrl+w`. In a terminal that doesn't report the position, Claude Code matches whatever the terminal sends for the keypress: an ASCII control code triggers the Latin shortcut, and a keypress that arrives as the Cyrillic character matches no binding
 * Under layouts that rearrange Latin letters, such as AZERTY, Claude Code matches the letter that the key types, so pressing Ctrl and the key labeled A triggers `ctrl+a`
 
 Before v2.1.247, pressing a Ctrl shortcut under a non-Latin layout didn't trigger its binding in terminals that use the Kitty keyboard protocol, such as Ghostty, Kitty, WezTerm, and iTerm2.

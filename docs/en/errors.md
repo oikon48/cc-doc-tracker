@@ -102,6 +102,7 @@ Match the message you see to a section below.
 | `The remote session sent a reply this version can't display`                                                                                                                                  | [Network](#the-remote-sent-a-reply-this-version-cant-display)                                                                 |
 | `Prompt is too long` / `Input is too long for requested model`                                                                                                                                | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Prompt is too long · automatic compaction failed:`                                                                                                                                           | [Request errors](#prompt-is-too-long)                                                                                         |
+| `Prompt is too long · this conversation is a single exchange` / `A single-exchange conversation cannot be compacted`                                                                          | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Context limit reached · /compact or /clear to continue`                                                                                                                                      | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Context limit reached · /clear to continue`                                                                                                                                                  | [Request errors](#prompt-is-too-long)                                                                                         |
 | `capability_rejected: prompt_too_long` on a Claude apps gateway session                                                                                                                       | [Request errors](#prompt-is-too-long)                                                                                         |
@@ -1379,9 +1380,29 @@ Prompt is too long · automatic compaction failed: <the underlying error>
 
 Resolve the named error first; `/compact` fails on the same error until you do. Before v2.1.229, a failed automatic compaction surfaced `Prompt is too long` without the cause.
 
+A single-exchange conversation has no earlier turns to summarize. When automatic compaction would have run on one, Claude Code skips the attempt and explains what fills the request instead. When the API doesn't report token counts in its error, the message reads:
+
+```text theme={null}
+Prompt is too long · this conversation is a single exchange and cannot be compacted — the request size comes mostly from system prompt, tool definitions, or attachments.
+```
+
+When the API reports token counts in its error, Claude Code compares them with its own estimate of the conversation's size to tell which is most of the request: the conversation's own content, or the system prompt, tool definitions, and attachment content that Claude Code sends with it. When the conversation's own content is most of the request, the message reads:
+
+```text theme={null}
+Prompt is too long · the request is ~<request tokens> tokens (limit <limit>) and this conversation's own content is most of it. A single-exchange conversation cannot be compacted; start with less content (smaller files or pasted text).
+```
+
+When most of the request is outside the conversation, the message reads:
+
+```text theme={null}
+Prompt is too long · the request is ~<request tokens> tokens (limit <limit>) but this conversation is only ~<conversation tokens> tokens — the rest is system prompt, tool definitions, and attachment content. A single-exchange conversation cannot be compacted; reduce attached files/tools or start with less context.
+```
+
+Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the bare `Prompt is too long` when it failed.
+
 **What to do:**
 
-* Run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh
+* In a multi-turn conversation, run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh. A single-exchange conversation can't be compacted, so shrink the request instead
 * Run `/context` to see a breakdown of what is consuming the window: system prompt, tools, memory files, and messages
 * Disable MCP servers you are not using with `/mcp disable <name>` to remove their tool definitions from context
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
@@ -1408,7 +1429,7 @@ Both forms name `/clear` instead of `/compact` when you have set [`DISABLE_COMPA
 
 **What to do:**
 
-* Run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh
+* In a multi-turn conversation, run `/compact` to summarize earlier turns and free space. To start fresh instead, run `/clear`
 * For more ways to reduce usage, see [Prompt is too long](#prompt-is-too-long)
 
 Before v2.1.216, `/context` showed usage above 100% with no warning line explaining what that meant or how to recover.
