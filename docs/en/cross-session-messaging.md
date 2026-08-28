@@ -17,7 +17,7 @@ source: https://code.claude.com/docs/en/cross-session-messaging.md
 
 Cross-session messaging lets Claude deliver a message from one of your Claude Code sessions to another. When a change in one session breaks what another is building on, Claude can warn that session before you notice. When one session settles a question another is blocked on, Claude can send the answer across.
 
-A message is a piece of text one Claude writes to another, never conversation history or files. To move a whole conversation or its context, [resume the session](/docs/en/sessions#resume-a-session) instead.
+A message is a piece of text one Claude writes to another, never the sender's conversation history or files. To move a whole conversation or its context, [resume the session](/docs/en/sessions#resume-a-session) instead.
 
 Claude uses two tools for this: `ListAgents` to discover which agents it can reach, and `SendMessage` to deliver a message to one of them by name. With the same `SendMessage` tool, Claude can also message [subagents](/docs/en/sub-agents#resume-subagents) and [agent team](/docs/en/agent-teams) teammates within a single session or team. This page covers messages between your independent sessions.
 
@@ -67,6 +67,10 @@ For what the message Claude writes looks like when it arrives, including an exam
 ### Message delivery
 
 The receiving Claude reads the message between tool calls during an active turn, so a running tool is never interrupted. When the receiving session is idle, Claude Code starts a new turn with the message.
+
+When a message that starts a new turn mentions a file as an `@` immediately followed by its path, Claude Code [attaches that file](/docs/en/common-workflows#reference-files-and-directories) as it exists on the receiving machine, resolving a relative path from the receiving session's working directory. The receiving session's [`Read` deny rules](/docs/en/permissions#read-and-edit) apply to that file, as they do to a file you mention with `@` yourself. When such a message mentions an [MCP resource](/docs/en/mcp#use-mcp-resources) with `@`, Claude Code attaches that resource from the receiving session's MCP servers. A path written without the `@` stays plain text and attaches nothing.
+
+A message that Claude reads during an active turn arrives as plain text with nothing attached, even if it mentions files or MCP resources with `@`.
 
 Claude Code refuses a message in the following cases:
 
@@ -183,7 +187,7 @@ Either of these shows you the full text:
 
 The preview shortens only what you see. Whether or not you expand it, Claude reads the full message.
 
-Claude receives the message with the sender's name and a reply address, except for a [one-way cross-machine message](#message-sessions-on-other-machines), which carries no reply address. Beyond the name and reply address, the receiving Claude gets only the message's text, never the sender's conversation history or files.
+Claude receives the message with the sender's name and a reply address, except for a [one-way cross-machine message](#message-sessions-on-other-machines), which carries no reply address. Beyond the name and reply address, the receiving Claude gets the message's text, never the sender's conversation history or files. An `@` mention in the text can still attach a file or MCP resource on the receiving side, as described under [Message delivery](#message-delivery).
 
 This example is a message one Claude wrote to another, as its full text reads when you expand it:
 

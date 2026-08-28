@@ -29,6 +29,8 @@ Subagents help you:
 
 Claude uses each subagent's description to decide when to delegate tasks. When you create a subagent, write a clear description so Claude knows when to use it.
 
+Those descriptions take up context, so keep them short. When the combined descriptions of your subagents, except the built-in ones, exceed 15,000 tokens, Claude Code shows a [warning at startup with the total token count](/docs/en/errors#agent-descriptions-are-over-the-15000-token-limit). Trim the `description` fields of your subagents, and move detail into each subagent's system prompt, which only loads when that subagent runs.
+
 ## Built-in subagents
 
 Claude Code includes built-in subagents that Claude automatically uses when appropriate. Each inherits the parent conversation's permissions; most run with a restricted tool set.
@@ -141,7 +143,7 @@ This walkthrough creates a user-level subagent that reviews code and suggests im
     Use the code-improver agent to suggest improvements in this project
     ```
 
-    Claude delegates to your new subagent, which scans the codebase and returns improvement suggestions. In the transcript, the delegation appears as a tool call row showing the subagent's name followed by a short task description, such as `code-improver (Suggest code improvements)`.
+    Claude delegates to your new subagent, which scans the codebase and returns improvement suggestions. In the transcript, the delegation appears as a tool call row showing the subagent's name followed by a short task description, such as `code-improver(Suggest code improvements)`.
 
     If Claude can't find the new subagent, restart Claude Code and try again. This happens only when `~/.claude/agents/` didn't exist before the session started, because a running session doesn't detect a newly created `agents` directory.
   </Step>
@@ -498,14 +500,14 @@ Managed-settings restrictions apply to every subagent regardless of how it is de
 
 Set `permissionMode` to choose the permission mode a subagent runs in. Use the modes' config values, so Manual mode is `default`. If you leave it unset, the subagent inherits the main conversation's mode, which starts as [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) on Pro, Max, and Team plans unless your settings or your organization change it. Setting it overrides that mode, except in the cases described below.
 
-| Mode                | Behavior                                                                                                                                                                                                                                                                                                                        |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `default`           | Manual mode: prompts for permission                                                                                                                                                                                                                                                                                             |
-| `acceptEdits`       | Auto-accept file edits and common filesystem commands for paths in the working directory or `additionalDirectories`                                                                                                                                                                                                             |
-| `auto`              | [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode): a background classifier reviews commands and protected-directory writes                                                                                                                                                                                     |
-| `dontAsk`           | Auto-deny permission prompts. Explicitly allowed tools still work; `AskUserQuestion`, connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) are denied even if you've allowed them |
-| `bypassPermissions` | Skip permission prompts                                                                                                                                                                                                                                                                                                         |
-| `plan`              | Plan mode (read-only exploration)                                                                                                                                                                                                                                                                                               |
+| Mode                | Behavior                                                                                                                                                                                                                                                                                                                                                                           |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Manual mode: prompts for permission                                                                                                                                                                                                                                                                                                                                                |
+| `acceptEdits`       | Auto-accept file edits and common filesystem commands for paths in the working directory or `additionalDirectories`                                                                                                                                                                                                                                                                |
+| `auto`              | [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode): a background classifier reviews commands and protected-directory writes                                                                                                                                                                                                                                        |
+| `dontAsk`           | Auto-deny permission prompts. Explicitly allowed tools still work; `AskUserQuestion`, MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool), and connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code are denied even if you've allowed them |
+| `bypassPermissions` | Skip permission prompts                                                                                                                                                                                                                                                                                                                                                            |
+| `plan`              | Plan mode (read-only exploration)                                                                                                                                                                                                                                                                                                                                                  |
 
 <Warning>
   Use `bypassPermissions` with caution. It skips permission prompts, allowing the subagent to execute operations without approval, including writes to `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, and `.mvn`.
@@ -897,7 +899,7 @@ Each subagent explores its area independently, then Claude synthesizes the findi
   When subagents complete, their results return to your main conversation. Running many subagents that each return detailed results can consume significant context.
 </Warning>
 
-For tasks that need sustained parallelism or exceed your context window, [agent teams](/docs/en/agent-teams) give each worker its own independent context.
+For work that needs to keep running in parallel or won't fit in one context window, run it in [separate sessions](/docs/en/agents) and let Claude [pass findings between them](/docs/en/cross-session-messaging).
 
 #### Chain subagents
 
@@ -1126,7 +1128,7 @@ These examples demonstrate effective patterns for building subagents. Use them a
   **Best practices:**
 
   * **Design focused subagents:** each subagent should excel at one specific task
-  * **Write detailed descriptions:** Claude uses the description to decide when to delegate
+  * **Write specific descriptions:** Claude uses the description to decide when to delegate
   * **Limit tool access:** grant only necessary permissions for security and focus
   * **Check into version control:** share project subagents with your team
 </Tip>

@@ -117,6 +117,7 @@ Match the message you see to a section below.
 | `Unable to resize image`                                                                                                                                                                      | [Request errors](#unable-to-resize-image)                                                                                     |
 | `PDF too large` / `PDF is password protected`                                                                                                                                                 | [Request errors](#pdf-errors)                                                                                                 |
 | `Extra inputs are not permitted`                                                                                                                                                              | [Request errors](#extra-inputs-are-not-permitted)                                                                             |
+| `API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid`                                                                                                                      | [Request errors](#tool-input-schema-is-invalid)                                                                               |
 | `There's an issue with the selected model`                                                                                                                                                    | [Request errors](#theres-an-issue-with-the-selected-model)                                                                    |
 | `Model ... is not a recognized model id`                                                                                                                                                      | [Request errors](#model-is-not-a-recognized-model-id)                                                                         |
 | `Claude Opus is not available with the Claude Pro plan`                                                                                                                                       | [Request errors](#claude-opus-is-not-available-with-the-claude-pro-plan)                                                      |
@@ -153,6 +154,8 @@ Match the message you see to a section below.
 | `Diff is too large for ultrareview` / `PR #<N> is too large for ultrareview`                                                                                                                  | [Command-line errors](#diff-is-too-large-for-ultrareview)                                                                     |
 | `Could not find merge-base with <branch>`                                                                                                                                                     | [Command-line errors](#could-not-find-merge-base-with-the-base-branch)                                                        |
 | `Your checkout has no branches (detached HEAD only)`                                                                                                                                          | [Command-line errors](#your-checkout-has-no-branches)                                                                         |
+| `Ultrareview clones <owner>/<repo> in the cloud with the GitHub account connected to your Claude account, and none is connected`                                                              | [Command-line errors](#no-github-account-is-connected-to-your-claude-account)                                                 |
+| `Your connected GitHub account can't see <owner>/<repo>`                                                                                                                                      | [Command-line errors](#your-connected-github-account-cant-see-the-repository)                                                 |
 | `Failed to resume the conversation`                                                                                                                                                           | [Command-line errors](#failed-to-resume-the-conversation)                                                                     |
 | `No conversation found with session ID: <session-id>`                                                                                                                                         | [Command-line errors](#no-conversation-found-with-the-session-id)                                                             |
 | `Cannot switch renderers in this session`                                                                                                                                                     | [Command-line errors](#cannot-switch-renderers-in-this-session)                                                               |
@@ -180,11 +183,18 @@ Match the message you see to a section below.
 | `blocked because the path is spelled in a form that cannot be safely resolved`                                                                                                                | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved)                             |
 | `blocked because the path is network-shaped`                                                                                                                                                  | [Background session errors](#write-or-command-blocked-because-the-path-names-a-network-location)                              |
 | `This session has no saved transcript`                                                                                                                                                        | [Background session errors](#this-session-has-no-saved-transcript)                                                            |
+| `Can't open — this session is running in another terminal`                                                                                                                                    | [Background session errors](#this-session-is-running-in-another-terminal)                                                     |
+| `This conversation is already open in another running Claude session`                                                                                                                         | [Background session errors](#this-session-is-running-in-another-terminal)                                                     |
+| `This session's saved conversation is no longer on disk`                                                                                                                                      | [Background session errors](#this-sessions-saved-conversation-is-no-longer-on-disk)                                           |
+| `kept <id> — worktree has commits that are not pushed anywhere`                                                                                                                               | [Background session errors](#worktree-has-commits-that-are-not-pushed-anywhere)                                               |
 | `terminal host process died — press Enter to restart` / `This session's terminal host process died`                                                                                           | [Background session errors](#terminal-host-process-died)                                                                      |
 | `Session isn't responding` / `Press enter again to restart this session — it isn't responding`                                                                                                | [Background session errors](#session-isnt-responding)                                                                         |
+| `Session <id> was stopped while the respawn was in flight`                                                                                                                                    | [Background session errors](#session-was-stopped-while-the-respawn-was-in-flight)                                             |
 | `This session was running agent '<name>', which is no longer available`                                                                                                                       | [Background session errors](#session-agent-no-longer-available)                                                               |
 | `CLAUDE_CODE_PROCESS_WRAPPER: launcher ...`                                                                                                                                                   | [Background session errors](#claude_code_process_wrapper-launcher-errors)                                                     |
 | `EUNKNOWN: unknown error, uv_spawn`                                                                                                                                                           | [Background session errors](#eunknown-when-starting-a-background-session)                                                     |
+| `EACCES: permission denied, posix_spawn`                                                                                                                                                      | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
+| `exited before it became reachable`                                                                                                                                                           | [Background session errors](#background-service-exited-before-it-became-reachable)                                            |
 | `Claude Code process exited with code N`                                                                                                                                                      | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n)                                                             |
 | `Could not locate the Claude CLI on PATH`                                                                                                                                                     | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path)                                                            |
 | `Restored the code, but skipped N files`                                                                                                                                                      | [Rewind warnings](#restored-the-code-but-skipped-files)                                                                       |
@@ -193,6 +203,7 @@ Match the message you see to a section below.
 | `Transcript saving is off — inherited CLAUDE_CODE_CHILD_SESSION marker`                                                                                                                       | [Session saving warnings](#transcript-saving-is-off-child-session-marker)                                                     |
 | `Claude Code's fullscreen renderer didn't finish starting last time on this machine` / `Claude Code's fullscreen renderer has repeatedly failed to start on this machine`                     | [Configuration warnings](#fullscreen-failed-start-notice)                                                                     |
 | `Claude Code exited after an unrecoverable interface error (...)`                                                                                                                             | [Configuration warnings](#exited-after-an-unrecoverable-interface-error)                                                      |
+| `Agent descriptions are over the 15.0k-token limit`                                                                                                                                           | [Configuration warnings](#agent-descriptions-are-over-the-15000-token-limit)                                                  |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                                                                                                           | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | `headersHelper not run — this workspace has no persisted trust`                                                                                                                               | [Configuration warnings](#headershelper-not-run)                                                                              |
 | `... is not matched by file permission checks`                                                                                                                                                | [Configuration warnings](#is-not-matched-by-file-permission-checks)                                                           |
@@ -607,7 +618,7 @@ If you are prompted to log in repeatedly, see [Not logged in or token expired](/
 
 ### Could not resolve authentication method
 
-The session reached the API client without any credential. This appears in [background sessions](/docs/en/agent-view), cloud sessions, and Agent SDK contexts where the interactive login check doesn't run before the first request.
+The session reached the API client without any credential. [Background sessions](/docs/en/agent-view) and cloud sessions show this message when the worker starts without a credential. Interactive, `-p`, and Agent SDK runs report the same condition as [Not logged in](#not-logged-in) and write this string only to their debug log, so if you found it there, follow that entry instead.
 
 ```text theme={null}
 Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
@@ -1538,6 +1549,24 @@ Claude Code sends beta-only fields such as `context_management` and `effort` alo
 * Configure your gateway to forward the `anthropic-beta` header. See [feature pass-through](/docs/en/llm-gateway-protocol#feature-pass-through) for what gateways must forward.
 * As a fallback, set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](/docs/en/env-vars) before launching. [Disable pre-release capabilities](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) covers the exact scope.
 
+### Tool input schema is invalid
+
+A tool in the request declared an `input_schema` that fails the API's JSON Schema validation, so the API rejected the whole request. The number after `tools.` is the failing tool's position in the request's tool list, not a name you can look up.
+
+```text theme={null}
+API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid
+```
+
+Claude Code [excludes MCP tools whose input schema would fail this validation](/docs/en/mcp#tools-with-invalid-input-schemas) when it loads a server's tools, so requests normally never include one. On a deployment that doesn't receive the remote configuration that enables the exclusion, Claude Code records in the server's log which tool would be rejected but sends it anyway, so this error can still occur. The error can also occur for a tool whose schema declares a JSON Schema dialect other than draft 2020-12 in `$schema`: Claude Code doesn't check those schemas against the JSON Schema meta-schema, though it still excludes one with an invalid top-level property name.
+
+Before v2.1.216, no deployment ran the exclusion checks.
+
+**What to do:**
+
+* If your Claude Code version is earlier than v2.1.216, run `claude update`.
+* Remove or [disable](/docs/en/mcp#disable-a-server-without-removing-it) the MCP server that declares the invalid schema. The error names the tool only by position. On v2.1.216 or later, check each server's log for a line naming a tool whose input schema would be rejected. If no log names one, disable servers one at a time.
+* If you maintain the server, fix the tool's `input_schema`. The schema must be valid JSON Schema, and top-level property names must be 1 to 64 characters long and use only ASCII letters and digits, `_`, `.`, and `-`. See [Tools with invalid input schemas](/docs/en/mcp#tools-with-invalid-input-schemas).
+
 <h3 id="theres-an-issue-with-the-selected-model">
   There's an issue with the selected model
 </h3>
@@ -2047,6 +2076,44 @@ Before v2.1.221, Claude Code attempted to review every tracked file in this chec
 
 * Create a branch at your current commit with `git checkout -b <name>`, then rerun the review
 
+<h3 id="no-github-account-is-connected-to-your-claude-account">
+  No GitHub account is connected to your Claude account
+</h3>
+
+You ran `/code-review ultra <PR#>` or `claude ultrareview <PR#>`, and before creating the cloud session Claude Code asks the server whether [the GitHub account connected to your Claude account](/docs/en/ultrareview#review-a-pull-request) can reach the PR's repository. No account is connected, or the connection expired, so the cloud clone would fail and Claude Code refuses the launch. Claude Code doesn't spend a free run or bill usage credits for a refused launch.
+
+```text theme={null}
+Ultrareview clones <owner>/<repo> in the cloud with the GitHub account connected to your Claude account, and none is connected (or the connection expired). To fix: run /web-setup to reuse your GitHub CLI login, or connect an account at https://claude.ai/code/onboarding?step=alt-auth — then re-run /code-review ultra 1234 (allow a minute after connecting).
+```
+
+When [`/web-setup`](/docs/en/web-quickstart#connect-from-your-terminal) isn't available in your session, the message names only the claude.ai link.
+
+**What to do:**
+
+* Run `/web-setup` to connect your GitHub CLI login to your Claude account, or connect an account at [claude.ai/code/onboarding](https://claude.ai/code/onboarding?step=alt-auth)
+* Rerun the review a minute after connecting
+
+Before v2.1.248, Claude Code didn't check this before launch.
+
+<h3 id="your-connected-github-account-cant-see-the-repository">
+  Your connected GitHub account can't see the repository
+</h3>
+
+You ran `/code-review ultra <PR#>` or `claude ultrareview <PR#>`, and [the GitHub account connected to your Claude account](/docs/en/ultrareview#review-a-pull-request) can't read the PR's repository, so the cloud clone would fail and Claude Code refuses the launch. Claude Code doesn't spend a free run or bill usage credits for a refused launch.
+
+```text theme={null}
+Your connected GitHub account can't see <owner>/<repo> — usually the Claude GitHub app isn't installed on <owner> or wasn't granted this repo (web-connected accounts need it for private repos), or a different GitHub account is connected. To fix: run /web-setup to reuse your GitHub CLI login, or install the app at https://github.com/apps/claude/installations/new — then re-run /code-review ultra 1234.
+```
+
+When [`/web-setup`](/docs/en/web-quickstart#connect-from-your-terminal) isn't available in your session, the message names only the app install.
+
+**What to do:**
+
+* If your local `gh` CLI can read the repository, run `/web-setup` to connect that login to your Claude account
+* Rerun the review after the change
+
+Before v2.1.248, Claude Code didn't check this before launch.
+
 ### Failed to resume the conversation
 
 Claude Code couldn't read or process the saved transcript for the session you selected from the [`claude --resume` picker](/docs/en/sessions#use-the-session-picker), so it ends the process rather than continue in a partially loaded state. The message includes the command to retry:
@@ -2446,6 +2513,70 @@ Opening the same session's row in [agent view](/docs/en/agent-view) shows `Press
 * To start the stopped session fresh anyway, run `claude respawn <id>` with the ID from the message, or press `Enter` twice on its row in agent view
 * If the session did finish a response and you still see this refusal on a version before v2.1.214, an unreadable folder in `~/.claude/projects` could make the transcript scan miss the saved conversation; update to v2.1.214 or later, which tolerates unreadable folders during the scan
 
+<h3 id="this-session-is-running-in-another-terminal">
+  This session is running in another terminal
+</h3>
+
+You opened a stopped session's row in [agent view](/docs/en/agent-view), and its saved conversation is already open in another live Claude Code process on this machine, so Claude Code refuses to start a second process that would write to the same transcript. Which message you see depends on [what holds the conversation](/docs/en/agent-view#opening-a-session-says-the-conversation-is-already-open):
+
+```text theme={null}
+Can't open — this session is running in another terminal
+This conversation is already open in another running Claude session — use that one, or close it and try again
+```
+
+* **`running in another terminal`**: a terminal holds the conversation, for example one where you resumed it with `claude --resume` or `/resume`. The row also shows `Open in a terminal`.
+* **`already open in another running Claude session`**: another non-interactive Claude Code process holds it, for example a [background session](/docs/en/agent-view#the-supervisor-process) process for the same conversation that hasn't exited yet.
+
+Claude Code saves a reply you typed when opening the row and sends it as the session's next prompt when the session next starts.
+
+**What to do:**
+
+* Continue the conversation in the process that has it open, or exit that process and open the row again
+
+Before v2.1.248, only the `already open in another running Claude session` refusal existed: a conversation resumed in a terminal didn't count as open, and opening the row started a second Claude Code process writing to the same conversation.
+
+<h3 id="this-sessions-saved-conversation-is-no-longer-on-disk">
+  This session's saved conversation is no longer on disk
+</h3>
+
+You opened a [background session](/docs/en/agent-view) that ended while the background service was off, and [transcript cleanup](/docs/en/settings-reference#cleanupperioddays) has since removed its saved conversation, for example after the machine was off for weeks. Opening such a row normally [resumes its saved conversation](/docs/en/agent-view#sessions-show-as-failed-after-shutdown). With nothing left to resume, Claude Code refuses rather than re-run the session's original prompt without asking:
+
+```text theme={null}
+This session's saved conversation is no longer on disk (it ended while the background service was off, and old transcripts are cleaned up), so there is nothing to resume. `claude rm 7c5dcf5d` deletes the row; `claude respawn 7c5dcf5d` runs its original prompt again instead.
+```
+
+`claude attach <id>` prints this text. In agent view, the footer is shorter and ends with `ctrl+x deletes the row`.
+
+**What to do:**
+
+* Run `claude rm <id>` to delete the row
+* To run the session's original prompt again as a fresh conversation, run `claude respawn <id>`
+
+Before v2.1.248, opening such a row re-ran the session's original prompt instead of refusing, pulling a weeks-old task back into the foreground.
+
+<h3 id="worktree-has-commits-that-are-not-pushed-anywhere">
+  Worktree has commits that are not pushed anywhere
+</h3>
+
+You tried to delete a [background session](/docs/en/agent-view#what-deleting-a-session-removes) whose worktree holds commits Claude Code can't confirm are saved elsewhere. Claude Code keeps the worktree and the session row rather than destroy the commits. `claude rm` prints the kept path and the reason:
+
+```text theme={null}
+kept 7c5dcf5d — worktree has commits that are not pushed anywhere
+  worktree kept at /home/you/project/.claude/worktrees/fix-login
+  resolve that (commit/push, or remove the worktree), then run 'claude rm 7c5dcf5d' again
+```
+
+When you delete from [agent view](/docs/en/agent-view) with a `Ctrl+X` double-press, you consent to discarding uncommitted changes, but not to discarding commits, so Claude Code refuses there too. After a refused delete, the session's row shows `not deleted` with the same reason.
+
+Commits on a remote don't block the delete. Neither do commits on the local copy of your `origin` remote's default branch, as long as that branch is checked out in your main checkout, the repository directory itself rather than a worktree.
+
+**What to do:**
+
+* Push the worktree's branch, or merge it into the default branch checked out in your main checkout, then delete the session again
+* To discard the commits instead, remove the worktree yourself with `git worktree remove --force <path>`, using the path the message names, then run `claude rm <id>` again. See [Clean up subagent and background-session worktrees](/docs/en/worktrees#clean-up-subagent-and-background-session-worktrees).
+
+Before v2.1.248, the default branch checked out in your main checkout didn't count: a branch you had already merged there still triggered this refusal until its commits reached a remote.
+
 ### Terminal host process died
 
 Each [background session's](/docs/en/agent-view) terminal runs in a host process under the background service, and that process died while the service still held its connection, so the session couldn't be reached.
@@ -2502,6 +2633,21 @@ Claude Code never restarts a row running a [shell command](/docs/en/agent-view#r
 * From the shell, run `claude stop <id>`, then `claude attach <id>`
 * For a shell-command row, press `Ctrl+X` in agent view or run `claude stop <id>` to stop it; dispatch the command again to rerun it
 
+### Session was stopped while the respawn was in flight
+
+You opened a [background session](/docs/en/agent-view) whose process wasn't running, and while Claude Code was restarting it, another Claude Code process stopped it, for example `claude stop` in another terminal. Claude Code keeps the session stopped:
+
+```text theme={null}
+Session <id> was stopped while the respawn was in flight
+```
+
+Opening a session you just dispatched, while its process is still starting, waits for the process instead. Before v2.1.246, opening it at that moment could stop it and show this message.
+
+**What to do:**
+
+* If you didn't stop the session, open its row again in agent view or run `claude respawn <id>` to restart it
+* If you stopped it yourself, nothing remains to do: the session stays stopped
+
 <h3 id="session-agent-no-longer-available">
   Session agent no longer available
 </h3>
@@ -2548,15 +2694,52 @@ Couldn't reach the background service (spawn background service: EUNKNOWN: unkno
 
 On some accounts the message says `daemon` in place of `background service`.
 
-Claude Code starts the background service through PowerShell so the service survives closing the terminal, using PowerShell 7 when it's installed and Windows PowerShell 5.1 otherwise. When neither PowerShell can run, Claude Code starts the service directly instead, so a policy that blocks only PowerShell doesn't cause this error. If you see it, the policy is blocking the Claude Code executable itself.
+On an npm installation, an `EUNKNOWN` that appears while `npm install -g @anthropic-ai/claude-code` is replacing the binary has the same cause as [`EACCES` during a reinstall](#eacces-when-starting-a-background-session) and clears when you retry after the install finishes.
+
+Claude Code starts the background service through PowerShell so the service survives closing the terminal, using PowerShell 7 when it's installed and Windows PowerShell 5.1 otherwise. When neither PowerShell can run, Claude Code starts the service directly instead, so a policy that blocks only PowerShell doesn't cause this error. If you see it while no npm install is running, the policy is blocking the Claude Code executable itself.
 
 Before v2.1.212, Claude Code used only Windows PowerShell 5.1 to start the service, so any machine where Group Policy blocked PowerShell 5.1 failed with `Couldn't start the session — EUNKNOWN: unknown error, uv_spawn`, even with PowerShell 7 installed.
 
 **What to do:**
 
 * If the message reads `Couldn't start the session`, upgrade to v2.1.212 or later. On earlier versions you can also run `claude daemon run` in a separate terminal first, then start the background session again. That command runs the background service in the terminal's foreground, so the service lasts only as long as that terminal stays open.
-* If the error appears on v2.1.212 or later, ask your Windows administrator to allow the Claude Code executable in the restriction policy
+* If an npm install was replacing the binary, wait for it to finish, then start the background session again
+* If the error appears on v2.1.212 or later while no npm install is running, ask your Windows administrator to allow the Claude Code executable in the restriction policy
 * If the background service stops when you close the terminal, Claude Code started it without PowerShell. Install PowerShell 7, or ask your administrator to unblock PowerShell, so the service can outlive the terminal.
+
+### EACCES when starting a background session
+
+Claude Code couldn't run its own binary to start the [background service](/docs/en/agent-view#the-supervisor-process) that hosts background sessions. On an npm installation, this usually means `npm install -g @anthropic-ai/claude-code` was replacing the binary at that moment, whether you ran it or the [auto-updater](/docs/en/setup#auto-updates) did. The error appears when you open a session from [agent view](/docs/en/agent-view):
+
+```text theme={null}
+Couldn't start the background service — spawn background service: EACCES: permission denied, posix_spawn '/usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude'
+```
+
+When you start a session with `/background` or `claude --bg`, the same reason appears inside `Couldn't reach the background service (...)`. During the same reinstall window the error can name another code instead, such as `ENOENT` or `ENOEXEC`, or `EUNKNOWN` or `EPERM` on Windows; an `EUNKNOWN` that persists across retries has a [different cause](#eunknown-when-starting-a-background-session).
+
+On an npm installation, Claude Code waits up to ten seconds for the reinstall to finish and retries on its own, so you see the error only when the binary stays unrunnable for longer, such as while npm is still downloading the package. Before v2.1.246, Claude Code failed at once.
+
+**What to do:**
+
+* Wait a few seconds, then open the session or dispatch again.
+* If the error persists while no npm install is running, your user can't run the installed binary. Check its permissions and its directory's, or reinstall Claude Code.
+
+### Background service exited before it became reachable
+
+The process Claude Code started as the [background service](/docs/en/agent-view#the-supervisor-process) exited before it accepted connections, so Claude Code couldn't open your session. When the service printed an error before exiting, the reason in parentheses gives the exit code or signal and the first line the service printed, which names what stopped it:
+
+```text theme={null}
+Couldn't reach the background service (background service exited before it became reachable (exit code N): <the service's first error line>) — run 'claude daemon status'
+```
+
+When you open a session from [agent view](/docs/en/agent-view), the same reason follows `Couldn't start the background service —`. When the service printed nothing before exiting, the message says `nothing on stderr` instead.
+
+Claude Code reports the failure with the service's error line. Before v2.1.246, the failure surfaced only after a 45-second wait, as `background service did not become reachable within 45s`, without the service's error line.
+
+**What to do:**
+
+* If the message quotes a line, fix what it names, then open the session or dispatch again. The next attempt starts the service again
+* Run `claude daemon status` to check whether a service is running now
 
 ## Wrapper and IDE errors
 
@@ -2682,7 +2865,7 @@ Inside tmux, Claude Code detects a marker that arrived through the tmux server's
 
 ## Configuration warnings
 
-Claude Code writes these messages to stderr rather than showing an error in the conversation, except where an entry notes that it writes the message to the debug log instead. It writes most of them at startup. Two exceptions: it writes the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time, and the [unrecoverable interface error message](#exited-after-an-unrecoverable-interface-error) as it exits.
+Claude Code writes most of these messages to stderr, not into the conversation, and writes most of them at startup. An entry says so when its message appears somewhere else, such as in the debug log or as a startup notice in the conversation view, or at another time, such as the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time.
 
 <h3 id="fullscreen-failed-start-notice">
   Fullscreen renderer didn't finish starting
@@ -2719,6 +2902,21 @@ Claude Code exited after an unrecoverable interface error (<error>). It happened
 * If the message names the fullscreen renderer, [Fullscreen rendering](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting) says what the next launch does, which depends on how you turned fullscreen on, and how to try fullscreen again or keep the classic renderer.
 
 Before v2.1.236, Claude Code exited without printing a message after this kind of error.
+
+<h3 id="agent-descriptions-are-over-the-15000-token-limit">
+  Agent descriptions are over the 15.0k-token limit
+</h3>
+
+Claude Code shows this warning as a startup notice in the conversation view rather than on stderr. The combined descriptions of your [subagents](/docs/en/sub-agents), except the built-in ones, exceed 15,000 tokens as Claude Code estimates them. Each agent counts its name plus its `description` frontmatter. Claude Code loads every agent whether or not the total is over the limit, so the warning doesn't change what loads.
+
+```text theme={null}
+Agent descriptions are over the 15.0k-token limit (~16.2k tokens) · ask Claude to trim agent descriptions in .claude/agents/
+```
+
+**What to do:**
+
+* Shorten the `description` frontmatter of your agent files, or ask Claude to trim them for you.
+* Remove agent files you no longer use.
 
 ### Workspace has not been trusted
 

@@ -257,6 +257,8 @@ Claude Code decides whether four privacy toggles need approval by the delivered 
 
 Server-managed settings require a direct connection to `api.anthropic.com`, and delivery requires the session to authenticate with a Team or Enterprise OAuth login, an OAuth token supplied through `CLAUDE_CODE_OAUTH_TOKEN`, or a directly configured API key. Keys returned by an [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script don't trigger the settings fetch.
 
+In a [Cowork](https://claude.com/docs/cowork/overview) session in the Claude Desktop app, Claude Code doesn't fetch server-managed settings from the claude.ai admin console, even when the user signs in with a Team or Enterprise account. [Where and when a policy applies](/docs/en/managed-settings#where-and-when-a-policy-applies) covers which policy reaches Cowork sessions on the user's machine and remote Cowork sessions.
+
 Server-managed settings are not available when using third-party model providers:
 
 * Amazon Bedrock

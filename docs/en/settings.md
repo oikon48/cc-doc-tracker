@@ -470,11 +470,11 @@ Claude Code reads settings from four files, and an organization can also deliver
 | Scope          | File                                                                                          | Who it affects                                                                                                                                                       | Use it for                                                                         |
 | :------------- | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
 | User           | `~/.claude/settings.json`                                                                     | You, in every project on this machine                                                                                                                                | Personal preferences: theme, editor mode, default model, your own permission rules |
-| Shared project | `.claude/settings.json`                                                                       | Everyone who starts Claude Code in the folder that contains it. In a git repository, commit it so teammates get it                                                   | Team permissions, hooks, plugins, and the environment variables the project needs  |
+| Shared project | `.claude/settings.json`                                                                       | Everyone working in the folder that contains it. In a git repository, commit it so teammates get it                                                                  | Team permissions, hooks, plugins, and the environment variables the project needs  |
 | Project local  | `.claude/settings.local.json`                                                                 | You, in this one project only. Claude Code keeps it out of git when it creates the file; if you create it by hand, add it to `.gitignore` yourself                   | Personal overrides for one project, and testing before you share                   |
 | Managed        | `managed-settings.json` and other [managed sources](/docs/en/managed-settings#delivery-mechanisms) | Everyone your organization deploys it to; nothing you set overrides it, apart from a few [security-sensitive exceptions](#exceptions-to-managed-settings-precedence) | Security policy and compliance requirements                                        |
 
-In the File column, `~/.claude` is the `.claude` folder in your home directory, and a bare `.claude` is the `.claude` folder inside the project you start Claude Code in.
+In the File column, `~/.claude` is the `.claude` folder in your home directory, and a bare `.claude` is the `.claude` folder inside your project.
 
 <span id="where-each-file-applies" />
 
@@ -541,12 +541,16 @@ Three things to know about the local file:
 
 #### Where Claude Code keeps the local file in a git repository
 
-When Claude asks permission to run a Bash command and you choose "Yes, and don't ask again", Claude Code saves that approval as an allow rule in `.claude/settings.local.json`. If you started Claude Code in a subdirectory or a [worktree](/docs/en/worktrees) of a git repository, it reads and writes that file at the repository root, so the approval applies across the whole repository. The shared `.claude/settings.json` doesn't move: Claude Code reads it only from the folder you start in, so start at the repository root to pick up a committed file there. Two details follow from the root location:
+When Claude asks permission to run a Bash command and you choose "Yes, and don't ask again", Claude Code saves that approval as an `allow` rule in `.claude/settings.local.json`. If you start Claude Code in a subdirectory of a git repository, it reads and writes that file at the repository root and applies the approval across the whole repository. In a [worktree](/docs/en/worktrees), it uses the file at the main checkout's root.
 
-* **When the file stays in the starting directory instead**: outside a git repository, when the repository root is your home directory, on Windows, or when the repository root or its `.git` or `.claude` entry isn't owned by your user.
-* **Paths in the file still resolve from where you started**: a permission rule that starts with `/` or a relative sandbox path keeps covering the directory you started Claude Code in, not the repository root.
+Two rules qualify the root location:
+
+* **When the file stays with `.claude/settings.json` instead**: outside a git repository, when the repository root is your home directory, on Windows, or when the repository root or its `.git` or `.claude` entry isn't owned by your user.
+* **Paths in the file don't anchor at the repository root**: a permission rule that starts with `/` or a relative sandbox path [anchors at the session's primary working directory](/docs/en/permissions#read-and-edit) instead.
 
 Before v2.1.211, Claude Code kept the file in the starting directory. It still reads a file an earlier version left there alongside the root file; where both set the same key, the root's value applies, and permission rules from both files apply. The Agent SDK's [`resolveSettings()`](/docs/en/agent-sdk/typescript#resolvesettings) helper always reads the file from the starting directory.
+
+Claude Code reads the shared `.claude/settings.json` from the session's [primary working directory](/docs/en/permissions#working-directories), so to use a file committed at the repository root, start Claude Code there. After you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory), Claude Code reads both project files from the new directory instead, placing the local file by the same rules. Reading them from the directory you moved to requires Claude Code v2.1.246 or later.
 
 <span id="managed-settings-delivery" />
 
@@ -567,6 +571,8 @@ Managed settings reach you through the [delivery mechanisms](/docs/en/managed-se
 * [Server-managed settings](/docs/en/server-managed-settings), which Claude Code fetches from the claude.ai admin console or a self-hosted [Claude apps gateway](/docs/en/claude-apps-gateway)
 * MDM or OS-level policies, and `managed-settings.json` files in a system directory
 * An embedding host such as Claude Desktop, through the SDK `managedSettings` option; see [Control policy from an embedding host](/docs/en/managed-settings#parent-settings-from-embedding-hosts)
+
+In a [Cowork](https://claude.com/docs/cowork/overview) session that runs on your machine in the Claude Desktop app, Claude Code doesn't fetch server-managed settings from the claude.ai admin console, and it reads policy deployed to your device unless your organization's Claude Desktop configuration sets `requireCoworkFullVmSandbox`. [Where and when a policy applies](/docs/en/managed-settings#where-and-when-a-policy-applies) covers Cowork and cloud sessions.
 
 If you're the administrator, [Set up Claude Code for your organization](/docs/en/admin-setup) walks through choosing what to enforce, and [Deploy managed settings](/docs/en/managed-settings) covers delivery and how to confirm a policy is in force.
 

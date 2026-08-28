@@ -1037,7 +1037,7 @@ The allowlist uses exact matching for most source types, apart from owner-wildca
 * For `hostPattern` sources: the marketplace host is matched against the regex pattern
 * For `pathPattern` sources: the marketplace's filesystem path is matched against the regex pattern
 
-The allowlist's exact matching doesn't normalize URLs: a trailing slash, `.git` suffix, or `ssh://` versus `https://` form are treated as different values. If your organization's marketplace can be cloned by more than one URL form, prefer a `hostPattern` entry over a literal URL so all forms match.
+The allowlist's exact matching treats URLs that differ only by a trailing slash, a `.git` suffix, or the `ssh://` and `https://` scheme as different values. If your organization's marketplace can be cloned by more than one URL form, prefer a `hostPattern` entry over a literal URL so the `https://`, `ssh://`, and `user@host:path` forms all match.
 
 Because `strictKnownMarketplaces` is set in [managed settings](/docs/en/managed-settings), individual users and project configurations can't override these restrictions.
 

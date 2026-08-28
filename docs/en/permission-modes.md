@@ -41,7 +41,7 @@ Modes set the baseline. Layer [permission rules](/docs/en/permissions#manage-per
 Claude Code doesn't auto-approve the following in any mode, including `bypassPermissions`. Each bullet links to the section that says what happens instead in each mode:
 
 * Tools matched by an explicit [ask rule](/docs/en/permissions#manage-permissions)
-* Connector tools your organization [set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools)
+* Connector tools your organization [set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), in sessions where that setting reaches Claude Code
 * Tools that require user interaction: the built-in `AskUserQuestion` tool and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
 * `rm` and `rmdir` removals targeting a [critical path](#critical-paths), which no allow rule or `PreToolUse` hook `"allow"` approves
 * The [cross-session messaging safeguards](#skip-all-checks-with-bypasspermissions-mode)
@@ -418,9 +418,9 @@ Repeated blocks usually mean the classifier is missing context about your infras
   <Accordion title="How the classifier evaluates actions">
     Each action goes through a fixed decision order. The first matching step wins:
 
-    1. Actions matching your [allow, ask, or deny rules](/docs/en/permissions#manage-permissions) resolve immediately. Writes to [protected paths](#protected-paths) route to the classifier even when an allow rule matches, and so do `rm` and `rmdir` removals targeting a [critical path](#critical-paths) in Claude Code v2.1.218 and later. Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt you directly even when an allow rule matches. Ask rules that match on a command's content, such as `Bash(git push *)`, fall back to a permission prompt
+    1. Actions matching your [allow, ask, or deny rules](/docs/en/permissions#manage-permissions) resolve immediately. Writes to [protected paths](#protected-paths) route to the classifier even when an allow rule matches, and so do `rm` and `rmdir` removals targeting a [critical path](#critical-paths) in Claude Code v2.1.218 and later. MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt you directly even when an allow rule matches, and so do connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code. Ask rules that match on a command's content, such as `Bash(git push *)`, fall back to a permission prompt
     2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths)
-    3. Everything else goes to the classifier, except the org-set-to-`ask` connector tools and `requiresUserInteraction` MCP tools from step 1, which always prompt you directly, so neither an org-required approval nor a consent step is auto-approved
+    3. Everything else goes to the classifier. The connector tools and `requiresUserInteraction` MCP tools that prompt you directly in step 1 never reach the classifier, so neither an org-required approval nor a consent step is auto-approved
     4. If the classifier blocks, Claude receives the reason and tries an alternative. In most sessions the reason is the fixed text `Blocked by classifier` rather than a written explanation, in Claude Code v2.1.208 and later; see [Review denials](/docs/en/auto-mode-config#review-denials)
 
     On entering auto mode, broad allow rules that grant arbitrary code execution are dropped:
@@ -465,7 +465,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
 
 If you set `dontAsk` mode, Claude Code auto-denies every tool call that would otherwise prompt you. Claude runs only actions matching your `permissions.allow` rules, [read-only Bash commands](/docs/en/permissions#read-only-commands), and calls approved by a [PreToolUse hook](/docs/en/permissions#extend-permissions-with-hooks). Use this mode for CI pipelines or restricted environments where you pre-define exactly what Claude may do; the session never waits for input. The status bar shows `⏵⏵ don't ask on` while this mode is active.
 
-Claude Code denies calls matching your explicit [`ask` rules](/docs/en/permissions#manage-permissions) rather than prompting. It also denies the built-in `AskUserQuestion` tool and connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), even if your allow rules match them. It denies MCP tools marked [`_meta["anthropic/requiresUserInteraction"]`](/docs/en/mcp#require-approval-for-a-specific-tool) the same way, because their approval card needs an answer this mode never collects; this requires Claude Code v2.1.199 or later.
+Claude Code denies calls matching your explicit [`ask` rules](/docs/en/permissions#manage-permissions) rather than prompting. It also denies the built-in `AskUserQuestion` tool even if your allow rules match it, and does the same to connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code. It denies MCP tools marked [`_meta["anthropic/requiresUserInteraction"]`](/docs/en/mcp#require-approval-for-a-specific-tool) the same way, because their approval card needs an answer this mode never collects; this requires Claude Code v2.1.199 or later.
 
 `rm` and `rmdir` removals targeting a [critical path](#critical-paths), such as `rm -rf /` and `rm -rf ~`, are denied even when an allow rule matches them or a `PreToolUse` hook allows them.
 
@@ -500,7 +500,7 @@ You can't enter `bypassPermissions` from a session that was started without it e
 claude --permission-mode bypassPermissions
 ```
 
-The `--dangerously-skip-permissions` flag is equivalent.
+The `--dangerously-skip-permissions` flag is equivalent. Claude Code refuses `bypassPermissions` in a session you start with [`--restricted`](/docs/en/cli-reference#cli-flags). `--restricted` requires Claude Code v2.1.248 or later.
 
 The first time you start an interactive session with this mode enabled, Claude Code shows a warning dialog asking you to accept responsibility for actions taken without permission checks. Claude Code saves your acceptance to user settings, so the dialog appears only once. If you decline, Claude Code exits. In [non-interactive mode](/docs/en/headless) no dialog is shown, and a [background session](/docs/en/agent-view) started with `--bg` is refused until you've accepted the dialog in an interactive session.
 
