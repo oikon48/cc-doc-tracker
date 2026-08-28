@@ -98,8 +98,6 @@ Match the message you see to a section below.
 | `Couldn't reconnect to your Remote Control session`                                                                                                                                           | [Network](#couldnt-reconnect-to-your-remote-control-session)                                                                  |
 | `N sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.`                                                                        | [Network](#sessions-ended-while-this-machine-was-offline)                                                                     |
 | `Couldn't share the transcript.`                                                                                                                                                              | [Network](#couldnt-share-the-transcript)                                                                                      |
-| `Couldn't show context usage: the remote sent a reply this version can't display`                                                                                                             | [Network](#the-remote-sent-a-reply-this-version-cant-display)                                                                 |
-| `The remote session sent a reply this version can't display`                                                                                                                                  | [Network](#the-remote-sent-a-reply-this-version-cant-display)                                                                 |
 | `Prompt is too long` / `Input is too long for requested model`                                                                                                                                | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Prompt is too long · automatic compaction failed:`                                                                                                                                           | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Prompt is too long · this conversation is a single exchange` / `A single-exchange conversation cannot be compacted`                                                                          | [Request errors](#prompt-is-too-long)                                                                                         |
@@ -167,6 +165,8 @@ Match the message you see to a section below.
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command`                                                                                                            | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `headersHelper for MCP server '<name>' references ${user_config.*}`                                                                                                                           | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `Plugin archive integrity check failed`                                                                                                                                                       | [Plugin errors](#plugin-archive-integrity-check-failed)                                                                       |
+| `Failed to load marketplace configuration`                                                                                                                                                    | [Plugin errors](#failed-to-load-marketplace-configuration)                                                                    |
+| `Marketplace configuration file is corrupted`                                                                                                                                                 | [Plugin errors](#failed-to-load-marketplace-configuration)                                                                    |
 | `would be spawned with zero tools — refusing`                                                                                                                                                 | [Tool errors](#agent-would-be-spawned-with-zero-tools)                                                                        |
 | `File is covered by a Read deny rule in your permission settings`                                                                                                                             | [Tool errors](#file-is-covered-by-a-read-deny-rule)                                                                           |
 | `subagent_type is required: the general-purpose agent is not available in this session`                                                                                                       | [Tool errors](#subagent-type-is-required)                                                                                     |
@@ -178,6 +178,8 @@ Match the message you see to a section below.
 | `Too many messages to this session just now`                                                                                                                                                  | [Tool errors](#too-many-messages-to-this-session-just-now)                                                                    |
 | `Refusing to send: reply target is a symlink` / `Refusing to send: cannot vet reply target`                                                                                                   | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
 | `Refusing to send: connected endpoint is not the expected process` / `Refusing to send: connected endpoint identity could not be read`                                                        | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
+| `Refusing to send: connected endpoint is not owned by this user` / `Refusing to send: connected endpoint owner could not be read`                                                             | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
+| `Refusing to send: connected endpoint is a different process with the expected pid`                                                                                                           | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
 | `Can't open MCP settings while no terminal is attached to this background session`                                                                                                            | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `Can't open MCP settings in a background session`                                                                                                                                             | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `blocked because the path is spelled in a form that cannot be safely resolved`                                                                                                                | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved)                             |
@@ -205,6 +207,7 @@ Match the message you see to a section below.
 | `Claude Code exited after an unrecoverable interface error (...)`                                                                                                                             | [Configuration warnings](#exited-after-an-unrecoverable-interface-error)                                                      |
 | `Agent descriptions are over the 15.0k-token limit`                                                                                                                                           | [Configuration warnings](#agent-descriptions-are-over-the-15000-token-limit)                                                  |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                                                                                                           | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
+| `"crossSessionInbound" must be one of "accept", "hold", "refuse"`                                                                                                                             | [Configuration warnings](#crosssessioninbound-must-be-one-of-accept-hold-refuse)                                              |
 | `headersHelper not run — this workspace has no persisted trust`                                                                                                                               | [Configuration warnings](#headershelper-not-run)                                                                              |
 | `... is not matched by file permission checks`                                                                                                                                                | [Configuration warnings](#is-not-matched-by-file-permission-checks)                                                           |
 | `... has a wildcard before the rest of the command`                                                                                                                                           | [Configuration warnings](#has-a-wildcard-before-the-rest-of-the-command)                                                      |
@@ -1120,10 +1123,13 @@ A proxy is configured via HTTPS_PROXY. Check that it allows connections to the h
 
 Claude Code sends the check through the same [proxy configuration](/docs/en/network-config) as API requests and gives each probe 10 seconds. When the failed probe went through a proxy, the message names the environment variable that configured it, such as `HTTPS_PROXY`. Before v2.1.222, the check used a different proxy transport with no timeout: behind a proxy URL with the `https://` scheme, it could stall on `Checking connectivity...` indefinitely and then fail even though API requests through the same proxy succeed.
 
+Claude Code skips this check when a [managed settings file, MDM policy, or policy helper](/docs/en/managed-settings) sets [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) to `"gateway"`, or sets [`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl) without `forceLoginMethod`. With either configuration, Claude Code opens the sign-in step on the **Cloud gateway** screen rather than an Anthropic sign-in method. Claude Code also skips the check when a managed settings source on the machine exists but can't be read, since that source may hold the gateway configuration. Before v2.1.247, Claude Code ran the check under this configuration too, and exited with this error when Anthropic's endpoints were unreachable.
+
 **What to do:**
 
 * If the message names a proxy variable, check that its value points at the right proxy and ask your network team to allow HTTPS connections through it to the host in the message. See [Network configuration](/docs/en/network-config).
 * Work through the checks in [Unable to connect to API](#unable-to-connect-to-api). The `curl` test and firewall guidance there apply to this check too.
+* If your organization signs in through a [cloud gateway](/docs/en/claude-apps-gateway) and this error appears on first run, update to Claude Code v2.1.247 or later.
 * If your network is open and the failure persists, Claude Code may not be [available in your country](https://www.anthropic.com/supported-countries)
 
 ### Socket is closed
@@ -1315,25 +1321,6 @@ Claude Code shows this message in the terminal running [`claude remote-control`]
 * When Claude Code lists kept worktrees under this message, pick up any uncommitted work from them
 * Run `claude remote-control` to start a fresh environment
 
-<h3 id="the-remote-sent-a-reply-this-version-cant-display">
-  The remote sent a reply this version can't display
-</h3>
-
-`/context` shows this line in a terminal [attached to a cloud session](/docs/en/claude-code-on-the-web#send-follow-ups-from-the-cli):
-
-```text theme={null}
-Couldn't show context usage: the remote sent a reply this version can't display
-```
-
-While your terminal is attached, `/context` and `/btw` ask the cloud session for their answer. Sometimes the answer arrives in a form your terminal's Claude Code can't render. The usual cause is a version difference between the two. `/context` then shows the line above instead of the usage breakdown. `/btw` shows `The remote session sent a reply this version can't display` instead of its answer. The cloud session keeps running, and other commands still work.
-
-**What to do:**
-
-* Update Claude Code with `claude update`, reattach, and rerun the command
-* If the line still appears, run `/feedback` and name the command
-
-Before v2.1.235, this case showed a raw JavaScript error instead, such as `undefined is not an object`.
-
 <h3 id="couldnt-share-the-transcript">
   Couldn't share the transcript
 </h3>
@@ -1377,7 +1364,7 @@ When you turned auto-compact off in your [user settings](/docs/en/settings-refer
 Context limit reached · /compact or /clear to continue · auto-compact is off · /config to turn it on
 ```
 
-The **Auto-compact** toggle in `/config` writes `autoCompactEnabled` to user settings. The hint appears only when a `/config` change would take effect. For example, it doesn't appear when [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars) or [`DISABLE_COMPACT`](/docs/en/env-vars) turned auto-compact off. It also doesn't appear when a higher-precedence scope, such as project or managed settings, set `autoCompactEnabled` to `false`. Nor does it appear in a terminal attached to a cloud session, where the cloud session owns auto-compact. Before v2.1.235, the line carried no auto-compact hint.
+The **Auto-compact** toggle in `/config` writes `autoCompactEnabled` to user settings. The hint appears only when a `/config` change would take effect. For example, it doesn't appear when [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars) or [`DISABLE_COMPACT`](/docs/en/env-vars) turned auto-compact off. It also doesn't appear when a higher-precedence scope, such as project or managed settings, set `autoCompactEnabled` to `false`. Before v2.1.235, the line carried no auto-compact hint.
 
 Amazon Bedrock reports this condition as `Input is too long for requested model.`, which Claude Code handles the same way. Before v2.1.217, Claude Code didn't recognize the Bedrock wording, so auto-compact never triggered on it and `/compact` failed with the same error.
 
@@ -2270,6 +2257,28 @@ Plugin archive integrity check failed for https://artifacts.example.com/claude-p
 * If you install the plugin, run `/plugin marketplace update <name>` to refresh the catalog in case the entry was corrected, then retry the install
 * If the digests still disagree after a refresh, ask the marketplace owner which file they pinned before installing
 
+### Failed to load marketplace configuration
+
+Claude Code keeps the plugin marketplaces you've added in a registry file at `~/.claude/plugins/known_marketplaces.json`. A plugin command that needs the registry, such as `claude plugin install`, fails with one of two messages when Claude Code can't use the file:
+
+* `Failed to load marketplace configuration`: the file isn't valid JSON, or can't be read. An empty file fails this way too.
+* `Marketplace configuration file is corrupted`: the file is valid JSON but its contents don't match the registry schema.
+
+A missing file isn't a failure: Claude Code treats it as a registry with no marketplaces.
+
+With an empty file, `claude plugin install` reports:
+
+```text theme={null}
+✘ Failed to install plugin "my-plugin": Failed to load marketplace configuration: JSON Parse error: Unexpected EOF
+```
+
+Before v2.1.246, `claude plugin install` didn't report this failure.
+
+**What to do:**
+
+* Open `~/.claude/plugins/known_marketplaces.json` and repair the JSON, or fix the entries the message names as not matching the registry schema
+* If you can't repair it, delete the file or replace its contents with `{}`, then re-add each marketplace with `claude plugin marketplace add <source>`. Claude Code re-registers the marketplaces your user or managed settings declare in [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces) the next time you start it in a folder you've trusted.
+
 ## Tool errors
 
 These errors come from Claude's built-in tools. Claude corrects most tool errors on its own; the first two below need a change from you, because they come from a subagent definition or a permission rule you control.
@@ -2438,6 +2447,9 @@ The text after `Refusing to send:` names the check that failed:
 * `cannot vet reply target`: Claude Code couldn't inspect the target path at all, for example because reading it failed with a permission error.
 * `connected endpoint is not the expected process`: the process holding the socket isn't the session the message was addressed to, so the address is stale or another process replaced the socket.
 * `connected endpoint identity could not be read`: Claude Code connected but couldn't read which process holds the other end, so it couldn't confirm the target. This can be transient.
+* `connected endpoint is not owned by this user`: the process holding the socket runs as a different user account, so it isn't one of your sessions.
+* `connected endpoint owner could not be read`: Claude Code connected but couldn't read which user account owns the other end, so it couldn't confirm the endpoint is yours.
+* `connected endpoint is a different process with the expected pid`: the process id matches the one the message was addressed to, but Claude Code couldn't confirm it's the same process. Usually that session exited and the operating system reused its process id, so the address is stale.
 
 **What to do:**
 
@@ -2445,6 +2457,9 @@ The text after `Refusing to send:` names the check that failed:
 * Ask Claude to list your sessions again and resend; a refusal caused by a stale address clears once Claude sends to the current one
 * If `reply target is a symlink` repeats for one session, check what created a link at that session's socket path, shown in its `/status` under `Peer address`
 * For `connected endpoint identity could not be read`, resend; the condition can be transient
+* If `connected endpoint is not owned by this user` appears on a shared machine, the session at that address runs under another user's account, so Claude can't message it from yours
+
+Before v2.1.248, Claude Code didn't check the endpoint's owning user or process start time, so the refusals that name those checks don't appear on earlier versions.
 
 ## Background session errors
 
@@ -2549,7 +2564,7 @@ This session's saved conversation is no longer on disk (it ended while the backg
 
 **What to do:**
 
-* Run `claude rm <id>` to delete the row
+* Run `claude rm <id>` to delete the row. When one of the [kept cases](/docs/en/agent-view#what-deleting-a-session-removes) applies, `claude rm` keeps the row and the worktree instead and names the reason
 * To run the session's original prompt again as a fresh conversation, run `claude respawn <id>`
 
 Before v2.1.248, opening such a row re-ran the session's original prompt instead of refusing, pulling a weeks-old task back into the foreground.
@@ -2573,7 +2588,7 @@ Commits on a remote don't block the delete. Neither do commits on the local copy
 **What to do:**
 
 * Push the worktree's branch, or merge it into the default branch checked out in your main checkout, then delete the session again
-* To discard the commits instead, remove the worktree yourself with `git worktree remove --force <path>`, using the path the message names, then run `claude rm <id>` again. See [Clean up subagent and background-session worktrees](/docs/en/worktrees#clean-up-subagent-and-background-session-worktrees).
+* To delete the session without pushing or merging the commits, first note the branch that `git worktree list` shows for the path the message names. Remove the worktree yourself with `git worktree remove --force <path>`, as described in [Clean up subagent and background-session worktrees](/docs/en/worktrees#clean-up-subagent-and-background-session-worktrees), then run `claude rm <id>` again. Neither step deletes that branch, so the commits stay on it until you run `git branch -D <branch>`.
 
 Before v2.1.248, the default branch checked out in your main checkout didn't count: a branch you had already merged there still triggered this refusal until its commits reached a remote.
 
@@ -2988,6 +3003,25 @@ Permission allow rule (.claude/settings.json): Bash(git -C * status *) has a wil
 Claude Code doesn't warn about deny and ask rules with the same shape: it refuses or prompts for the extra commands they match rather than approving them. It also doesn't warn about rules whose subcommand comes before the first `*`, such as `Bash(git commit *)`, or rules in which no word other than an option follows the `*`, such as `Bash(git *)`, or about `:*` prefix rules such as `Bash(git:*)`.
 
 In a [background session](/docs/en/agent-view) or with `--output-format json` or `stream-json`, Claude Code writes the warning to the debug log instead of stderr, so machine-read output stays clean. Run with `--debug` to capture it at `~/.claude/debug/<session-id>.txt`. Before v2.1.246, Claude Code accepted these rules without a warning.
+
+<h3 id="crosssessioninbound-must-be-one-of-accept-hold-refuse">
+  crossSessionInbound must be one of accept, hold, refuse
+</h3>
+
+A settings file sets [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound) to a value Claude Code doesn't recognize, such as the typo `"reject"`. The warning's second sentence depends on which file holds the value; in a user, project, local, or `--settings` file it reads:
+
+```text theme={null}
+"crossSessionInbound" must be one of "accept", "hold", "refuse"; received "reject". This value was ignored; while it is present, cross-session messages are held for your approval instead of being delivered. Set it to one of the values above.
+```
+
+In [managed settings](/docs/en/managed-settings), Claude Code treats the unrecognized value as `refuse`, the most restrictive value, and the warning says cross-session messages are turned away until an administrator fixes it. For how the hold combines with values in your other settings files, see [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound).
+
+**What to do:**
+
+* Set the key to `"accept"`, `"hold"`, or `"refuse"`, or remove it
+* When the warning names managed settings, ask the administrator to fix the value
+
+Before v2.1.248, Claude Code ignored an unrecognized value without warning.
 
 <h3 id="the-200k-limit-isnt-enforced">
   The 200K limit isn't enforced
