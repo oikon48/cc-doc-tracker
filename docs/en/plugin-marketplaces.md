@@ -708,7 +708,8 @@ This example shows a plugin entry using many of the optional fields, including c
 
 Key things to notice:
 
-* **`commands` and `agents`**: you can specify multiple directories or individual files. Paths are relative to the plugin root.
+* **`commands` and `agents`**: you can specify multiple directories or individual files. Paths are relative to the plugin root and must stay inside it.
+  * Claude Code rejects a path that resolves outside the plugin directory, such as `./../shared.md`, with a [`path escapes plugin directory`](/docs/en/errors#path-escapes-plugin-directory) error, and still loads the plugin without that component
 * **`${CLAUDE_PLUGIN_ROOT}`**: use this variable in hook commands and MCP server configs to reference files within the plugin's installation directory.
   * See the [substitution table](/docs/en/plugins-reference#environment-variables) for which config fields substitute it per server type
   * For dependencies or state that should survive plugin updates, use [`${CLAUDE_PLUGIN_DATA}`](/docs/en/plugins-reference#persistent-data-directory) instead
