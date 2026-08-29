@@ -28,7 +28,7 @@ The SDK is available as a library for Python and TypeScript only. To drive the s
 
 ## Capabilities
 
-Everything that makes Claude Code powerful is available in the SDK.
+These Claude Code capabilities are available in the SDK:
 
 | Capability                   | What it does                                                                                 | Learn more                                                                                                                                                                                                     |
 | ---------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -93,4 +93,4 @@ These resources cover deeper technical detail and example projects for building 
 * [Example agents](https://github.com/anthropics/claude-agent-sdk-demos): demo apps for local development
 * [TypeScript SDK](/docs/en/agent-sdk/typescript): full TypeScript API reference and examples
 * [Python SDK](/docs/en/agent-sdk/python): full Python API reference and examples
-* [Agent harness design](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code): how the Claude Code team uses dynamic workflows to orchestrate subagents at scale
+* [Agent harness design](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code): how the Claude Code team uses dynamic workflows to orchestrate many subagents at once
