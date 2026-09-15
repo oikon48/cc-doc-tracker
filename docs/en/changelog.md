@@ -15,6 +15,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.272" description="September 15, 2026">
+  * Bug fixes and reliability improvements
+</Update>
+
 <Update label="2.1.271" description="September 14, 2026">
   * Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or `/fast` typed in the session applies where your organization allows it
   * Added mouse support to the `/config` panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted

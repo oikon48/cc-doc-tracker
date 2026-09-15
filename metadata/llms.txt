@@ -311,6 +311,9 @@
 ### What's New
 
 - [What's new](https://code.claude.com/docs/en/whats-new/index.md): A weekly digest of notable Claude Code features, with code snippets, demos, and context on why they matter.
+- [Week 37 · September 7–11, 2026](https://code.claude.com/docs/en/whats-new/2026-w37.md): Test your plugins with claude plugin eval and pop Claude Code Desktop panes out into their own windows.
+- [Week 36 · August 31 – September 4, 2026](https://code.claude.com/docs/en/whats-new/2026-w36.md): Switch to Claude Fable 5.1, let computer use run in the background on Desktop, and watch Claude's edits in a live /diff panel.
+- [Week 35 · August 24–28, 2026](https://code.claude.com/docs/en/whats-new/2026-w35.md): Resume terminal sessions in the Claude Code Desktop app, review feedback reports that Claude drafts for you, and start a session in restricted mode.
 - [Week 34 · August 17–21, 2026](https://code.claude.com/docs/en/whats-new/2026-w34.md): Draft editable UI artboards with the /design skill, set the Concise output style, and start a Claude Code session on your machine from your phone.
 - [Week 33 · August 10–14, 2026](https://code.claude.com/docs/en/whats-new/2026-w33.md): Claude Code Desktop auto-continues after a usage limit resets, fork mode turns on by default, and GitLab merge requests and marketplaces join GitHub.
 - [Week 32 · August 3–7, 2026](https://code.claude.com/docs/en/whats-new/2026-w32.md): Claude Code sessions message each other, self-hosted environments run cloud sessions on your infrastructure, and auto mode becomes the default permission mode.
