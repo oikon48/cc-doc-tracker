@@ -32,9 +32,10 @@ In a terminal Claude Code session, install from the [official Anthropic marketpl
 /plugin install security-guidance@claude-plugins-official
 ```
 
-`/plugin` opens an interactive panel and is available only in the terminal CLI. If Claude replies that `/plugin` isn't available in this environment, install another way:
+`/plugin` opens an interactive panel in the terminal CLI. If Claude replies that `/plugin` isn't available in this environment, install another way:
 
 * **Claude desktop app, local or SSH session**: open the [plugin browser](/docs/en/desktop#install-plugins) by clicking the **+** button next to the prompt, then **Plugins**, then **Add plugin**
+* **VS Code extension**: install from the [**Manage plugins** dialog](/docs/en/vs-code#manage-plugins)
 * **Cloud sessions**: declare the plugin in `.claude/settings.json` as shown under [Enable in cloud sessions](#enable-in-cloud-sessions-and-shared-repositories)
 
 The terminal install prompts for a scope. Choose user scope to write the plugin to your user settings, so it loads in every new local session you start on this machine.
