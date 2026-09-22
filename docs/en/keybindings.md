@@ -246,6 +246,10 @@ Actions available in the `Footer` context:
 | `footer:clearSelection` | Escape            | Clear footer selection                                                                                                                                                                        |
 | `footer:dismiss`        | Backspace, Delete | Dismiss the selected [artifact](/docs/en/artifacts) link from the footer; the published artifact itself is unaffected. On other footer rows, these keys have no effect. Requires v2.1.217 or later |
 
+While a footer item is selected, such as a row in the agent panel below the prompt, `Enter` opens it even when you rebind `Enter` in the `Chat` context to `chat:queueSubmit` or `chat:newline`.
+
+`Chat` bindings on keys the `Footer` context doesn't bind, such as `Shift+Tab` for `chat:cycleMode`, keep working while an item is selected.
+
 ### Message selector actions
 
 Actions available in the `MessageSelector` context:

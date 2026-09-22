@@ -441,7 +441,7 @@ For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the 
 
 You can scope plugins to your user account, a specific project, or local-only. If your organization manages plugins centrally, those plugins are available in desktop sessions the same way they are in the CLI.
 
-The plugin browser is not available in cloud sessions, and plugins you install from the desktop app aren't available for cloud sessions. To use a plugin in a cloud session, either declare it in the repository's `.claude/settings.json` under [`enabledPlugins`](/docs/en/settings-reference#enabledplugins) so Claude Code [installs it at session start](/docs/en/cloud-environments#what-carries-over-from-your-setup), or enable it for your claude.ai account so Claude Code loads it as a [synced plugin](/docs/en/plugins-reference#synced-plugins). Plugins aren't available in WSL sessions. For the full plugin reference including creating your own plugins, see [plugins](/docs/en/plugins).
+The plugin browser is not available in cloud sessions, and plugins you install from the desktop app aren't available for cloud sessions. A cloud session also doesn't install plugins that the repository's `.claude/settings.json` declares, as [What carries over from your setup](/docs/en/cloud-environments#what-carries-over-from-your-setup) explains. To use a plugin in a cloud session, enable it for your claude.ai account so Claude Code loads it as a [synced plugin](/docs/en/plugins-reference#synced-plugins). Plugins aren't available in WSL sessions. For the full plugin reference including creating your own plugins, see [plugins](/docs/en/plugins).
 
 ### Configure preview servers
 
