@@ -3497,7 +3497,6 @@ In addition to command, HTTP, and MCP tool hooks, Claude Code supports prompt-ba
 Events that support all five hook types (`command`, `http`, `mcp_tool`, `prompt`, and `agent`):
 
 * `PermissionDenied`
-* `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
 * `PostToolUseFailure`
@@ -3509,6 +3508,8 @@ Events that support all five hook types (`command`, `http`, `mcp_tool`, `prompt`
 * `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
+
+`PermissionRequest` supports `command`, `http`, `mcp_tool`, and `prompt` hooks but not `agent` hooks. If you configure an agent hook on this event, Claude Code skips it and the permission flow proceeds unchanged. To allow or deny from a hook, return the [decision object](#permissionrequest-decision-control) from a command or HTTP hook.
 
 Events that support `command`, `http`, and `mcp_tool` hooks but not `prompt` or `agent`:
 
@@ -3632,7 +3633,7 @@ This `Stop` hook uses a detailed prompt to check three conditions before allowin
   Agent hooks are experimental. Behavior and configuration may change in future releases. For production workflows, prefer [command hooks](#command-hook-fields).
 </Warning>
 
-Agent-based hooks (`type: "agent"`) are like prompt-based hooks but with multi-turn tool access. Instead of a single LLM call, an agent hook spawns a subagent that can read files, search code, and inspect the codebase to verify conditions. Agent hooks support the same events as prompt-based hooks.
+Agent-based hooks (`type: "agent"`) are like prompt-based hooks but with multi-turn tool access. Instead of a single LLM call, an agent hook spawns a subagent that can read files, search code, and inspect the codebase to verify conditions. Agent hooks support the same events as [prompt-based hooks](#prompt-based-hooks), except `PermissionRequest`.
 
 ### How agent hooks work
 
