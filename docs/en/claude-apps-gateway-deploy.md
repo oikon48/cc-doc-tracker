@@ -166,7 +166,9 @@ The gateway writes two streams to stderr, both JSON-friendly:
 
 ### Health
 
-The gateway serves `GET /healthz` as a liveness probe and `GET /readyz` as a readiness probe; `/readyz` verifies the store is reachable. Both are exempt from `access_control.allow_cidrs`, so probes keep working on a locked-down listener.
+The gateway serves `GET /healthz` as a liveness probe and `GET /readyz` as a readiness probe. `/readyz` verifies the store is reachable. If you set [`store.readiness_grace_seconds`](/docs/en/claude-apps-gateway-config#store), `/readyz` keeps reporting ready for up to that many seconds after the store stops answering.
+
+Both endpoints are exempt from `access_control.allow_cidrs`, so probes keep working on a locked-down listener.
 
 The OAuth discovery document at `/.well-known/oauth-authorization-server` also returns `200` only after config load, OIDC discovery, upstream client construction, and Postgres migration all succeed, so it doubles as an end-to-end boot check.
 
@@ -198,9 +200,17 @@ If Postgres goes down, the gateway itself keeps serving signed-in developers and
 * **Existing sessions**: bearer tokens validate locally with the JWT secret, session refreshes don't touch the store, and the gateway process can still serve inference
 * **New sign-ins**: fail until Postgres recovers, because the device flow and its rate-limit counters live in Postgres
 * **[Spend-limit enforcement](/docs/en/claude-apps-gateway-spend-limits#postgres-availability)**: fails open by default during the outage, so inference still flows; flip it to fail closed if you'd rather block than run unmetered
-* **Readiness**: `/readyz` reports not-ready during the outage, so orchestrators that gate traffic on readiness remove every replica from rotation at once. In that topology all traffic, including inference the gateway could still serve, fails at the load balancer until Postgres recovers. The liveness probe on `/healthz` keeps passing, so replicas aren't restarted. Point the readiness probe at `/healthz` instead if you'd rather signed-in developers keep working through a store outage; the cost is that new sign-ins fail against a replica that still reports ready.
+* **Readiness**: by default `/readyz` reports not-ready as soon as Postgres is unreachable, so every replica fails its readiness check at once. Where traffic only reaches replicas that pass the check, all traffic, including inference the gateway could still serve, fails until Postgres recovers. The liveness probe on `/healthz` keeps passing throughout.
 
 If your IdP goes down, existing sessions work until `ttl_hours` and new logins fail. A session refresh gets a try-again answer and succeeds once the IdP is back. Set a longer `ttl_hours` if your IdP has frequent maintenance windows.
+
+#### Readiness grace period
+
+To keep signed-in developers working through a short Postgres outage such as a database failover, set [`store.readiness_grace_seconds`](/docs/en/claude-apps-gateway-config#store) to longer than the failover takes, for example `300`. With spend limits on and the default fail-open behavior, requests through a replica that stays ready are unmetered until Postgres recovers, so keep the value as low as covers your failover. If you set [`enforcement.fail_closed_on_error: true`](/docs/en/claude-apps-gateway-config#enforcement), the gateway refuses signed-in developers' inference with the `429` `spend limit unavailable` message until Postgres recovers, even while replicas still pass their readiness check.
+
+The setting requires Claude Code v2.1.282 or later on the gateway server. An earlier gateway refuses to start when it finds the key, so upgrade every replica before you add it. [Upgrades](#upgrades) covers rolling back.
+
+If you point the readiness probe at `/healthz` instead, replicas also keep passing it through an outage, but `/healthz` never reports not-ready, so a replica whose Postgres connection doesn't recover keeps passing too.
 
 ### JWT secret rotation
 
