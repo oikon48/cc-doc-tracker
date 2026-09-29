@@ -9,7 +9,7 @@ source: https://code.claude.com/docs/en/claude-code-on-the-web.md
 
 # Use Claude Code in the cloud
 
-> Run Claude Code sessions in the cloud from your browser, phone, desktop app, or terminal, move them with --cloud and --teleport, and auto-fix pull requests.
+> Run Claude Code sessions in the cloud from your browser, phone, Desktop app, or terminal, move them with `--cloud` and `--teleport`, and auto-fix pull requests.
 
 <Note>
   Cloud sessions are available on Pro, Max, and Team plans, and for Enterprise users with premium seats or Chat + Claude Code seats.
