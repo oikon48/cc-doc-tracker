@@ -271,7 +271,7 @@ function listSessions(options?: ListSessionsOptions): Promise<SDKSessionInfo[]>;
 | `summary` | `string` | Display title: custom title, most recent prompt, auto-generated summary, or first prompt |
 | `lastModified` | `number` | Last modified time in milliseconds since epoch |
 | `fileSize` | `number \| undefined` | Session file size in bytes. Only populated for local JSONL storage |
-| `customTitle` | `string \| undefined` | User-set session title (via `/rename`) |
+| `customTitle` | `string \| undefined` | The session's custom title when one is set, for example with `--name`, `/rename`, a hook's `sessionTitle` output, or [`renameSession()`](#renamesession). Otherwise the AI-generated session title, if the session has one |
 | `firstPrompt` | `string \| undefined` | First meaningful user prompt in the session |
 | `gitBranch` | `string \| undefined` | Git branch at the end of the session |
 | `cwd` | `string \| undefined` | Working directory for the session |
@@ -1156,7 +1156,7 @@ type PermissionMode =
   | "bypassPermissions" // Bypass permission checks; explicit ask rules still prompt
   | "plan" // Planning mode - explore without editing
   | "dontAsk" // Don't prompt for permissions, deny if not pre-approved
-  | "auto"; // Model classifier approves or denies permission prompts
+  | "auto"; // A model classifier reviews actions such as shell commands and network requests
 ```
 
 ### `CanUseTool`
@@ -2895,14 +2895,14 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
 ```typescript theme={null}
 type BashInput = {
   command: string;
-  timeout?: number; // milliseconds, max 600000; higher values are clamped to the max
+  timeout?: number; // milliseconds. Foreground: capped at 600000 by default, higher values are clamped. With run_in_background (Claude Code v2.1.285 or later): the background time limit, 1800000 when omitted, capped at 7200000 unless raised
   description?: string;
   run_in_background?: boolean;
   dangerouslyDisableSandbox?: boolean;
 };
 ```
 
-Executes Bash commands with optional timeout and background execution. The working directory persists between commands, including commands run in later turns of a multi-turn session; shell state such as exported environment variables doesn't. For the limits on which directory changes carry over, see [What persists between commands](/docs/en/tools-reference#what-persists-between-commands).
+Executes Bash commands with optional timeout and background execution. The working directory persists between commands, including commands run in later turns of a multi-turn session; shell state such as exported environment variables doesn't. For the limits on which directory changes carry over, see [What persists between commands](/docs/en/tools-reference#what-persists-between-commands). For what sets the foreground ceiling, see [Timeout and output limits](/docs/en/tools-reference#timeout-and-output-limits). For the background time limit, see [Background commands](/docs/en/tools-reference#background-commands).
 
 ### Monitor
 
@@ -3722,7 +3722,7 @@ The `stdout`, `stderr`, and `backgroundTaskId` fields carry:
 
 `timedOutAfterMs` is the timeout in milliseconds, set when the command reached its timeout and moved to the background rather than starting there explicitly. `backgroundCwdHint` is set when the backgrounded command contained a directory-change builtin such as `cd`, `pushd`, `popd`, or `chdir`, and notes that the session working directory didn't change. Both fields require Claude Code v2.1.210 or later.
 
-When a subagent running in the foreground owns a backgrounded command, Claude Code terminates the command when that subagent gives its final response. Claude Code sets `backgroundEndsWithFinalResponse` to `true` on such commands, and omits the field when the command survives the turn, as commands started by the main conversation or by background subagents do. The field requires Claude Code v2.1.227 or later.
+When a subagent running in the foreground owns a backgrounded command, the command [ends when that subagent's run ends](/docs/en/tools-reference#background-commands). Claude Code sets `backgroundEndsWithFinalResponse` to `true` on such commands, and omits the field when the command survives the turn, as commands started by the main conversation or by background subagents do. The field requires Claude Code v2.1.227 or later.
 
 Claude Code sets `gitOperation.commit.branch` to the branch named in git's commit summary line, and omits it for a commit made on a detached HEAD. The field requires Agent SDK v0.3.227 or later. Claude Code reports a `gh pr reopen` command as the `reopened` PR action, which requires Agent SDK v0.3.234 or later.
 
