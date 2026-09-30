@@ -223,6 +223,7 @@ Match the message you see to a section below.
 | `Ultrareview clones <owner>/<repo> in the cloud with the GitHub account connected to your Claude account, and none is connected` | [Command-line errors](#no-github-account-is-connected-to-your-claude-account) |
 | `Your connected GitHub account can't see <owner>/<repo>` | [Command-line errors](#your-connected-github-account-cant-see-the-repository) |
 | `The GitHub App preflight failed transiently (network or service hiccup) — retry in a moment to start from GitHub instead` | [Command-line errors](#the-github-app-preflight-failed-transiently) |
+| `Not uploading this working tree` with `the upload cannot follow that setting` | [Command-line errors](#the-repository-upload-cant-follow-a-git-setting) |
 | `GitHub isn't connected to your Claude account, so this repository can't be cloned in the cloud` | [Command-line errors](#github-isnt-connected-to-your-claude-account) |
 | `Single sign-on authorization needed` | [Command-line errors](#single-sign-on-authorization-needed) |
 | `Failed to resume the conversation` | [Command-line errors](#failed-to-resume-the-conversation) |
@@ -256,6 +257,7 @@ Match the message you see to a section below.
 | `Plugin "<name>@synced" is required by your organization and can't be disabled here` | [Plugin errors](#plugin-is-required-by-your-organization) |
 | `"<plugin>" was not uninstalled: it is still switched on in <file>` | [Plugin errors](#plugin-was-not-uninstalled) |
 | `"<plugin>" was not uninstalled: <file> is there and could not be read` | [Plugin errors](#plugin-was-not-uninstalled) |
+| `Plugin "<plugin>" was not uninstalled: installed_plugins.json` | [Plugin troubleshooting](/docs/en/plugins/troubleshooting#installed-plugins-json-holds-a-record-this-version-cannot-read) |
 | `would be spawned with zero tools — refusing` | [Tool errors](#agent-would-be-spawned-with-zero-tools) |
 | `File is covered by a Read deny rule in your permission settings` | [Tool errors](#file-is-covered-by-a-read-deny-rule) |
 | `cannot contain null bytes (\0)` | [Tool errors](#path-cannot-contain-null-bytes) |
@@ -3212,6 +3214,24 @@ Could not upload repo bundle (<error>). The GitHub App preflight failed transien
 
 Before v2.1.251, Claude Code ended the message with `Please set up GitHub on https://claude.ai/code` even when the GitHub check failed only transiently, and setup advice can't clear a transient failure.
 
+<h3 id="the-repository-upload-cant-follow-a-git-setting">
+  The repository upload can't follow a git setting
+</h3>
+
+You started a [cloud session that uploads your local repository](/docs/en/claude-code-on-the-web#send-local-repositories-without-github), or an [ultrareview](/docs/en/ultrareview) of a branch, and the upload can't follow one of the git settings that decide which attribute rules apply to your files. If the upload went ahead and missed a rule, a file that git transforms before storing it, such as one a clean filter encrypts, could reach the cloud as it is on disk. Claude Code refuses the upload instead, and nothing is uploaded:
+
+```text theme={null}
+Not uploading this working tree: core.ignoreCase (which decides whether .gitattributes patterns match file names regardless of letter case) is set in <file>, and the upload cannot follow that setting, so a file git would change before storing it (to encrypt it, for example) could be uploaded as it is on disk. Move the core.ignoreCase line into this repository’s .git/config or directly into your ~/.gitconfig, then retry.
+```
+
+The message names the setting and where it's set, and ends with the fix for the case you hit. The same refusal appears for `core.attributesFile` and `attr.tree`, each with its own fix.
+
+The message can name a config file that your git configuration pulls in through an `include` or `includeIf` directive, even when that directive's condition doesn't apply to this repository.
+
+**What to do:**
+
+* Apply the fix in the message's final sentence
+
 <h3 id="github-isnt-connected-to-your-claude-account">
   GitHub isn't connected to your Claude account
 </h3>
@@ -3700,7 +3720,7 @@ When you try to disable a plugin that a required plugin depends on, Claude Code 
   Plugin was not uninstalled
 </h3>
 
-You ran [`claude plugin uninstall`](/docs/en/plugins/cli-reference#plugin-uninstall), or chose **Uninstall** in the `/plugin` **Installed** tab, and the uninstall stopped with a message starting `"<plugin>" was not uninstalled:`.
+You ran [`claude plugin uninstall`](/docs/en/plugins/cli-reference#plugin-uninstall), or chose **Uninstall** in the `/plugin` **Installed** tab, and the uninstall stopped with a message starting `"<plugin>" was not uninstalled:`. If the text after that colon starts with `installed_plugins.json` instead of naming a settings file, the cause is content in `installed_plugins.json` that this version of Claude Code can't read. For that form, see [`installed_plugins.json` holds a record this version can't read](/docs/en/plugins/troubleshooting#installed-plugins-json-holds-a-record-this-version-cannot-read).
 
 When Claude Code removed the plugin's entry from `enabledPlugins` and read that scope's settings files back, either the plugin was still switched on there, or a file that could switch it on couldn't be read or checked. Deleting the plugin's saved options, secrets, and data while a settings entry could switch it back on would lose them, so the uninstall stops instead: the plugin stays installed and nothing it saved is deleted.
 

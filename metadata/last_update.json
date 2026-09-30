@@ -1,10 +1,8 @@
 {
-  "lastMapUpdate": "2026-09-30 00:36:43 UTC",
+  "lastMapUpdate": "2026-09-30 06:26:38 UTC",
   "totalDocs": 210,
-  "successfulFetch": 209,
-  "failedFetch": 1,
-  "failedFiles": [
-    "claude-tag.md"
-  ],
+  "successfulFetch": 210,
+  "failedFetch": 0,
+  "failedFiles": [],
   "deletedFiles": 0
 }
