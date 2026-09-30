@@ -501,6 +501,10 @@ With **Trusted** network access, sessions can reach the following domains by def
     * platform.claude.com
     * code.claude.com
     * claude.ai
+    * claude.com
+    * support.claude.com
+    * anthropic.com
+    * [www.anthropic.com](http://www.anthropic.com)
   </Accordion>
 
   <Accordion title="Version control">
@@ -531,6 +535,7 @@ With **Trusted** network access, sessions can reach the following domains by def
     * hub.docker.com
     * [www.docker.com](http://www.docker.com)
     * production.cloudflare.docker.com
+    * production.cloudfront.docker.com
     * download.docker.com
     * gcr.io
     * \*.gcr.io
