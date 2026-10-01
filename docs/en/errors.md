@@ -325,7 +325,7 @@ Match the message you see to a section below.
 | `Transcript writes are failing (...)` | [Session saving warnings](#transcript-writes-are-failing) |
 | `Transcript saving is off — CLAUDE_CODE_SKIP_PROMPT_HISTORY is set` | [Session saving warnings](#transcript-saving-is-off-skip-prompt-history) |
 | `Transcript saving is off — inherited CLAUDE_CODE_CHILD_SESSION marker` | [Session saving warnings](#transcript-saving-is-off-child-session-marker) |
-| `Claude Code's fullscreen renderer didn't finish starting last time on this machine` / `Claude Code's fullscreen renderer has repeatedly failed to start on this machine` | [Configuration warnings](#fullscreen-failed-start-notice) |
+| `Claude Code's fullscreen renderer didn't finish starting last time on this machine` / `Claude Code's fullscreen renderer has repeatedly failed to start on this machine` | [Fullscreen rendering](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting) |
 | `Claude Code exited after an unrecoverable interface error (...)` | [Configuration warnings](#exited-after-an-unrecoverable-interface-error) |
 | `Agent descriptions are over the 15.0k-token limit` | [Configuration warnings](#agent-descriptions-are-over-the-15000-token-limit) |
 | `Not loaded: rename <path>, then restart — its name uses "<name>", a name reserved for the skills synced from your claude.ai account` | [Configuration warnings](#a-skill-command-or-workflow-wasnt-loaded-because-its-name-is-reserved) |
@@ -334,9 +334,12 @@ Match the message you see to a section below.
 | `Remote managed settings failed to load (<cause>)` | [Configuration warnings](#remote-managed-settings-failed-to-load) |
 | `Managed settings were not approved; exiting without applying them.` | [Configuration warnings](#managed-settings-were-not-approved) |
 | `Claude Code can't start: your organization's managed settings block the default model` / `Claude Code can't start: your organization allows only the models listed in "availableModels"` | [Configuration warnings](#managed-settings-block-the-default-model) |
+| `Your organization's managed settings allow Claude Code to use: <providers>` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
+| `Your organization's managed settings allow Claude Code to use no API provider at all` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
 | `MCP server <name> is blocked by enterprise managed policy` | [Configuration warnings](#mcp-server-is-blocked-by-enterprise-managed-policy) |
 | `Managed settings document could not be parsed as a JSON object; none of its settings are in effect. Fix or remove it.` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Managed settings drop-in directory could not be read` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
+| `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
 | `otelHeadersHelper failed; telemetry is not being exported. See /status: ...` | [Configuration warnings](#otelheadershelper-failed) |
 | `"crossSessionInbound" must be one of "accept", "hold", "refuse"` | [Configuration warnings](#crosssessioninbound-must-be-one-of-accept-hold-refuse) |
 | `headersHelper not run — this workspace has no persisted trust` | [Configuration warnings](#headershelper-not-run) |
@@ -3025,8 +3028,6 @@ You started a sign-in for an MCP server whose URL points at an Anthropic-hosted 
 "gmail" is Anthropic-hosted and doesn't support local OAuth. Connect it via Settings → Connectors on claude.ai (requires `claude login`), then it'll be available here automatically.
 ```
 
-Claude Code matches these hosts by URL, so the message appears when a server you added with `claude mcp add` or in `.mcp.json` points at one of them.
-
 **What to do:**
 
 * Remove your entry with `claude mcp remove <name>`, so it can't hide the claude.ai connector at the same URL
@@ -3706,7 +3707,7 @@ On macOS and Linux, Claude Code also rejects a component path that contains a ba
 commands path escapes plugin directory: ./commands\deploy.md — its path contains a backslash, which is not resolved reliably on this platform
 ```
 
-Before v2.1.251, Claude Code loaded a `commands` path declared in a marketplace entry even when it pointed outside the plugin directory. Claude Code already rejected paths declared in `plugin.json` and the other component paths in a marketplace entry.
+Before v2.1.251, Claude Code loaded a `commands` path declared in a marketplace entry even when it pointed outside the plugin directory.
 
 Before v2.1.257, the check looked only at the path's spelling, not at where a symlink leads.
 
@@ -3777,10 +3778,8 @@ Plugin source path refused: ./my-plugin does not stay inside its marketplace dir
 
 Claude Code keeps the plugin marketplaces you've added in a registry file at `~/.claude/plugins/known_marketplaces.json`. A plugin command that needs the registry, such as `claude plugin install`, fails with one of two messages when Claude Code can't use the file:
 
-* `Failed to load marketplace configuration`: the file isn't valid JSON, or can't be read. An empty file fails this way too.
+* `Failed to load marketplace configuration`: the file exists but isn't valid JSON or can't be read. An empty file fails this way too.
 * `Marketplace configuration file is corrupted`: the file is valid JSON but its contents don't match the registry schema.
-
-A missing file isn't a failure: Claude Code treats it as a registry with no marketplaces.
 
 With an empty file, `claude plugin install` reports:
 
@@ -4375,8 +4374,6 @@ On Linux and WSL, the background service checks each host process every few seco
 terminal host process died — press Enter to restart
 ```
 
-If you open the row before the check runs, the footer shows `This session's terminal host process died (the conversation is saved) — press Enter to restart it` and the row turns failed.
-
 From the shell, `claude attach <id>` restarts a session already marked failed for a dead host, and otherwise prints the cause and exits:
 
 ```text theme={null}
@@ -4746,25 +4743,6 @@ Inside tmux, Claude Code detects a marker that arrived through the tmux server's
 
 Claude Code writes most of these messages to stderr, not into the conversation, and writes most of them at startup. An entry says so when its message appears somewhere else, such as in the debug log or as a startup notice in the conversation view, or at another time, such as the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time.
 
-<h3 id="fullscreen-failed-start-notice">
-  Fullscreen renderer didn't finish starting
-</h3>
-
-A previous [fullscreen](/docs/en/fullscreen) session on this machine exited before it finished starting, so Claude Code starts this session on the classic renderer and prints one of these notices:
-
-```text theme={null}
-Claude Code's fullscreen renderer didn't finish starting last time on this machine, so this launch is using the classic renderer. It will try fullscreen again next launch; /tui default keeps the classic renderer.
-
-Claude Code's fullscreen renderer has repeatedly failed to start on this machine, so it has been turned off here. Run /tui fullscreen to try it again (this also resets after an update).
-```
-
-**What to do:**
-
-* Follow [Fullscreen rendering](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting). It says which notice you get, what Claude Code does in later sessions, and how to try fullscreen again or keep the classic renderer.
-* If the session that died printed an exit message, see [Claude Code exited after an unrecoverable interface error](#exited-after-an-unrecoverable-interface-error) for what it names.
-
-Before v2.1.236, Claude Code printed no notice and kept starting sessions in fullscreen rendering after a failed start.
-
 <h3 id="exited-after-an-unrecoverable-interface-error">
   Claude Code exited after an unrecoverable interface error
 </h3>
@@ -4912,6 +4890,29 @@ Claude Code can't start: your organization allows only the models listed in "ava
 * If you administer the settings, add a model your users can run to `availableModels`, or narrow the `deniedModels` entries that block every fallback. [Block specific models or versions](/docs/en/model-config#block-specific-models-or-versions) describes how the Default option steps down
 * If you don't administer them, send the message to your administrator. Your own settings files can't widen a managed `availableModels` or `deniedModels` list
 
+<h3 id="managed-settings-dont-allow-this-api-provider">
+  Managed settings don't allow this API provider
+</h3>
+
+Your organization's [managed settings](/docs/en/managed-settings) set an [`allowedProviders`](/docs/en/settings-reference#allowedproviders) list, and the session's API provider isn't on it or the session uses an endpoint that isn't pinned the way that entry requires. Claude Code refuses at startup, before a login, or when the session next contacts the API. The message begins with the permitted providers:
+
+```text theme={null}
+Your organization's managed settings allow Claude Code to use: Anthropic API, Amazon Bedrock.
+```
+
+When the list is empty, the message reads instead:
+
+```text theme={null}
+Your organization's managed settings allow Claude Code to use no API provider at all (allowedProviders is an empty list), so it cannot start on this machine.
+```
+
+When every entry is unrecognized, the parenthetical reads `(allowedProviders lists only unrecognized entries)` instead.
+
+**What to do:**
+
+* Follow the message's `To continue:` steps
+* If you administer the settings, the message's lines starting `Admins:` name the entry to add or the value to pin, and the [`allowedProviders`](/docs/en/settings-reference#allowedproviders) entry says which source's `env` block can pin it
+
 <h3 id="mcp-server-is-blocked-by-enterprise-managed-policy">
   MCP server is blocked by enterprise managed policy
 </h3>
@@ -4964,6 +4965,31 @@ When a `managed-settings.d/` directory exists but can't be listed, Claude Code r
 
 * If you administer the machine, fix the named document so it parses as a JSON object, or remove the file, profile, or registry value. An empty `managed-settings.json` counts as `{}` and doesn't block launch.
 * If you don't, ask your administrator to fix the deployed document. Nothing in your own settings files causes or clears this error.
+
+<h3 id="unable-to-read-managed-policy-settings">
+  Unable to read managed policy settings
+</h3>
+
+Your organization deploys [managed settings](/docs/en/managed-settings), and one of the deployed sources exists but couldn't be read, for a reason such as an I/O error rather than the operating system denying the read. With no other admin source supplying a policy, Claude Code exits at startup rather than run without the policy the source may carry:
+
+```text theme={null}
+Unable to read managed policy settings.
+This machine may require organization login enforcement, but the policy file failed to load.
+Contact your administrator.
+
+Detail: <source>: <reason>
+```
+
+In the same state, sign-in flows, API requests from a session that is already running, and the [`claude gateway`](/docs/en/claude-apps-gateway) server are refused with a variant of the first line that names [`allowedProviders`](/docs/en/settings-reference#allowedproviders).
+
+A read that the operating system denied, such as on a root-only file, doesn't produce this exit: [the session starts without that source's policies](/docs/en/managed-settings#find-entries-claude-code-dropped). For a source that can't be parsed, Claude Code exits with [a different message naming the source](#managed-settings-document-could-not-be-parsed).
+
+**What to do:**
+
+* If you administer the machine, fix the problem the `Detail:` line names so the deployed source can be read, or remove the source
+* If you don't, send the message to your administrator. Nothing in your own settings files causes or clears this error
+
+Before v2.1.285, only sessions signed in with claude.ai or Claude Console credentials exited with this message, and a read that the operating system denied produced it too.
 
 <h3 id="otelheadershelper-failed">
   otelHeadersHelper failed
@@ -5056,8 +5082,6 @@ Permission allow rule (.claude/settings.json): Bash(git -C * status *) has a wil
 * Move every `*` after the subcommand: `Bash(git status *)` in place of `Bash(git -C * status *)`. Write one rule per subcommand you want to allow.
 * Fix the rule at the source the warning names in parentheses: a settings file path, or the `--allowed-tools` flag itself. A `claude-settings-<hash>.json` path that doesn't exist on disk stands for an inline `--settings` value. Fix the JSON you pass to that flag.
 * If the source reads `managed policy settings`, forward the warning to whoever maintains your managed settings, since you can't clear it yourself.
-
-Claude Code doesn't warn about deny and ask rules with the same shape: it refuses or prompts for the extra commands they match rather than approving them. It also doesn't warn about rules whose subcommand comes before the first `*`, such as `Bash(git commit *)`, or rules in which no word other than an option follows the `*`, such as `Bash(git *)`, or about `:*` prefix rules such as `Bash(git:*)`.
 
 In a [background session](/docs/en/agent-view) or with `--output-format json` or `stream-json`, Claude Code writes the warning to the debug log instead of stderr, so machine-read output stays clean. Run with `--debug` to capture it at `~/.claude/debug/<session-id>.txt`. Before v2.1.246, Claude Code accepted these rules without a warning.
 
@@ -5167,10 +5191,10 @@ Before v2.1.257, `claude doctor` didn't flag these files; earlier versions leave
 
 ## Responses seem lower quality than usual
 
-If Claude's answers seem less capable than you expect but no error is shown, the cause is usually conversation state rather than the model itself. Claude Code doesn't silently change model versions. It can switch to a fallback model in three specific cases:
+If Claude's answers seem less capable than you expect but no error is shown, the cause is usually conversation state rather than the model itself. Claude Code doesn't silently change model versions. It can switch to a fallback model in these cases:
 
 * A configured [`--fallback-model`](/docs/en/cli-reference#cli-flags) takes over after an availability error, for that turn only, with a notice in the transcript
-* An Amazon Bedrock or Google Cloud's Agent Platform startup check finds your default model unavailable
+* An Amazon Bedrock or Google Cloud's Agent Platform startup check finds your default model unavailable, or your account [loses access to it mid-session](/docs/en/amazon-bedrock#when-a-model-is-disabled-mid-session)
 * [Automatic model fallback](/docs/en/model-config#automatic-model-fallback) on Fable 5.1, Fable 5, Opus 5.5, Sonnet 5.5, and Opus 5 moves the session to the flagged category's fallback model, when that category has one, and shows a notice in the transcript
 
 The Model selection check below catches the second and third cases; the first appears as a transcript notice rather than a `/model` change. [Model configuration](/docs/en/model-config) explains when each fallback applies.
