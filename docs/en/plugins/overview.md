@@ -33,9 +33,10 @@ A plugin is a directory of components, usually with a manifest. The manifest, a 
 * [**Skills**](/docs/en/plugins/components#skills): `SKILL.md` instructions Claude loads when relevant, and that you can also run as a command
 * [**Agents**](/docs/en/plugins/components#agents): subagent definitions Claude can delegate to
 * [**Hooks**](/docs/en/plugins/components#hooks): commands Claude Code runs at points in its lifecycle, such as after every edit
+* [**A hooks module**](/docs/en/plugins/mods/overview): hooks written as JavaScript functions, which can also draw panes and add commands. A plugin that has one is called a mod
 * [**MCP servers**](/docs/en/plugins/components#mcp-servers): tool servers Claude Code connects to while the plugin is enabled
 
-This diagram shows a plugin named `my-plugin` that holds one of each of those components, and what you get from each file once the plugin loads.
+This diagram shows a plugin named `my-plugin` that holds a skill, an agent, hooks, and an MCP server, and what you get from each file once the plugin loads.
 
 <img src="https://mintcdn.com/claude-code/2Q_GtOEovg5qaBem/images/plugin-directory.svg?fit=max&auto=format&n=2Q_GtOEovg5qaBem&q=85&s=f623b64e82713b830e48174f0a922888" className="dark:hidden" alt="Diagram in two columns joined by five straight arrows. Left, the directory of a plugin named my-plugin, holding a manifest at .claude-plugin/plugin.json, skills/review/SKILL.md, agents/reviewer.md, hooks/hooks.json, .mcp.json, and other components. Right, what each file gives you in your session: the manifest sets the plugin name, my-plugin; the skill runs as /my-plugin:review; the agent file is a subagent Claude can delegate to; the hooks file holds hooks that run on lifecycle events; and .mcp.json adds an MCP server that gives Claude tools." width="760" height="336" data-path="images/plugin-directory.svg" />
 

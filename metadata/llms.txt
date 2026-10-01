@@ -133,6 +133,23 @@
 - [Measure plugin cost and usage](https://code.claude.com/docs/en/plugins/measure.md): Measure a Claude Code plugin's token cost, find out whether people still use it, and pick the telemetry events for organization-wide plugin questions.
 - [Recommend your plugin from your CLI](https://code.claude.com/docs/en/plugins/cli-hints.md): Prompt Claude Code users to install your official-marketplace plugin by emitting a claude-code-hint tag from your CLI or SDK.
 
+### Mods
+
+- [Mods overview](https://code.claude.com/docs/en/plugins/mods/overview.md): Add panes, commands, and tool call rules to Claude Code with a mod. See what a mod can do, how to make or install one, and where mods run.
+- [Create a mod](https://code.claude.com/docs/en/plugins/mods/create.md): Have Claude write a Claude Code mod from a description, or write one yourself that counts tool calls and adds a command. Learn the reload and validate loop.
+- [Mods reference](https://code.claude.com/docs/en/plugins/mods/reference.md): Complete reference for Claude Code mods: hooks module layout, every event, every mods API method, render sites, elements by surface, limits, and settings.
+
+#### Build
+
+- [Draw in the interface with a mod](https://code.claude.com/docs/en/plugins/mods/interface.md): Draw panes, a band above the prompt, buttons, and text fields from a Claude Code mod, handle presses and input, and keep state between redraws and sessions.
+- [React to events with a mod](https://code.claude.com/docs/en/plugins/mods/events.md): Handle Claude Code events from a mod: observe, rewrite, or answer tool calls, prompts, and turns, filter which events a hook handles, and plan for other mods.
+- [Use the mods API](https://code.claude.com/docs/en/plugins/mods/api.md): Call the mods API from a Claude Code mod to add commands and tools, call a model, run work on a timer, message other sessions, and reach files and the network.
+
+#### Test and troubleshoot
+
+- [Test a mod](https://code.claude.com/docs/en/plugins/mods/test.md): Write automated tests for a Claude Code mod that raise events, stub Claude Code's answers, and press buttons, with no session, sign-in, or network.
+- [Troubleshoot a mod](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md): Find out why a Claude Code mod does nothing: match the symptom or message to its cause, look up refusal messages, and read the debug log.
+
 ### Run a marketplace
 
 - [Create a marketplace](https://code.claude.com/docs/en/plugins/create-marketplace.md): Build a plugin marketplace from a marketplace.json file and test it locally before you host it.
@@ -142,6 +159,7 @@
 ### Manage plugins for your organization
 
 - [Manage Claude Code plugins for your organization](https://code.claude.com/docs/en/plugins/org.md): Control which plugins Claude Code installs and allows across your organization through managed settings.
+- [Manage mods for your organization](https://code.claude.com/docs/en/plugins/mods/admin.md): Control Claude Code mods with managed settings: stop user-installed mods, allow only your own, review what a mod can do, and enforce policy with your own mod.
 
 ### Troubleshooting
 
