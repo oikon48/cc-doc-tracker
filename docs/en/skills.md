@@ -560,7 +560,7 @@ When Claude re-invokes a skill whose rendered content is identical to the copy a
 
 [Auto-compaction](/docs/en/how-claude-code-works#when-context-fills-up) carries invoked skills forward within a token budget. When the conversation is summarized to free context, Claude Code re-attaches the most recent invocation of each skill after the summary, keeping the first 5,000 tokens of each. Re-attached skills share a combined budget of 25,000 tokens. Claude Code fills this budget starting from the most recently invoked skill, so older skills can be dropped entirely after compaction if you have invoked many in one session.
 
-If a skill seems to stop influencing behavior after the first response, the content is usually still present and the model is choosing other tools or approaches. Strengthen the skill's `description` and instructions so the model keeps preferring it, or use [hooks](/docs/en/hooks) to enforce behavior deterministically. If the skill is large or you invoked several others after it, re-invoke it after compaction to restore the full content.
+If Claude stops following a skill partway through a session, see [Claude stops following a skill](#claude-stops-following-a-skill).
 
 ### Pre-approve tools for a skill
 
@@ -1135,6 +1135,14 @@ If Claude uses your skill when you don't want it:
 
 1. Make the description more specific
 2. Add `disable-model-invocation: true` if you only want manual invocation
+
+### Claude stops following a skill
+
+If Claude follows a skill in its first response and stops following it later, start with whichever of these cases matches:
+
+* **Claude skipped a rule that must hold every time**: move the rule into a [hook](/docs/en/hooks-guide). Claude Code runs a hook every time its event occurs, such as before each file edit, whether or not Claude is following the skill. To keep the rule with the skill, define the hook in the skill's [`hooks` frontmatter](/docs/en/hooks#hooks-in-skills-and-agents). That hook applies from the time the skill is invoked until the session ends.
+* **Claude skipped guidance it should apply with judgment**: word the guidance so it applies to the whole task, for example "Run the tests after every edit" rather than "Run the tests". Claude Code adds the skill's content to the conversation when the skill is invoked and [doesn't re-read the file](#skill-content-lifecycle) on later turns.
+* **The conversation was compacted**: invoke the skill again to restore its full content. After [compaction](/docs/en/how-claude-code-works#when-context-fills-up), Claude Code [can keep only the start of an invoked skill](#skill-content-lifecycle), so put the most important instructions near the top of `SKILL.md`.
 
 ### Skill descriptions are cut short
 

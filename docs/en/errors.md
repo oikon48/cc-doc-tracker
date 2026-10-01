@@ -3452,18 +3452,20 @@ Each reason the message can show in parentheses:
   Couldn't open Claude Desktop
 </h3>
 
-You ran [`/desktop`](/docs/en/desktop#coming-from-the-cli), or its alias `/app`, and the system command Claude Code uses to open Claude Desktop failed. The session stays in the terminal.
+You ran [`/desktop`](/docs/en/desktop#coming-from-the-cli) or its alias `/app` in a session, or [`claude --desktop`](/docs/en/cli-reference#cli-flags) in your shell, and the system command Claude Code uses to open Claude Desktop failed. After `/desktop`, the session stays in the terminal; `claude --desktop` prints the message without the `Error:` prefix and exits with status 1.
+
+The text in parentheses names the command that failed, with its exit status and the first line of its error output when it produced them. On macOS that command is `open`, as in this example; on Windows it is `rundll32`:
 
 ```text theme={null}
-Error: Couldn't open Claude Desktop (`open` exited 1: LSOpenURLsWithRole() failed for the URL claude://resume?session=<session-id> with error -10814). Open Claude Desktop and run /desktop again.
+Error: Couldn't open Claude Desktop (`open` exited 1: LSOpenURLsWithRole() failed for the URL claude://resume?session=<session-id> with error -10814). Open Claude Desktop and try again.
 ```
 
 **What to do:**
 
-* Open Claude Desktop yourself, then run `/desktop` again
-* To read that command's full error output, turn on debug logging with `/debug`, run `/desktop` again, and check the debug log
+* Open Claude Desktop yourself, then run `/desktop` or `claude --desktop` again
+* To read the failed command's full error output, turn on debug logging with `/debug` and run `/desktop` again, or run `claude --desktop --debug-file <path>`, then check the debug log
 
-Before v2.1.275, the message was `Failed to open Claude Desktop. Please try opening it manually.` and didn't say what failed.
+Before v2.1.285, the message ended `Open Claude Desktop and run /desktop again.` Before v2.1.275, it was `Failed to open Claude Desktop. Please try opening it manually.` and didn't say what failed.
 
 <h3 id="terminal-setup-left-your-zed-keymap-unchanged">
   /terminal-setup left your Zed keymap unchanged
