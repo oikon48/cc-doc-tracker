@@ -67,6 +67,8 @@ A mod runs with your permissions, so before you install one, know what it has ac
 * **Act without asking you**: approve a tool call before you're asked
 * **Spend your usage**: call a model on your plan or API key
 
+Mods aren't sandboxed. If you turn on [sandboxing](/docs/en/sandboxing), the sandbox isolates the Bash commands Claude runs, and a process that a mod starts runs outside it.
+
 A mod that approves tool calls can approve one that an `ask` rule would prompt for, or that one of your own `PreToolUse` hooks blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists what such a mod can approve, including when it can approve a call that a `deny` rule refuses.
 
 A mod can restyle much of Claude Code's interface, but not the permission prompt. It can't change what a prompt shows you.
@@ -92,6 +94,8 @@ To turn mods off, choose how many to stop, and for how long. To turn them back o
 * **Every mod you installed, in every session**: set [`"disableAllHooks": true`](/docs/en/settings-reference#disableallhooks) in `~/.claude/settings.json`. Your settings hooks and custom status line stop too. What your organization manages keeps running.
 
 If you use Claude Code through an organization, an administrator can also limit which mods load. Administrators start at [Stop user-installed mods from loading](/docs/en/plugins/mods/admin#stop-user-installed-mods-from-loading).
+
+`disableAllHooks` and your organization's `allowManagedModsOnly` stop a mod and leave the rest of its plugin in place: the plugin stays installed, and its skills, commands, agents, and MCP servers load. Other settings and flags reach further. [`disableAllHooks`](/docs/en/settings-reference#disableallhooks) and [What runs under `allowManagedHooksOnly`](/docs/en/settings-reference#what-runs-under-allowmanagedhooksonly) list what each one does to a plugin and its settings hooks.
 
 To find out whether mods can load for you, see [Check whether mods can load](/docs/en/plugins/mods/troubleshoot#check-whether-mods-can-load).
 
@@ -177,7 +181,8 @@ A mod's hooks run in every kind of session that loads the plugin. Drawing is nar
 | Where you run Claude Code | Hooks run | What the mod draws appears |
 | :- | :- | :- |
 | `claude` in a terminal, including an editor's integrated terminal and the JetBrains plugin | Yes | Yes |
-| The Code tab of the Desktop app | Yes | Yes, except elements the [elements table](/docs/en/plugins/mods/reference#elements) marks terminal-only |
+| The Code tab of the Desktop app, except in a WSL session | Yes | Yes, except elements the [elements table](/docs/en/plugins/mods/reference#elements) marks terminal-only |
+| A [WSL session](/docs/en/desktop-wsl) in the Desktop app | No, because plugins aren't available in WSL sessions | No |
 | The VS Code extension's chat panel | Yes | No |
 | `claude -p` and the [Agent SDK](/docs/en/agent-sdk/overview) | Yes | No |
 | [Remote Control](/docs/en/remote-control) from claude.ai or the mobile app | Yes, in the session on your machine | In the terminal on your machine |
@@ -216,12 +221,13 @@ This table lists each entry by the name `/plugin` shows:
 | `cc-plugin-plugin-authoring` | Gives Claude the [`plugin-authoring` skill](/docs/en/plugins/mods/create#ask-claude-for-a-mod) for writing mods. It holds a skill and no mod code. | Unless Anthropic has turned installed mods off remotely | Disable it in `/plugin` |
 | `cc-plugin-sec-default` | Guards what your organization manages from the mods a user installs | [Where the guard loads](/docs/en/plugins/mods/admin#know-what-happens-by-default) | You can't. An administrator [sets the order](/docs/en/plugins/mods/admin#install-your-organizations-mods) in managed settings |
 | `cc-plugin-telemetry` | Sends the analytics records that Claude Code and its built-in mods log | Wherever Claude Code's own analytics are on | Disable it in `/plugin`, or turn analytics off, for example with [`DISABLE_TELEMETRY`](/docs/en/env-vars) |
+| `cc-plugin-you-should-know` | Runs a side agent that watches your back while Claude works on longer tasks. When it finds something worth knowing that you might miss, it shows you a note above the prompt. | Disabled by default. Listed in `/plugin` -> **Installed** -> **Show disabled** if available for your org. Enable with [`/plugin enable cc-plugin-you-should-know@builtin`](/docs/en/plugins/cli-reference#plugin-in-a-session). | Disable it in `/plugin` |
 
 The settings and flags that stop installed mods, such as `disableAllHooks`, `--bare`, and `--safe-mode`, don't stop built-in mods.
 
 ### Read the source of built-in mods
 
-The source of these mods is public in the [`mods` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods). Each one is a complete plugin with its hooks module and tests:
+The source of four of these mods is public in the [`mods` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods). Each one is a complete plugin with its hooks module and tests:
 
 * [`diff`](https://github.com/anthropics/claude-code/tree/main/mods/diff): the `/diff` pane, with buttons bound to keyboard actions and scrolling the mod handles itself
 * [`agents-md`](https://github.com/anthropics/claude-code/tree/main/mods/agents-md): loads `AGENTS.md` as project instructions, with a [`userConfig`](/docs/en/plugins/components#user-configuration) option

@@ -200,7 +200,7 @@ The one exception is a DM, where it runs on your own claude.ai account instead o
 
 ### Common uses
 
-The list below covers common ways teams use Claude Tag. Each link opens a guide with the prompts to paste and the connections the task needs.
+Each link opens a guide with the prompts to paste and the connections the task needs.
 
 * [Watch monitors and alerts](/docs/claude-tag/users/use-cases/watch-monitors): scheduled dashboard checks, and alerts investigated as they arrive. Needs a monitoring connection like Datadog, Sentry, or PagerDuty.
 * [Triage requests](/docs/claude-tag/users/use-cases/triage-requests): an intake channel where Claude answers what it can, flags duplicates, and routes the rest. Works on Slack content alone.

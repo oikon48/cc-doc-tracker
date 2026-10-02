@@ -773,7 +773,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`sandbox.network`](#sandbox-network) | Control which hosts, ports, and sockets [sandboxed](/docs/en/sandboxing#network-isolation) commands reach | Sandbox settings | Any file |
 | [`sandbox.network.allowAllUnixSockets`](#sandbox-network-allowallunixsockets) | Let [sandboxed](/docs/en/sandboxing) commands connect to every Unix socket | Sandbox settings | Any file |
 | [`sandbox.network.allowedDomains`](#sandbox-network-alloweddomains) | Pre-allow domains so [sandboxed](/docs/en/sandboxing) commands don't prompt for them | Sandbox settings | Any file |
-| [`sandbox.network.allowLocalBinding`](#sandbox-network-allowlocalbinding) | Let [sandboxed](/docs/en/sandboxing) commands bind to localhost ports on macOS | Sandbox settings | Any file |
+| [`sandbox.network.allowLocalBinding`](#sandbox-network-allowlocalbinding) | Let [sandboxed](/docs/en/sandboxing) commands listen on network ports and connect to localhost on macOS | Sandbox settings | Any file |
 | [`sandbox.network.allowMachLookup`](#sandbox-network-allowmachlookup) | Let macOS [sandboxed](/docs/en/sandboxing) tools like the iOS Simulator or Playwright reach their XPC services | Sandbox settings | Any file |
 | [`sandbox.network.allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) | Lock the network allowlist to [managed settings](/docs/en/sandboxing#keep-developers-from-widening-the-policy) | Sandbox settings | Managed |
 | [`sandbox.network.allowUnixSockets`](#sandbox-network-allowunixsockets) | List Unix socket paths [sandboxed](/docs/en/sandboxing) commands can use on macOS | Sandbox settings | Any file |
@@ -1392,6 +1392,15 @@ When [parent settings from an embedding host](/docs/en/managed-settings#let-an-e
 
 For what a `!` pattern in a `--disallowedTools` or session rule can carve out, see [Read and Edit rules](/docs/en/permissions#read-and-edit).
 
+When you set this key, Claude Code v2.1.282 or later also ignores the [`allowed-tools`](/docs/en/skills#pre-approve-tools-for-a-skill) frontmatter in skills and `.claude/commands/` files from these sources:
+
+* A repository's `.claude/` directory
+* Your `~/.claude/skills/` and `~/.claude/commands/` directories, including [skills synced from claude.ai](/docs/en/skills#where-synced-skills-load)
+* An `--add-dir` directory
+* [Plugins declared with a `.claude-plugin` manifest](/docs/en/plugins/loading#plugins-shared-through-a-repository) inside `~/.claude/skills/` or the project's `.claude/skills/`
+
+Skills from managed settings and bundled skills keep their `allowed-tools`. A skill's `disallowed-tools` still applies. For what a developer sees when Claude Code ignores the field, see [When only managed permission rules apply](/docs/en/skills#when-only-managed-permission-rules-apply).
+
 * **Scope**: [`Managed`](#scopes)
 * **Type**: Boolean
   * `true`: managed settings become the only settings source of permission rules
@@ -1586,7 +1595,7 @@ Tool names accept glob patterns, so `"*"` denies every tool and `"mcp__*"` denie
 
 Give Claude file access to directories outside the one you started in, as additional [working directories](/docs/en/permissions#working-directories). Most `.claude/` configuration is [not discovered](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) from these directories.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on the sandbox write access](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox) that project and local entries give
 * **Type**: array of directory paths
 * **Default**: unset
 * **Per-session overrides**: `--add-dir` and `/add-dir` add directories for one session alongside this key
@@ -1766,13 +1775,13 @@ This turns the sandbox on, skips permission prompts for sandboxed commands, runs
 }
 ```
 
-Claude Code takes a Boolean key's value from the highest-precedence settings scope that sets it, so a managed `enabled` or `failIfUnavailable` overrides anything a developer sets. It merges array keys across every settings scope the session loads, so a developer can append entries; see [Keep developers from widening the policy](/docs/en/sandboxing#keep-developers-from-widening-the-policy) for the managed-only locks. To require the sandbox for an organization, see [Enforce sandboxing with managed settings](/docs/en/sandboxing#enforce-sandboxing-with-managed-settings).
+When managed settings set a Boolean key such as `enabled` or `failIfUnavailable`, that value overrides anything a developer sets. Claude Code merges array keys across the settings scopes the session loads, so a developer can append entries; see [Keep developers from widening the policy](/docs/en/sandboxing#keep-developers-from-widening-the-policy) for the managed-only locks. To require the sandbox for an organization, see [Enforce sandboxing with managed settings](/docs/en/sandboxing#enforce-sandboxing-with-managed-settings).
 
 ### `sandbox.enabled`
 
 Turn on [sandboxing](/docs/en/sandboxing) for Bash commands. When you pick a mode in the `/sandbox` panel, Claude Code writes this key to `.claude/settings.local.json` for the current project; set it in `~/.claude/settings.json` to sandbox every project.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: Boolean
   * `true`: Claude Code sandboxes Bash commands
   * `false`: Bash commands run unsandboxed
@@ -1786,16 +1795,18 @@ Turn on [sandboxing](/docs/en/sandboxing) for Bash commands. When you pick a mod
 }
 ```
 
-On Linux and WSL2 the sandbox needs `bubblewrap` and `socat`; see [Set up Linux and WSL2](/docs/en/sandboxing#set-up-linux-and-wsl2). When the sandbox can't start, Claude Code shows a warning and runs commands unsandboxed unless you also set [`failIfUnavailable`](#sandbox-failifunavailable).
+On Linux and WSL2 the sandbox needs `bubblewrap` and `socat`; see [Set up Linux and WSL2](/docs/en/sandboxing#set-up-linux-and-wsl2). When the sandbox can't start, Claude Code runs commands unsandboxed unless you also set [`failIfUnavailable`](#sandbox-failifunavailable).
 
 ### `sandbox.failIfUnavailable`
 
-Make Claude Code exit with an error at startup when `sandbox.enabled` is `true` but the sandbox can't start, because a dependency is missing or the platform is unsupported. Without it, Claude Code shows a warning and runs commands unsandboxed. Use it in managed settings when your organization requires sandboxing as a hard gate.
+Make Claude Code exit with an error at startup when `sandbox.enabled` is `true` but the sandbox can't start, because a dependency is missing or the platform is unsupported. Without this key, Claude Code runs commands unsandboxed. Managed deployments that require sandboxing as a security gate can use this setting.
 
-* **Scope**: [`Any file`](#scopes)
+On a platform the sandbox doesn't support, Claude Code doesn't start with this key on. See [Enforce sandboxing with managed settings](/docs/en/sandboxing#enforce-sandboxing-with-managed-settings).
+
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: Boolean
   * `true`: Claude Code exits with an error at startup when `sandbox.enabled` is `true` but the sandbox can't start
-  * `false`: Claude Code shows a warning and runs commands unsandboxed
+  * `false`: Claude Code runs commands unsandboxed when the sandbox can't start
 * **Default**: `false`
 
 This makes every managed machine sandbox commands or refuse to start:
@@ -1836,11 +1847,11 @@ See [Sandbox modes](/docs/en/sandboxing#sandbox-modes) for what auto-allow mode 
 
 ### `sandbox.excludedCommands`
 
-Name commands that Claude Code runs outside the sandbox, such as tools that don't work under it. Each entry uses the same syntax as the content of a `Bash(...)` [permission rule](/docs/en/permissions#permission-rule-syntax): an exact command, a prefix such as `docker *`, or a wildcard pattern.
+Name commands that Claude Code runs outside the sandbox, such as tools that don't work under it. Each entry uses the same syntax as the content of a `Bash(...)` [permission rule](/docs/en/permissions#permission-rule-syntax): an exact command, a prefix such as `docker *`, or a wildcard pattern. A pattern with no wildcard is an exact match, so `docker` matches only `docker` with no arguments.
 
 Your entries take a Bash call out of the sandbox only when they cover every command in it, and some call shapes stay sandboxed even then. A `docker *` entry alone doesn't take `npm ci && docker build .` out of the sandbox.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: array of command patterns
 * **Default**: unset, so no command is excluded
 
@@ -1859,19 +1870,22 @@ Claude Code keeps a Bash call sandboxed when it has one of these shapes, among o
 * A command substitution, a subshell, or a control-flow block such as `if` or `for`
 * A redirection, such as `docker build . > build.log`, other than one that only duplicates a file descriptor, as `2>&1` does
 * A command name that comes from a variable
+* A `git clone`, `git init`, `git worktree add`, `git worktree move`, or `git bundle create` with a path argument that is absolute, starts with `~`, or contains a `..` segment
 
-For example, `cd build && docker compose up` stays sandboxed under a `docker *` entry, and adding a `cd` entry doesn't change that.
+For example, `cd build && docker compose up` stays sandboxed under a `docker *` entry, and adding a `cd` entry doesn't change that. Under a `git *` entry, `git clone <url> vendor/lib` runs outside the sandbox, but `git clone <url> ~/tools` stays sandboxed. A clone writes a whole tree of files, possibly executable ones, wherever its destination path points.
 
-Excluded commands still go through the regular permission flow. Exclusion is a convenience, not a security boundary: prefer [`filesystem.allowWrite`](#sandbox-filesystem-allowwrite) when a tool only needs to write somewhere specific. Claude Code merges entries across every settings scope the session loads, and there is no managed-only lock for this list, so keep a managed list narrow.
+Excluded commands still go through the regular permission flow. Exclusion is a convenience, not a security boundary: when a tool only needs to write somewhere specific, [`filesystem.allowWrite`](#sandbox-filesystem-allowwrite) keeps it sandboxed.
+
+Entries from the settings scopes the session loads combine into one list unless the sandbox is [admin-required](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox). While it is, Claude Code ignores entries in `.claude/settings.json` and `.claude/settings.local.json`, so a cloned repository can't take commands out of the sandbox. Entries in managed settings, `--settings`, and your `~/.claude/settings.json` still apply, and no managed-only lock covers this list.
 
 ### `sandbox.allowUnsandboxedCommands`
 
-Let Claude retry a command outside the sandbox with the `dangerouslyDisableSandbox` parameter after the sandbox blocks it. Set it to `false` so Claude Code ignores that parameter completely and every command Claude runs must be sandboxed or appear in [`excludedCommands`](#sandbox-excludedcommands). The `/sandbox` **Overrides** tab shows that state as **Strict sandbox mode**. Use `false` in managed settings for policies that require strict sandboxing.
+Let Claude retry a command outside the sandbox with the `dangerouslyDisableSandbox` parameter after the sandbox blocks it. When it's `false`, Claude Code ignores that parameter. While the sandbox is running, commands Claude runs are then sandboxed unless they match an [`excludedCommands`](#sandbox-excludedcommands) entry. The `/sandbox` **Overrides** tab shows that state as **Strict sandbox mode**. A `false` in managed settings turns on strict sandbox mode for the developers it covers.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [a limit on project and local settings](/docs/en/sandboxing#turn-off-the-retry-with-strict-sandbox-mode)
 * **Type**: Boolean
   * `true`: Claude can retry a command outside the sandbox with the `dangerouslyDisableSandbox` parameter after the sandbox blocks it
-  * `false`: Claude Code ignores that parameter, so every command Claude runs is sandboxed or appears in `excludedCommands`
+  * `false`: Claude Code ignores that parameter, so while the sandbox is running, commands Claude runs are sandboxed unless they match an `excludedCommands` entry
 * **Default**: `true`
 
 This enforces strict sandbox mode for everyone the managed settings cover:
@@ -1885,9 +1899,11 @@ This enforces strict sandbox mode for everyone the managed settings cover:
 }
 ```
 
-An unsandboxed retry goes through the regular permission flow, with a prompt in Manual mode. See [The unsandboxed retry escape hatch](/docs/en/sandboxing#the-unsandboxed-retry-escape-hatch).
+A `false` from managed settings or `--settings` also makes the sandbox [admin-required](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox). A `false` in your user settings holds against a project's `true` but doesn't make the sandbox admin-required. Holding against a project's value requires Claude Code v2.1.285 or later.
 
-To see when commands you type yourself at the [`!` shell-mode prompt](/docs/en/interactive-mode#shell-mode-with-prefix) run sandboxed, see [strict sandbox mode](/docs/en/sandboxing#the-unsandboxed-retry-escape-hatch).
+Who approves an unsandboxed retry depends on your permission mode and allow rules. See [The unsandboxed retry escape hatch](/docs/en/sandboxing#the-unsandboxed-retry-escape-hatch).
+
+To see when commands you type yourself at the [`!` shell-mode prompt](/docs/en/interactive-mode#shell-mode-with-prefix) run sandboxed, see [strict sandbox mode](/docs/en/sandboxing#turn-off-the-retry-with-strict-sandbox-mode).
 
 ### `sandbox.filesystem`
 
@@ -1912,7 +1928,7 @@ This lets sandboxed commands write to a build directory and your kubeconfig, and
 
 Claude Code enforces these lists at the OS sandbox boundary, so they apply to every subprocess a sandboxed command starts, such as `kubectl`, `terraform`, or `npm`. Claude Code adds your [permission rules](/docs/en/sandboxing#permission-rules) to the same lists: `Edit` allow and deny rules to `allowWrite` and `denyWrite`, `Read` deny rules to `denyRead`, and `WebFetch(domain:...)` allow and deny rules to the [`network`](#sandbox-network) domain lists.
 
-Unless a managed-only lock is set, Claude Code merges every list across the settings files the session loads. [`allowManagedReadPathsOnly`](#sandbox-filesystem-allowmanagedreadpathsonly) limits `allowRead` to entries from managed settings, and [`allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) does the same for allowed domains.
+Unless a lock applies, Claude Code merges these lists across the settings files the session loads. [`allowManagedReadPathsOnly`](#sandbox-filesystem-allowmanagedreadpathsonly) limits `allowRead` to entries from managed settings, and [`allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) does the same for allowed domains. [Repository locks](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox) leave out entries from a repository's settings files.
 
 [Configure sandboxing](/docs/en/sandboxing#configure-sandboxing) covers sources you exclude with `--setting-sources`. When you edit a list during a session, Claude Code [applies the change to the running session](/docs/en/settings#when-edits-take-effect).
 
@@ -1939,7 +1955,7 @@ Claude Code also removes a trailing `/**`, so `~/build/**` and `~/build` cover t
 
 Add paths where sandboxed commands can write, beyond the working directory, the per-user temp directory, and the directories you've added with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`. Use it when a subprocess such as `kubectl` or a build tool needs to write outside the project.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: array of path strings, using the [sandbox path prefixes](#sandbox-path-prefixes)
 * **Default**: unset, so sandboxed commands can write to the working directory, the per-user temp directory, directories you've added with `--add-dir` or `/add-dir`, and directories in [`permissions.additionalDirectories`](#permissions-additionaldirectories)
 
@@ -1955,7 +1971,7 @@ This lets a build write under `/tmp/build` and lets `kubectl` update your kubeco
 }
 ```
 
-Claude Code merges `allowWrite` entries and the paths from your `Edit(...)` allow permission rules across every settings scope the session loads, leaving out the ones from repository settings while [`permissions.blockReadsOutsideWorkingDirectories`](#sandboxed-commands-under-the-block) is on. An `allowWrite` entry can't lift a [protected path](/docs/en/sandboxing#protected-paths).
+Claude Code merges `allowWrite` entries and the paths from your `Edit(...)` allow permission rules across the settings scopes the session loads, leaving out the ones from repository settings while [`permissions.blockReadsOutsideWorkingDirectories`](#sandboxed-commands-under-the-block) is on. [Repository locks](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox) can leave out a repository's entries too. An `allowWrite` entry can't lift a [protected path](/docs/en/sandboxing#protected-paths).
 
 ### `sandbox.filesystem.denyWrite`
 
@@ -2003,7 +2019,7 @@ Claude Code merges entries across every settings scope the session loads, and ad
 
 Re-open reading for specific paths inside a region that [`denyRead`](#sandbox-filesystem-denyread) blocks, to build workspace-only read access. An exact or wildcard `denyRead` entry stays blocked inside a broader `allowRead`, as the [overlap table](/docs/en/sandboxing#configure-sandboxing) shows. When a wildcard `denyRead` entry such as `~/**/.env` matches a directory, Claude Code blocks reads of its contents as well. Before v2.1.236 on macOS, Claude Code re-opened the paths a wildcard `denyRead` entry matched wherever a broader `allowRead` entry covered them, and left a matched directory's contents readable.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: array of path strings, using the [sandbox path prefixes](#sandbox-path-prefixes)
 * **Default**: unset
 
@@ -2020,7 +2036,7 @@ This blocks reads of your home directory except the project itself:
 }
 ```
 
-Claude Code resolves a `.` entry to the project root in project settings and to `~/.claude` in user settings. Claude Code merges entries across every settings file the session loads unless [`allowManagedReadPathsOnly`](#sandbox-filesystem-allowmanagedreadpathsonly) is set, and leaves out entries from repository settings while [`permissions.blockReadsOutsideWorkingDirectories`](#sandboxed-commands-under-the-block) is on.
+Claude Code resolves a `.` entry to the project root in project settings and to `~/.claude` in user settings. Claude Code merges entries across the settings files the session loads unless [`allowManagedReadPathsOnly`](#sandbox-filesystem-allowmanagedreadpathsonly) is set, and leaves out entries from repository settings while [`permissions.blockReadsOutsideWorkingDirectories`](#sandboxed-commands-under-the-block) is on. [Repository locks](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox) can leave out a repository's entries too.
 
 ### `sandbox.filesystem.allowManagedReadPathsOnly`
 
@@ -2029,7 +2045,7 @@ Honor only the [`allowRead`](#sandbox-filesystem-allowread) entries that come fr
 * **Scope**: [`Managed`](#scopes)
 * **Type**: Boolean
   * `true`: Claude Code honors only the `allowRead` entries from managed settings
-  * `false`: `allowRead` entries merge from every settings scope the session loads
+  * `false`: `allowRead` entries from other settings files can merge in
 * **Default**: `false`
 
 This blocks reads of the home directory, re-opens `~/work`, and stops developers from re-opening anything else:
@@ -2080,7 +2096,7 @@ With the layer off, Claude Code doesn't enforce `denyRead` or `credentials.files
 
 Silence sandbox violation reports for paths you expect a command to probe and be refused, such as a tool that checks `/etc/hosts` on startup, so those denials don't show up as violations or in what Claude sees. The sandbox still blocks the access; only the report is suppressed. Keys are substrings to match against the command, with `*` matching every command, and values are substrings of the violation to ignore for that command, such as a filesystem path.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: object mapping a command substring to an array of violation substrings, usually paths
 * **Default**: unset, so every violation is reported
 
@@ -2098,7 +2114,7 @@ Silence sandbox violation reports for paths you expect a command to probe and be
 
 Run the Linux sandbox inside an unprivileged Docker container, where bubblewrap can't mount a fresh `/proc`. Instead the inner sandbox bind-mounts the container's existing `/proc`, which exposes process information that a fresh mount would hide. This reduces security; use it only when the outer container already provides the isolation you need.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: Boolean
   * `true`: the inner sandbox bind-mounts the container's existing `/proc` instead of mounting a fresh one
   * `false`: the sandbox mounts a fresh `/proc`, which doesn't work in an unprivileged Docker container
@@ -2119,7 +2135,7 @@ Linux and WSL2 only. See [Bubblewrap fails to start inside a container](/docs/en
 
 Let sandboxed commands on macOS reach the system TLS trust service, `com.apple.trustd.agent`. Go-based tools such as `gh`, `gcloud`, and `terraform` need it to verify TLS certificates when you use [`network.httpProxyPort`](#sandbox-network-httpproxyport) with a MITM proxy and a custom CA. This reduces security by opening a potential data exfiltration path through the trust service.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: Boolean
   * `true`: sandboxed commands on macOS can reach `com.apple.trustd.agent`
   * `false`: sandboxed commands on macOS can't reach the system TLS trust service
@@ -2475,7 +2491,7 @@ Control which hosts, ports, and sockets sandboxed commands can reach. The sandbo
 
 * **Scope**: [`Any file`](#scopes). `strictAllowlist`, `allowManagedDomainsOnly`, and `tlsTerminate` are read from fewer sources, as their entries say.
 * **Type**: object with the sub-keys below
-* **Default**: unset, so no domains are pre-allowed and the sandbox prompts for each new host
+* **Default**: unset, so no domains are pre-allowed and your permission mode decides [what happens to each new host](/docs/en/sandboxing#hosts-outside-your-allowed-domains)
 
 This pre-allows GitHub and npm, blocks `uploads.github.com`, and lets commands bind to localhost:
 
@@ -2491,13 +2507,13 @@ This pre-allows GitHub and npm, blocks `uploads.github.com`, and lets commands b
 }
 ```
 
-Claude Code merges the array sub-keys across settings scopes and deduplicates them, so a project can add domains to your user list. `WebFetch(domain:...)` allow and deny [permission rules](/docs/en/sandboxing#permission-rules) feed the same allow and deny lists.
+Claude Code merges the array sub-keys across settings scopes, so a project can add domains to your user list unless a [repository lock](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox) applies. `WebFetch(domain:...)` allow and deny [permission rules](/docs/en/sandboxing#permission-rules) feed the same allow and deny lists.
 
 ### `sandbox.network.allowUnixSockets`
 
 List the Unix socket paths sandboxed commands can connect to on macOS. Claude Code ignores this list on Linux and WSL2, where the seccomp filter can't inspect socket paths; use [`allowAllUnixSockets`](#sandbox-network-allowallunixsockets) there instead.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: array of strings, each a socket path
 * **Default**: unset, so the macOS sandbox blocks every Unix socket
 
@@ -2517,7 +2533,7 @@ A socket path can grant broad access: allowing `/var/run/docker.sock`, for examp
 
 Let sandboxed commands connect to every Unix socket. On Linux and WSL2, the sandbox's [seccomp filter](/docs/en/sandboxing#set-up-linux-and-wsl2) blocks `socket(AF_UNIX, ...)` calls, so this is the only way to permit Unix sockets there. When the filter is missing, which `/sandbox` reports on its Dependencies tab, the sandbox doesn't block Unix-socket calls. See [Set up Linux and WSL2](/docs/en/sandboxing#set-up-linux-and-wsl2) for where the filter comes from.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: Boolean
   * `true`: sandboxed commands can connect to every Unix socket
   * `false`: the sandbox blocks Unix-socket connections: on macOS except the paths in `allowUnixSockets`, and on Linux and WSL2 through the seccomp filter when it's present
@@ -2537,12 +2553,12 @@ On WSL2, `true` also reopens the interop socket that launches Windows binaries s
 
 ### `sandbox.network.allowLocalBinding`
 
-Let sandboxed commands bind to localhost ports on macOS, for example to start a dev server.
+Let sandboxed commands on macOS listen on network ports, for example to start a dev server, and connect to any port on localhost. A command that listens on a non-loopback address accepts connections from other machines. The key has no effect on Linux and WSL2, where each sandboxed command has its own loopback interface. To reach a server on the host from Linux or WSL2, see [A command fails to reach a server on localhost](/docs/en/sandboxing#a-command-fails-to-reach-a-server-on-localhost).
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: Boolean
-  * `true`: sandboxed commands can bind to localhost ports on macOS
-  * `false`: sandboxed commands on macOS can't bind to localhost ports
+  * `true`: sandboxed commands on macOS can listen on any local address and connect to any port on localhost
+  * `false`: sandboxed commands on macOS can't listen on a port or connect directly to servers on localhost
 * **Default**: `false`
 
 ```json settings.json theme={null}
@@ -2559,7 +2575,7 @@ Let sandboxed commands bind to localhost ports on macOS, for example to start a 
 
 List additional XPC and Mach service names the macOS sandbox may look up. Tools that communicate over XPC, such as the iOS Simulator or Playwright, need their services listed here.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox)
 * **Type**: array of strings, each a service name; a single trailing `*` matches a prefix, and `"*"` alone matches every service
 * **Default**: unset
 
@@ -2579,9 +2595,9 @@ This allows every service under the `com.apple.coresimulator.` prefix:
 
 Pre-allow domains for outbound traffic from sandboxed commands, so the sandbox doesn't prompt for them. Wildcards such as `*.example.com` match subdomains, and an optional `:port` suffix limits an entry to one port; an entry without a port matches every port.
 
-* **Scope**: [`Any file`](#scopes). Only managed settings when [`allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) is set.
+* **Scope**: [`Any file`](#scopes), with [limits on project and local settings](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox). Only managed settings when [`allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) is set.
 * **Type**: array of strings, each a domain, wildcard pattern, or IP literal, with an optional `:port` suffix
-* **Default**: unset, so the sandbox prompts the first time a command reaches a new host
+* **Default**: unset, so your permission mode decides [what happens to each new host](/docs/en/sandboxing#hosts-outside-your-allowed-domains)
 
 This pre-allows GitHub on every port, every npm subdomain, and one API host on port 443 only:
 
@@ -2621,7 +2637,7 @@ An entry written with the trailing dot that marks a fully qualified domain name,
 
 ### `sandbox.network.strictAllowlist`
 
-Deny sandboxed commands access to hosts outside the allowlist instead of prompting for approval. The allowlist is [`allowedDomains`](#sandbox-network-alloweddomains) plus domains from `WebFetch(domain:...)` allow rules, or only the managed settings entries when [`allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) is set. Requires Claude Code v2.1.219 or later.
+Deny sandboxed commands access to hosts outside the allowlist instead of prompting for approval. The allowlist is [`allowedDomains`](#sandbox-network-alloweddomains) plus domains from `WebFetch(domain:...)` allow rules, or only the managed settings entries when [`allowManagedDomainsOnly`](#sandbox-network-allowmanageddomainsonly) is set. [Locks that apply without an admin-required sandbox](/docs/en/sandboxing#locks-that-apply-without-an-admin-required-sandbox) covers a repository's entries. Requires Claude Code v2.1.219 or later.
 
 * **Scope**: [`User or managed`](#scopes). A repository can't turn it on or off.
 * **Type**: Boolean
@@ -2648,7 +2664,7 @@ Lock the network allowlist to what managed settings define. Claude Code then hon
 * **Scope**: [`Managed`](#scopes)
 * **Type**: Boolean
   * `true`: Claude Code honors only `allowedDomains` and `WebFetch(domain:...)` allow rules from managed settings and blocks a non-allowed domain instead of prompting
-  * `false`: domains from user, project, local, and `--settings` settings merge into the allowlist
+  * `false`: domains from other settings files can merge into the allowlist
 * **Default**: `false`
 
 This locks the allowlist to GitHub and npm and ignores any domains developers add:
@@ -2664,13 +2680,15 @@ This locks the allowlist to GitHub and npm and ignores any domains developers ad
 }
 ```
 
+While the key is `true`, the sandbox is [admin-required](/docs/en/sandboxing#repository-settings-under-an-admin-required-sandbox), and only managed settings can set a [proxy port](#sandbox-network-httpproxyport).
+
 Denied domains still merge from every source the session loads. See [Keep developers from widening the policy](/docs/en/sandboxing#keep-developers-from-widening-the-policy).
 
 ### `sandbox.network.httpProxyPort`
 
-Point the sandbox at your own HTTP proxy instead of the one Claude Code runs. Organizations do this to inspect HTTPS traffic, apply their own filtering rules, or log every request. When unset, Claude Code starts its own proxy for HTTP traffic.
+Point the sandbox at your own HTTP proxy instead of the one Claude Code runs. Organizations do this to inspect HTTPS traffic, apply their own filtering rules, or log requests. Your proxy takes over filtering, and Claude Code stops applying its domain lists and network prompts to traffic sent there. When unset, Claude Code starts its own proxy for HTTP traffic.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), unless [other sandbox settings limit which files can set a port](/docs/en/sandboxing#custom-proxy-configuration)
 * **Type**: number, a local TCP port
 * **Default**: unset, so Claude Code runs its own proxy
 
@@ -2688,9 +2706,9 @@ Set [`socksProxyPort`](#sandbox-network-socksproxyport) too if your proxy should
 
 ### `sandbox.network.socksProxyPort`
 
-Point the sandbox at your own SOCKS5 proxy instead of the one Claude Code runs. When unset, Claude Code starts its own proxy for SOCKS traffic.
+Point the sandbox at your own SOCKS5 proxy instead of the one Claude Code runs. Your proxy takes over filtering, and Claude Code stops applying its domain lists and network prompts to traffic sent there. When unset, Claude Code starts its own proxy for SOCKS traffic.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`Any file`](#scopes), unless [other sandbox settings limit which files can set a port](/docs/en/sandboxing#custom-proxy-configuration)
 * **Type**: number, a local TCP port
 * **Default**: unset, so Claude Code runs its own proxy
 
@@ -4021,6 +4039,13 @@ The reach depends on which file carries the key:
 
 * **In managed settings**: Claude Code disables every configured hook, including managed ones, and keeps running the hooks the [Agent SDK](/docs/en/agent-sdk/overview) registers in process
 * **In any other settings file**: Claude Code disables user, project, local, and plugin hooks; managed hooks, Agent SDK hooks, and hooks from plugins force-enabled in managed [`enabledPlugins`](#enabledplugins) keep running
+
+The key also stops [mods](/docs/en/plugins/mods/overview), which are plugins whose code registers hooks:
+
+* **In managed settings**: the mods in every installed plugin stop, your organization's included
+* **In any other settings file**: the mods you installed stop, and [your organization's mods](/docs/en/plugins/mods/admin#install-your-organizations-mods) keep running
+
+Mods built into Claude Code keep running in both cases. Each has [its own switch](/docs/en/plugins/mods/overview#mods-built-into-claude-code).
 
 Keeping Agent SDK hooks running when managed settings set this key requires Claude Code v2.1.242 or later.
 
@@ -5528,6 +5553,8 @@ In interactive sessions, when the command comes from project or local settings, 
 
 Run your own command, such as `aws sso login`, to refresh the credentials in your `.aws` directory when the ones Claude Code has for [Amazon Bedrock](/docs/en/amazon-bedrock) stop working. Claude Code checks the current credentials against STS first and runs the command only when that check fails, then reads the refreshed `.aws` directory.
 
+When the check fails at the same time in several Claude Code processes that use the same command and credentials, such as separate terminals or IDE windows, one process runs the command and the rest wait for that run instead of starting their own. A process that has waited 60 seconds with a request pending runs the command itself. To turn this off, set [`CLAUDE_CODE_DISABLE_AUTH_REFRESH_LOCK`](/docs/en/env-vars) to `1`.
+
 * **Scope**: [`Any file`](#scopes)
 * **Type**: string, a shell command line
 * **Default**: unset, so Claude Code doesn't refresh AWS credentials for you
@@ -5638,6 +5665,8 @@ If an entry is invalid, or the value isn't a list of strings, `/login` names the
 ### `gcpAuthRefresh`
 
 Run your own command to refresh Google Cloud Application Default Credentials when Claude Code finds they've expired or can't be loaded, so [Google Cloud's Agent Platform](/docs/en/google-vertex-ai) requests keep working without you re-authenticating by hand.
+
+When several Claude Code processes that use the same command and credentials, such as separate terminals or IDE windows, find them expired at the same time, one process runs the command and the rest wait for that run instead of starting their own. A process that has waited 60 seconds with a request pending runs the command itself. To turn this off, set [`CLAUDE_CODE_DISABLE_AUTH_REFRESH_LOCK`](/docs/en/env-vars) to `1`.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: string, a shell command line

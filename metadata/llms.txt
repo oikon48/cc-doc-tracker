@@ -142,6 +142,7 @@
 #### Build
 
 - [Draw in the interface with a mod](https://code.claude.com/docs/en/plugins/mods/interface.md): Draw panes, a band above the prompt, buttons, and text fields from a Claude Code mod, handle presses and input, and keep state between redraws and sessions.
+- [Interface gallery for mods](https://code.claude.com/docs/en/plugins/mods/gallery.md): See the interface elements a Claude Code mod can draw, such as text, buttons, fields, Markdown, code, and diffs, with sample code and terminal screenshots.
 - [React to events with a mod](https://code.claude.com/docs/en/plugins/mods/events.md): Handle Claude Code events from a mod: observe, rewrite, or answer tool calls, prompts, and turns, filter which events a hook handles, and plan for other mods.
 - [Use the mods API](https://code.claude.com/docs/en/plugins/mods/api.md): Call the mods API from a Claude Code mod to add commands and tools, call a model, run work on a timer, message other sessions, and reach files and the network.
 
@@ -396,14 +397,14 @@
 
 ## Indexes
 
-- [French (209 pages)](https://code.claude.com/docs/_llms/fr.md): Documentation for French.
-- [German (210 pages)](https://code.claude.com/docs/_llms/de.md): Documentation for German.
-- [Italian (209 pages)](https://code.claude.com/docs/_llms/it.md): Documentation for Italian.
-- [Japanese (209 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
-- [Spanish (209 pages)](https://code.claude.com/docs/_llms/es.md): Documentation for Spanish.
-- [Korean (210 pages)](https://code.claude.com/docs/_llms/ko.md): Documentation for Korean.
-- [Simplified Chinese (210 pages)](https://code.claude.com/docs/_llms/zh-cn.md): Documentation for Simplified Chinese.
-- [Traditional Chinese (210 pages)](https://code.claude.com/docs/_llms/zh-tw.md): Documentation for Traditional Chinese.
-- [Russian (209 pages)](https://code.claude.com/docs/_llms/ru.md): Documentation for Russian.
-- [Indonesian (209 pages)](https://code.claude.com/docs/_llms/id.md): Documentation for Indonesian.
-- [Brazilian Portuguese (208 pages)](https://code.claude.com/docs/_llms/pt-br.md): Documentation for Brazilian Portuguese.
+- [French (217 pages)](https://code.claude.com/docs/_llms/fr.md): Documentation for French.
+- [German (218 pages)](https://code.claude.com/docs/_llms/de.md): Documentation for German.
+- [Italian (217 pages)](https://code.claude.com/docs/_llms/it.md): Documentation for Italian.
+- [Japanese (217 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
+- [Spanish (218 pages)](https://code.claude.com/docs/_llms/es.md): Documentation for Spanish.
+- [Korean (218 pages)](https://code.claude.com/docs/_llms/ko.md): Documentation for Korean.
+- [Simplified Chinese (218 pages)](https://code.claude.com/docs/_llms/zh-cn.md): Documentation for Simplified Chinese.
+- [Traditional Chinese (218 pages)](https://code.claude.com/docs/_llms/zh-tw.md): Documentation for Traditional Chinese.
+- [Russian (217 pages)](https://code.claude.com/docs/_llms/ru.md): Documentation for Russian.
+- [Indonesian (217 pages)](https://code.claude.com/docs/_llms/id.md): Documentation for Indonesian.
+- [Brazilian Portuguese (216 pages)](https://code.claude.com/docs/_llms/pt-br.md): Documentation for Brazilian Portuguese.

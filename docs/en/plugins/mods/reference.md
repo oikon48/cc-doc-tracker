@@ -13,9 +13,9 @@ source: https://code.claude.com/docs/en/plugins/mods/reference.md
 
 Look up any event a [mod](/docs/en/plugins/mods/overview) can hook, mods API method it can call, or render site it can draw in, for the Claude Code CLI and the Desktop app as of v2.1.287. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
 
-The complete reference is the set of TypeScript declarations that Claude Code writes for your version. Their comments describe every event, field, method, and element, with examples. They also match the version you're running, and events and methods can change between releases.
-
-To open them, load a mod with `claude --plugin-dir`, as in `claude --plugin-dir ./first-mod`, then open `.claude-plugin/types/claude-code/index.d.ts` in the mod's directory. [Get type definitions for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build) lists the other files Claude Code writes there.
+<Note>
+  The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build).
+</Note>
 
 ## Files
 
@@ -212,11 +212,17 @@ A render site is an extension point in Claude Code's interface. Each row is a va
 
 `e.viewport` holds `columns`, `rows`, and `isFullscreen`. It's absent until the app has measured its window. Its `rows` is the height of the whole window, not of your pane.
 
-In a `Pane` or `AbovePrompt` hook, size the tree's width to `e.props.bodyColumns`, and keep the first row two cells shorter, because in the terminal the mark that closes a pane is drawn over that row's last cell. For height in the terminal, `e.props.placement` is `'dock'` beside the transcript, where `e.props.scroll.bodyRows` is the number of rows the pane has, or `'inline'` above the prompt, where the pane grows with your tree up to a limit and `bodyRows` counts only the rows showing now. A tree taller than the pane scrolls as a whole. The [`rows` field of `$.ui.open`](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time) asks for a different limit.
+To fit a tree to its site, read these props in the hook:
+
+* **Width of a `Pane` or the band**: draw to `e.props.bodyColumns`
+* **Height of a `Pane` beside the transcript**: where `e.props.placement` is `'dock'`, `e.props.scroll.bodyRows` is the number of rows the pane has
+* **Height of a `Pane` above the prompt**: where `e.props.placement` is `'inline'`, the pane grows with your tree up to a limit, and `bodyRows` counts only the rows showing now. The [`rows` field of `$.ui.open`](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time) asks for a different limit.
+
+A tree taller than the pane scrolls as a whole.
 
 ## Elements
 
-Elements are the building blocks of a tree a `ui.render` hook returns, and you get them from `$.ui.resolve(e)`. [Build a tree from elements](/docs/en/plugins/mods/interface#build-a-tree-from-elements) shows the common ones with how the terminal draws them. A check mark means the app can draw the element.
+Elements are the building blocks of a tree a `ui.render` hook returns, and you get them from `$.ui.resolve(e)`. [Build a tree from elements](/docs/en/plugins/mods/interface#build-a-tree-from-elements) shows the common ones with how the terminal draws them, and the [interface gallery](/docs/en/plugins/mods/gallery) has screenshots of most. A check mark means the app can draw the element.
 
 | Element | Main props | Terminal | Desktop |
 | :- | :- | :-: | :-: |

@@ -308,10 +308,17 @@ Besides `id`, `$.ui.open` takes these optional fields:
 | :- | :- |
 | `title` | The pane's tab label when more than one pane is open |
 | `focus` | Requests [keyboard focus](#know-which-keys-your-mod-can-receive) |
-| `closeOnEscape` | Makes Esc close the pane. Pass `true` or leave the field out, because Claude Code refuses `false`. |
+| `closeOnEscape` | Makes Esc close the pane |
 | `holdToasts` | Holds toasts, the small notices from [`$.ui.toast`](/docs/en/plugins/mods/api#show-something-without-starting-a-turn), until the pane closes |
 | `rows` | The height to ask for when the pane sits above the prompt. The default is a third of the space. |
 | `columns` | The width to ask for when the pane sits beside the transcript |
+
+`focus`, `closeOnEscape`, and `holdToasts` are optional and accept only `true`. To leave one off, omit it. Passing `false` throws an error such as `ui.open: focus is true or left out`. To set one of them conditionally, add the field only when the condition holds. This call asks for keyboard focus only when `items` isn't empty:
+
+```javascript theme={null}
+const pane = { id: 'hello-tabs', title: 'Hello tabs' }
+await $.ui.open(items.length > 0 ? { ...pane, focus: true } : pane)
+```
 
 To let a command open the pane while Claude is working, add `immediate: true` when you [register the command](/docs/en/plugins/mods/api#add-a-command). Without it, a command typed during a turn waits for the turn to end.
 
@@ -393,12 +400,12 @@ Most drawings use four elements. Select a tab to see each one and how the termin
     ```
 
     ```text theme={null}
-    Note: Type a note and press Enter ⏎ add
+    Note: Type a note and press Enter
     ```
   </Tab>
 </Tabs>
 
-This table lists every element:
+The [interface gallery](/docs/en/plugins/mods/gallery) has samples and screenshots of most elements. This table lists every element:
 
 | Element | What it draws | Where |
 | :- | :- | :- |
@@ -672,12 +679,7 @@ Claude Code now runs your `ui.render` hook once a second. The timer stops when t
 
 ### How often a site can redraw
 
-Claude Code limits how often it redraws, so your mod can call `$.ui.invalidate` as often as its data changes:
-
-| Site | Redraws a second, at most |
-| :- | :- |
-| The visible pane and the band | 30 |
-| Every other site | 10 |
+Claude Code limits how often it redraws a site, so your mod can call `$.ui.invalidate` as often as its data changes. The visible pane and the band have a higher limit than other sites, and the [limits table](/docs/en/plugins/mods/reference#limits) has the numbers.
 
 Calls that come faster than the limit are combined into one redraw. That redraw runs your hook once, and the hook reads your data as it is at that moment, so the latest value shows and the values in between don't. An animation can't run faster than the limit.
 

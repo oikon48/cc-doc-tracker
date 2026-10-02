@@ -51,6 +51,8 @@ Nothing the mod adds appears, and the [`mods active` line](/docs/en/plugins/mods
 
 Read the reason after the colon. The [refusal messages](#refusal-messages) section lists each one. If the log has no such line, work through the other entries in this group.
 
+Some settings stop a mod and leave the rest of its plugin working. [Turn mods on or off](/docs/en/plugins/mods/overview#turn-mods-on-or-off) names them.
+
 ### A `claude -p` run prints `hooks module not loaded`
 
 The line starts with the mod's name and goes to stderr. The hooks module was refused. A non-interactive run has no transcript, so the message goes to stderr.
@@ -118,6 +120,15 @@ The mod loaded, and then Claude Code skipped one of its hooks or unloaded it.
 The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, ran past its [10-second time limit](/docs/en/plugins/mods/reference#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
 
 Fix the error. The debug log has a line for every occurrence.
+
+### `no command.run hook answered it`
+
+You run a command your mod added, and the reply names the mod and the command, as in `first-mod registered /tally but no command.run hook answered it`, then tells you to add a hook. Claude Code prints that reply when the command reaches the end of the chain with no answer, which happens in two cases:
+
+* **No hook answered the command**: the module has no `command.run` hook, the hook's [filter](/docs/en/plugins/mods/events#filter-which-events-a-hook-handles) names a different command, or the hook returned `next(e)`
+* **Claude Code skipped the hook**: [`hook skipped`](#hook-skipped) lists the reasons. Passing `focus: false` to [`$.ui.open`](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time) is one way to get there.
+
+If the module already has the hook the reply describes, look for a `hook skipped` line that names `command.run`, which gives the reason. A [test](/docs/en/plugins/mods/test) that runs the command fails with the same reason.
 
 ### `it crashed the hooks worker`
 
