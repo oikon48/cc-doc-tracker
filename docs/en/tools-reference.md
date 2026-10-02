@@ -592,6 +592,8 @@ To allow a domain in advance without a prompt, add an allow rule like `WebFetch(
 
 An explicit `WebFetch(domain:...)` rule in `deny`, `ask`, or `allow` takes precedence over the preapproved set, so you can block a preapproved domain or require a prompt for it.
 
+When the URL is a claude.ai [artifact](/docs/en/artifacts) link, Claude Code can also ask for approval to read the artifact itself. For the cases where it asks, see [Read an artifact shared with you](/docs/en/artifacts#read-an-artifact-shared-with-you).
+
 WebFetch sets a `User-Agent` header beginning with `Claude-User`, and an `Accept` header that prefers Markdown over HTML so servers that support content negotiation can return Markdown directly.
 
 Sandboxed commands don't inherit WebFetch's built-in set of preapproved documentation domains. To let a sandboxed command reach a domain without a prompt, add the domain to [`allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) or allow it with a `WebFetch(domain:...)` rule, which the [sandbox also honors](/docs/en/sandboxing#network-isolation). WebFetch never reads the sandbox allowlist in return, so adding a domain to a sandbox or organization network allowlist doesn't stop WebFetch from prompting for it.
