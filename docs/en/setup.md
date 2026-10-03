@@ -44,19 +44,19 @@ To install Claude Code, open a terminal and run the command for your system. If 
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -74,7 +74,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -86,7 +86,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -242,9 +242,13 @@ Configure this via `/config` → **Auto-update channel**, or add it to your [set
 }
 ```
 
+A newly launched model can require a Claude Code version newer than the stable channel serves. To run the model now, move to the latest channel.
+
 For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](/docs/en/managed-settings).
 
 Homebrew installations choose a channel by cask name instead of this setting: `claude-code` tracks stable and `claude-code@latest` tracks latest.
+
+Installations from the apt, dnf, and apk repositories choose a channel by repository instead of this setting. To switch one, follow [Install with Linux package managers](#install-with-linux-package-managers).
 
 ### Pin a minimum version
 

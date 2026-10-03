@@ -246,7 +246,7 @@ For what Claude Code does with a value it can't load, and the flags and environm
   If you're the plugin's author, ship the hooks in the plugin's [`hooks/hooks.json`](/docs/en/plugins/components#hooks) and the MCP servers in its [`.mcp.json`](/docs/en/plugins/components#mcp-servers) instead. They apply whenever the plugin is enabled rather than only inside the subagent.
 </Note>
 
-Subagent definitions from any of these scopes are also available to [agent teams](/docs/en/agent-teams#use-subagent-definitions-for-teammates): when spawning a teammate, you can reference a subagent type, and Claude Code applies parts of that definition to the teammate. See [agent teams](/docs/en/agent-teams#use-subagent-definitions-for-teammates) for which parts apply in each display mode.
+You can also reuse a subagent definition as an [agent team](/docs/en/agent-teams) teammate: name the subagent type when you ask Claude to spawn the teammate, and Claude Code applies parts of that definition to it. [Use subagent definitions for teammates](/docs/en/agent-teams#use-subagent-definitions-for-teammates) says which scopes and which parts apply in each display mode.
 
 ### Write subagent files
 

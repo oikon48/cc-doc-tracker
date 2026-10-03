@@ -2404,6 +2404,7 @@ Update that binary, then start a new session. Where the binary came from decides
 | The binary the [VS Code extension](/docs/en/vs-code) bundles | Update the extension |
 | The binary an Agent SDK package bundles | [Upgrade the SDK package](/docs/en/agent-sdk/hosting#runtime-dependencies), then restart your application. In a [compiled single-file executable](/docs/en/agent-sdk/typescript#compile-to-a-single-executable), rebuild it |
 
+* If you run `claude update` on the [stable release channel](/docs/en/setup#configure-release-channel), it doesn't move you past the newest stable release, which can still be below the required minimum. Move to the latest channel, then update again. If your organization pins your channel or version through [managed settings](/docs/en/managed-settings), ask your admin to change it
 * For the per-model wording, you can keep working in the current session by switching to another model: run `/model` in the CLI, call [`setModel()`](/docs/en/agent-sdk/typescript#query-object) on the TypeScript SDK's `Query` object in streaming input mode, or call [`set_model()`](/docs/en/agent-sdk/python#claudesdkclient) on the Python SDK's `ClaudeSDKClient`
 * For the organization-policy wording, update before you continue
 
@@ -2522,6 +2523,7 @@ API Error: 400 ... "thinking.type.enabled" is not supported for this model. Use 
 **What to do:**
 
 * Run `claude update` and restart Claude Code. Opus 4.7 needs v2.1.111 or later. Opus 4.8 needs v2.1.154 or later. Sonnet 5 needs v2.1.197 or later. Opus 5 needs v2.1.219 or later. Opus 5.5 needs v2.1.280 or later. Sonnet 5.5 needs v2.1.284 or later
+* On the [stable release channel](/docs/en/setup#configure-release-channel), updating doesn't move you past the newest stable release, which can still be older than these versions. Move to the latest channel, then update
 * If you can't upgrade, run `/model` and select Opus 4.6 or Sonnet 4.6 instead
 * If you hit this in the [Agent SDK](/docs/en/agent-sdk/overview), upgrade the SDK package instead. Opus 4.8 needs TypeScript SDK v0.3.154 or later and Python SDK v0.2.88 or later. Sonnet 5 needs TypeScript SDK v0.3.197 or later. Opus 5 needs TypeScript SDK v0.3.219 or later. Opus 5.5 needs TypeScript SDK v0.3.280 or later. Sonnet 5.5 needs TypeScript SDK v0.3.284 or later
 
@@ -4177,7 +4179,7 @@ When you message a teammate yourself, typing `@name` followed by the message in 
   Teammate's agent definition was not restored
 </h3>
 
-Claude messaged a stopped [agent team](/docs/en/agent-teams) teammate, and Claude Code brought it back without re-applying the [subagent definition](/docs/en/agent-teams#use-subagent-definitions-for-teammates) it was spawned from, because its definition file came from a folder with no saved trust. The notice follows the resume report in the sending agent's tool result:
+Claude messaged a stopped [agent team](/docs/en/agent-teams) teammate, and Claude Code brought it back without re-applying the [subagent definition](/docs/en/agent-teams#use-subagent-definitions-for-teammates) it was spawned from. The notice follows the resume report in the sending agent's tool result and names the reason. When the definition file came from a folder with no saved trust, it reads:
 
 ```text wrap theme={null}
 Its agent definition was not restored: the folder its definition file came from is not trusted (source: projectSettings), so the teammate is running with the team-essential tools and no custom instructions. To restore it, the user needs to run Claude Code in that folder once and accept the trust dialog (the --debug log names the folder); do not change trust settings on the user's behalf.
