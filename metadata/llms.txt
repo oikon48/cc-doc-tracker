@@ -400,7 +400,7 @@
 - [French (220 pages)](https://code.claude.com/docs/_llms/fr.md): Documentation for French.
 - [German (220 pages)](https://code.claude.com/docs/_llms/de.md): Documentation for German.
 - [Italian (220 pages)](https://code.claude.com/docs/_llms/it.md): Documentation for Italian.
-- [Japanese (219 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
+- [Japanese (220 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
 - [Spanish (220 pages)](https://code.claude.com/docs/_llms/es.md): Documentation for Spanish.
 - [Korean (220 pages)](https://code.claude.com/docs/_llms/ko.md): Documentation for Korean.
 - [Simplified Chinese (220 pages)](https://code.claude.com/docs/_llms/zh-cn.md): Documentation for Simplified Chinese.
