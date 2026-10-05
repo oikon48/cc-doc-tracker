@@ -228,6 +228,7 @@
 - [Security](https://code.claude.com/docs/en/security.md): Learn about Claude Code's security safeguards and best practices for safe usage.
 - [Data usage](https://code.claude.com/docs/en/data-usage.md): Learn about Anthropic's data usage policies for Claude
 - [Zero data retention](https://code.claude.com/docs/en/zero-data-retention.md): Learn about Zero Data Retention (ZDR) for Claude Code, available to qualified accounts on Claude for Enterprise, including scope, disabled features, and how to request enablement.
+- [Set up Claude Code (local mode) for a HIPAA-ready organization](https://code.claude.com/docs/en/hipaa-setup.md): Prepare developers' computers to run Claude Code (local mode) under the HIPAA configuration. Covers versions, network access, managed settings, and local data.
 
 ### Adoption
 
@@ -397,14 +398,14 @@
 
 ## Indexes
 
-- [French (220 pages)](https://code.claude.com/docs/_llms/fr.md): Documentation for French.
-- [German (220 pages)](https://code.claude.com/docs/_llms/de.md): Documentation for German.
-- [Italian (220 pages)](https://code.claude.com/docs/_llms/it.md): Documentation for Italian.
-- [Japanese (220 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
-- [Spanish (220 pages)](https://code.claude.com/docs/_llms/es.md): Documentation for Spanish.
-- [Korean (220 pages)](https://code.claude.com/docs/_llms/ko.md): Documentation for Korean.
-- [Simplified Chinese (220 pages)](https://code.claude.com/docs/_llms/zh-cn.md): Documentation for Simplified Chinese.
-- [Traditional Chinese (220 pages)](https://code.claude.com/docs/_llms/zh-tw.md): Documentation for Traditional Chinese.
-- [Russian (220 pages)](https://code.claude.com/docs/_llms/ru.md): Documentation for Russian.
-- [Indonesian (220 pages)](https://code.claude.com/docs/_llms/id.md): Documentation for Indonesian.
-- [Brazilian Portuguese (220 pages)](https://code.claude.com/docs/_llms/pt-br.md): Documentation for Brazilian Portuguese.
+- [French (221 pages)](https://code.claude.com/docs/_llms/fr.md): Documentation for French.
+- [German (221 pages)](https://code.claude.com/docs/_llms/de.md): Documentation for German.
+- [Italian (221 pages)](https://code.claude.com/docs/_llms/it.md): Documentation for Italian.
+- [Japanese (221 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
+- [Spanish (221 pages)](https://code.claude.com/docs/_llms/es.md): Documentation for Spanish.
+- [Korean (221 pages)](https://code.claude.com/docs/_llms/ko.md): Documentation for Korean.
+- [Simplified Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-cn.md): Documentation for Simplified Chinese.
+- [Traditional Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-tw.md): Documentation for Traditional Chinese.
+- [Russian (221 pages)](https://code.claude.com/docs/_llms/ru.md): Documentation for Russian.
+- [Indonesian (221 pages)](https://code.claude.com/docs/_llms/id.md): Documentation for Indonesian.
+- [Brazilian Portuguese (221 pages)](https://code.claude.com/docs/_llms/pt-br.md): Documentation for Brazilian Portuguese.

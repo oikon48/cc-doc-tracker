@@ -88,7 +88,7 @@ Use either of these instead:
 
 You ran `claude plugin install ...` in your shell, and the shell couldn't find `claude` at all. On Windows the message is `'claude' is not recognized as the name of a cmdlet` or `'claude' is not recognized as an internal or external command`.
 
-The cause isn't the plugin command. Either Claude Code isn't installed, or its install directory isn't on your `PATH` in this shell. Follow [`command not found: claude` after installation](/docs/en/troubleshoot-install#command-not-found-claude-after-installation), then retry the plugin command.
+The cause isn't the plugin command. Follow [Verify your PATH](/docs/en/troubleshoot-install#verify-your-path), then retry the plugin command.
 
 <h3 id="unknown-command-and-command-spellings-that-dont-exist">
   `Unknown command` and command spellings that don't exist

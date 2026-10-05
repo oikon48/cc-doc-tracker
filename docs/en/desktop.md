@@ -732,10 +732,12 @@ Organizations on Team or Enterprise plans can manage desktop app behavior throug
 
 These settings are configured through the [admin settings console](https://claude.ai/admin-settings/claude-code):
 
-* **Code in the desktop**: control whether users in your organization can access Claude Code in the desktop app
-* **Code in the web**: enable or disable [cloud sessions](/docs/en/claude-code-on-the-web) for your organization
+* **Desktop**: control whether users in your organization can access Claude Code in the desktop app
+* **Cloud sessions**: enable or disable [cloud sessions](/docs/en/claude-code-on-the-web) for your organization
 * **Remote Control**: enable or disable [Remote Control](/docs/en/remote-control) for your organization
 * **Disable Bypass permissions mode**: prevent users in your organization from enabling bypass permissions mode
+
+In Enterprise organizations that have HIPAA enabled, the **Desktop** toggle is off by default and an [Owner](/docs/en/server-managed-settings#access-control) can turn it on. Applying the [HIPAA configuration](/docs/en/hipaa-setup) turns it off, even if it was on, so an Owner has to turn it on afterward. **Cloud sessions** and **Remote Control** are also off by default, and an Owner can't turn them on once the organization has the HIPAA configuration applied.
 
 <Note>
   The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only. In a Cowork session on this machine, the desktop app passes that collector to Claude Code as `OTEL_*` environment variables, so the form takes effect even though Claude Code in that session [never fetches admin-console settings](#managed-settings).
