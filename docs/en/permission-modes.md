@@ -644,7 +644,12 @@ Protected directories:
 * `.devcontainer`
 * `.yarn`
 * `.mvn`
-* `.claude`, except for `.claude/worktrees` where Claude stores its own git worktrees, and except for the markdown files in Claude's own [auto memory](/docs/en/memory#storage-location) directory in a session started without `--restricted`
+* `.claude`, with a few exceptions, such as:
+  * Claude's own git worktrees under `.claude/worktrees/`
+  * The current session's own plan files in `~/.claude/plans/`, or in the [`plansDirectory`](/docs/en/settings-reference#plansdirectory) you set
+  * A [background session](/docs/en/agent-view#where-state-is-stored)'s own scratch directory at `~/.claude/jobs/<id>/tmp/`
+  * Markdown files in the project's [auto memory](/docs/en/memory#storage-location) directory, such as `~/.claude/projects/<project>/memory/`, in a session started without `--restricted`
+  * Markdown files in a [subagent memory](/docs/en/sub-agents#enable-persistent-memory) directory, such as `.claude/agent-memory/`, in a session started without `--restricted`
 * A directory you loaded with [`--plugin-dir`](/docs/en/plugins/mods/create#change-a-mod-with-claude), because Claude Code reloads and runs a mod's code from it when a file changes
 
 Protected files:

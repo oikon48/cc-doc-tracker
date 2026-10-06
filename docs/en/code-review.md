@@ -335,7 +335,7 @@ Claude reports the findings as text in the reply in both of these runs, even whe
 * In a terminal session, where `/code-review` runs the review as a [forked subagent](/docs/en/skills#run-skills-in-a-subagent)
 * In a `-p` run with text or JSON output
 
-In a host application that requests the findings list, such as the [desktop app](/docs/en/desktop), Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead. Claude Code renders the report as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+In a host application that requests the findings list, such as the [desktop app](/docs/en/desktop#review-your-code), Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead. Claude Code renders the report as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
 
 When Claude fixes reported findings later in the session, it reports them again, and Claude Code marks each finding in the updated findings list as fixed, skipped, or no change needed.
 
