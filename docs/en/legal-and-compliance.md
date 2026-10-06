@@ -44,7 +44,7 @@ If a customer has executed a Business Associate Agreement (BAA) with Anthropic, 
 * **HIPAA configuration**: the Claude Code CLI or the Code tab in Claude Desktop, used with a Claude for Enterprise account. The organization must have HIPAA enabled and the HIPAA configuration applied to Claude Code (local mode) and Cowork (local mode). See [Set up Claude Code (local mode) for a HIPAA-ready organization](/docs/en/hipaa-setup).
 * **Zero Data Retention**: Claude Code with [Zero Data Retention (ZDR)](/docs/en/zero-data-retention) enabled for the relevant organization. ZDR isn't available for all organizations.
 
-Under the HIPAA configuration, cloud sessions, Remote Control, Claude Code in the Claude mobile app, and Claude Code routed through a third-party cloud provider or a gateway aren't covered. Review the [Implementation Guide](https://trust.anthropic.com/resources?s=rgirr4qe8u7ek8c2igx3\&name=claude-for-enterprise-hipaa-ready-offering-implementation-guide) for a full list of Eligible Services.
+Under the HIPAA configuration, cloud sessions, Remote Control, Claude Code in the Claude mobile app, and Claude Code routed through a third-party cloud provider or a gateway aren't covered. Review the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for a full list of Eligible Services.
 
 ## Usage policy
 

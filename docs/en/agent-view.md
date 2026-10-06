@@ -231,7 +231,7 @@ When a [`PermissionRequest`](/docs/en/hooks#permissionrequest) or [`PreToolUse`]
 
 A reply that can't be delivered, because the background service is unreachable or the send fails, is saved and sent to the session as its next prompt when its process starts again, and the error message says the reply was saved. A reply prefixed with `!` isn't saved, because the saved text would reach the session as a plain prompt rather than run as a Bash command.
 
-With [voice dictation](/docs/en/voice-dictation) enabled, hold or tap your push-to-talk key while the reply input is focused to dictate a reply instead of typing it. The same works in the dispatch input at the bottom of agent view.
+With [voice dictation](/docs/en/voice-dictation) enabled in [hold mode](/docs/en/voice-dictation#hold-to-record), hold your push-to-talk key while the reply input is focused to dictate a reply instead of typing it. The same works in the dispatch input at the bottom of agent view.
 
 Use `↑` and `↓` to peek at adjacent sessions without closing the panel, or `→` to attach.
 

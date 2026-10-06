@@ -692,10 +692,10 @@ If the plugin loads with no error and its skills still don't appear, the next st
 * **A plugin someone else published**: open **Installed** in `/plugin` and open the plugin's details pane, which lists what the plugin contains. A plugin that lists no skills there has none to offer when you type `/`
 
 <h3 id="run-reload-plugins-to-activate">
-  `Run /reload-plugins to activate.`
+  `Run /reload-plugins to apply.`
 </h3>
 
-The install summary in `/plugin` ended with `Run /reload-plugins to activate.` instead of `Plugin is now active.`
+The install summary in `/plugin` ended with `Run /reload-plugins to apply.` instead of `Plugin is now active.` A `Plugins changed. Run /reload-plugins to activate.` notice can appear above the prompt at the same time.
 
 Claude Code didn't activate the plugin during the install, either because activating it would [invalidate the prompt cache](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) or because the activation attempt failed.
 

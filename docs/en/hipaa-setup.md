@@ -20,7 +20,7 @@ The HIPAA configuration is an organization setting on Claude Enterprise plans, f
   * Claude Code in the Code tab of Claude Desktop
   * Cowork in Claude Desktop
 
-  The Claude Code extensions for VS Code and JetBrains aren't part of (local mode). They keep working with the HIPAA configuration applied, but your BAA doesn't cover them. See the [Implementation Guide](https://trust.anthropic.com/resources?s=rgirr4qe8u7ek8c2igx3\&name=claude-for-enterprise-hipaa-ready-offering-implementation-guide) for the full list of Eligible Services.
+  The Claude Code extensions for VS Code and JetBrains aren't part of (local mode). They keep working with the HIPAA configuration applied, but your BAA doesn't cover them. See the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for the full list of Eligible Services.
 </Note>
 
 This page is for the IT or security administrator who prepares developers' computers. The Primary Owner of your Claude organization applies the configuration itself. [Use Claude Code (local mode) and Cowork (local mode) on a HIPAA-ready Enterprise plan](https://support.claude.com/en/articles/17318731) explains what your BAA includes, how the configuration is applied, and how to schedule the date it's applied.
@@ -159,6 +159,7 @@ Even with these keys deployed, some sessions can still run without the HIPAA con
 
 * **Claude Console sign-ins and federation credentials**: `forceLoginOrgUUID` checks only claude.ai sign-ins. [Restrict login to your organization](/docs/en/authentication#restrict-login-to-your-organization) lists what Claude Code checks for each sign-in path and credential.
 * **Server-managed settings**: if your organization also uses [server-managed settings](/docs/en/server-managed-settings), have an Owner add the same keys there. [How Claude Code combines managed sources](/docs/en/managed-settings#how-claude-code-combines-managed-sources) explains which source applies.
+* **Versions older than v2.1.285**: these versions ignore `allowedProviders`, so they can still start on a cloud provider or a gateway. To make v2.1.163 through v2.1.284 refuse to start, you can add [`requiredMinimumVersion`](/docs/en/settings-reference#requiredminimumversion) set to `"2.1.285"` to the same managed settings as the [sample keys](#deploy-managed-settings). Versions before v2.1.163 ignore `requiredMinimumVersion` as well as `allowedProviders`, so [update those computers](#update-claude-code-and-claude-desktop).
 
 To find out whether your BAA covers a session that runs without the HIPAA configuration, see [Use Claude Code (local mode) and Cowork (local mode) on a HIPAA-ready Enterprise plan](https://support.claude.com/en/articles/17318731).
 
@@ -213,7 +214,7 @@ With the HIPAA configuration applied, some Claude Code features are off or behav
 
 With the HIPAA configuration applied, Claude Code removes the credentials it uses to reach Anthropic, such as `ANTHROPIC_API_KEY` and `ANTHROPIC_AUTH_TOKEN`, from the environment of the shell commands, hooks, and MCP servers it starts.
 
-The HIPAA configuration doesn't remove cloud provider or GitHub credentials, so a command that pushes to GitHub or calls another service still works with that developer's access. Your BAA with Anthropic doesn't cover the data it sends there. See the [Implementation Guide](https://trust.anthropic.com/resources?s=rgirr4qe8u7ek8c2igx3\&name=claude-for-enterprise-hipaa-ready-offering-implementation-guide) for the full list of Eligible Services.
+The HIPAA configuration doesn't remove cloud provider or GitHub credentials, so a command that pushes to GitHub or calls another service still works with that developer's access. Your BAA with Anthropic doesn't cover the data it sends there. See the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for the full list of Eligible Services.
 
 To limit which commands and hosts Claude can use, see [permission rules](/docs/en/permissions) and the [sandbox](/docs/en/sandboxing).
 
@@ -244,15 +245,21 @@ On Windows, `~` means `%USERPROFILE%`.
 
 ### Delete session data right away
 
-If your organization needs a developer's session data removed before the retention sweep deletes it, you can remove most of it with one command. Sign in to the computer as that developer, and run this command in any shell:
+If your organization needs a developer's session data removed before the retention sweep deletes it, you can remove most of it with one command. Sign in to the computer as that developer, open any shell, and run the command for the installed Claude Code version.
+
+On Claude Code v2.1.288 or later, run `claude purge`:
 
 ```bash theme={null}
 claude purge --all --yes
 ```
 
-Before v2.1.288, the command was `claude project purge`.
+On v2.1.126 through v2.1.287, run `claude project purge`, which takes the same flags:
 
-The command deletes every project's transcripts and auto memory, the entries in `tasks/`, `debug/`, and `file-history/`, `history.jsonl`, and the project entries in `~/.claude.json`. Without `--yes`, it prints the plan and asks first.
+```bash theme={null}
+claude project purge --all --yes
+```
+
+Either command deletes every project's transcripts and auto memory, the entries in `tasks/`, `debug/`, and `file-history/`, `history.jsonl`, and the project entries in `~/.claude.json`. Without `--yes`, it prints the plan and asks first.
 
 The purge leaves other paths that can hold session content, such as pasted text in `paste-cache/`. [Clear local data](/docs/en/claude-directory#clear-local-data) lists the paths you can delete by hand. To clear a computer completely, for example before you reassign it, [wipe it](#offboard-a-developer).
 

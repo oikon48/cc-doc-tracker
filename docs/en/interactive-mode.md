@@ -192,7 +192,7 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `$` | End of line |
 | `^` | First non-blank character |
 | `gg` | Beginning of input |
-| `G` | End of input |
+| `G` | Beginning of last line |
 | `f{char}` | Jump to next occurrence of character |
 | `F{char}` | Jump to previous occurrence of character |
 | `t{char}` | Jump to just before next occurrence of character |
