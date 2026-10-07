@@ -171,7 +171,7 @@
 
 - [Plugin manifest reference](https://code.claude.com/docs/en/plugins/manifest-reference.md): Complete reference for plugin.json: every field with its type and default, accepted path forms, and the userConfig and environment variable schemas.
 - [Marketplace reference](https://code.claude.com/docs/en/plugins/marketplace-reference.md): Complete reference for marketplace.json fields, plugin entries, and the plugin and marketplace source objects, with where each is valid.
-- [Plugin commands reference](https://code.claude.com/docs/en/plugins/cli-reference.md): Complete reference for the claude plugin shell commands, /plugin and /reload-plugins in a session, and the flags that load a plugin for one session.
+- [Plugin commands reference](https://code.claude.com/docs/en/plugins/cli-reference.md): Reference for the claude plugin shell commands, /plugin and /reload-plugins in a session, and the flags that load a plugin for one session.
 
 ## Administration
 
