@@ -11,8 +11,6 @@ source: https://code.claude.com/docs/en/agent-sdk/typescript.md
 
 > Complete API reference for the TypeScript Agent SDK, including all functions, types, and interfaces.
 
-<script src="/docs/components/typescript-sdk-type-links.js" defer />
-
 ## Installation
 
 ```bash theme={null}
@@ -3448,7 +3446,9 @@ type ReportFindingsInput = {
 };
 ```
 
-Reports code-review findings as a structured list so Claude Code can render them instead of printing them as text. `level` is the effort level the review ran at. Findings are ordered most-severe first, with at most 32 per call, and the array is empty when none survived. Requires Claude Code v2.1.196 or later.
+Reports code-review findings as a structured list so Claude Code can render them instead of printing them as text. Findings are ordered most-severe first, with at most 32 per call, and the array is empty when none survived. Requires Claude Code v2.1.196 or later.
+
+`level` is optional and holds the effort level Claude reports for the review. Claude Code doesn't compare it with the level the review ran at, so the two can differ.
 
 Each finding carries these fields:
 
@@ -4418,7 +4418,7 @@ type ReportFindingsOutput = {
 };
 ```
 
-Returns the number of findings reported, the effort level the review ran at, and the findings echoed back for the result body. Requires Claude Code v2.1.196 or later. The echoed `short_summary` field requires Claude Code v2.1.212 or later.
+Returns the number of findings reported, the `level` value Claude passed, and the findings echoed back for the result body. Requires Claude Code v2.1.196 or later. The echoed `short_summary` field requires Claude Code v2.1.212 or later.
 
 ### Artifact
 
