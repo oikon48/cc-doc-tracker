@@ -87,7 +87,7 @@ Before you create a project, check your plan, your GitHub setup, and what the wo
 
 * **Plan**: you're on Pro or Max and **Projects** shows in your sidebar.
 * **GitHub, if the project will work on code**: your code is on github.com rather than GitHub Enterprise Server, GitLab, or Bitbucket, your connected GitHub account has push access to it, and the Claude GitHub App is installed on it. If you connected GitHub with [`/web-setup`](/docs/en/web-quickstart#connect-from-your-terminal), that token lets your other cloud sessions reach a repository but isn't enough for a project's cloud threads, which need the Claude GitHub App. [Set up GitHub access](#set-up-github-access) has the steps.
-* **Network, secrets, and tools**: for cloud threads, these come from the project's [cloud environment](#choose-an-environment-for-threads). The default environment already reaches [common package registries](/docs/en/cloud-environments#default-allowed-domains), so check this only if the work needs other domains, a secret, or a tool that isn't preinstalled. If the work needs an MCP server, check that it shows as connected in your [claude.ai connectors](https://claude.ai/customize/connectors).
+* **Network access, secrets, and tools**: for cloud threads, these come from the project's [cloud environment](#choose-an-environment-for-threads). The default environment already reaches [common package registries](/docs/en/cloud-environments#default-allowed-domains), so check this only if the work needs other domains, a secret, or a tool that isn't preinstalled. If the work needs an MCP server, check that it shows as connected in your [claude.ai connectors](https://claude.ai/customize/connectors).
 
 ### Start a new project from scratch
 
@@ -355,7 +355,7 @@ In a project with several repositories, each clone is attached to the thread as 
 
 Every new cloud thread starts in the project's [cloud environment](/docs/en/cloud-environments). The environment sets which domains threads can reach, which environment variables they have, which network secrets are added to their requests, and what the setup script installs before Claude starts. Cloud threads use a default Anthropic-hosted environment until you pick one in **Project settings > Environment**.
 
-If cloud threads need to reach an internal API or a private package registry, or need a token your machine normally holds, change the environment rather than the project: see [Network access](/docs/en/cloud-environments#network-access), [Add network secrets](/docs/en/cloud-environments#add-api-credentials), and [Setup scripts](/docs/en/cloud-environments#setup-scripts).
+If cloud threads need to reach an internal API or a private package registry, or need a token your machine normally holds, change the environment rather than the project: see [Network access](/docs/en/cloud-environments#network-access), [Add network secrets](/docs/en/cloud-environments#add-network-secrets), and [Setup scripts](/docs/en/cloud-environments#setup-scripts).
 
 ### Get skills, plugins, connectors, and tools into threads
 

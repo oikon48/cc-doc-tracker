@@ -169,7 +169,7 @@ config/secrets.json`,
           icon: 'folder',
           color: '#9B7BC4',
           oneLiner: 'Topic-scoped instructions, optionally gated by file paths',
-          when: <>Rules without <C>paths:</C> load at session start. Rules with <C>paths:</C> load when a matching file enters context</>,
+          when: <>Rules without <C>paths:</C> load at session start. Rules with <C>paths:</C> load when Claude reads, writes, or edits a matching file</>,
           description: [<>Project instructions split into topic files that can load conditionally based on file paths. A rule without <C>paths:</C> frontmatter loads at session start like CLAUDE.md; a rule with <C>paths:</C> loads only when Claude reads, writes, or edits a matching file.</>, <>Like CLAUDE.md, rules are guidance Claude reads, not configuration Claude Code enforces. For guaranteed behavior use <A href="/docs/en/hooks">hooks</A> or <A href="/docs/en/permissions">permissions</A>.</>],
           tips: [<>Use <C>paths:</C> frontmatter with globs to scope rules to directories or file types</>, <>Subdirectories work: <C>.claude/rules/frontend/react.md</C> is discovered automatically</>, 'When CLAUDE.md approaches 200 lines, start splitting into rules'],
           docsLink: '/en/memory#organize-rules-with-claude/rules/',
@@ -181,7 +181,7 @@ config/secrets.json`,
             color: '#9B7BC4',
             badge: 'committed',
             oneLiner: 'Test conventions scoped to test files',
-            when: <>Loaded when Claude reads a file matching the <C>paths:</C> globs below</>,
+            when: <>Loaded when Claude reads, writes, or edits a file matching the <C>paths:</C> globs below</>,
             description: <>An example rule that only loads when Claude is working on test files. The <C>paths:</C> globs in the frontmatter define which files trigger it; here, anything ending in .test.ts or .test.tsx. For other files, this rule is not loaded into context.</>,
             example: `---
 paths:
@@ -202,8 +202,8 @@ paths:
             color: '#9B7BC4',
             badge: 'committed',
             oneLiner: 'API conventions scoped to backend code',
-            when: <>Loaded when Claude reads a file matching the <C>paths:</C> glob below</>,
-            description: <>A second example showing a rule scoped to backend code. The <C>paths:</C> glob matches files under src/api/, so these conventions load only when Claude is editing API routes.</>,
+            when: <>Loaded when Claude reads, writes, or edits a file matching the <C>paths:</C> glob below</>,
+            description: <>A second example showing a rule scoped to backend code. The <C>paths:</C> glob matches files under src/api/, so these conventions load only when Claude is working on API routes.</>,
             example: `---
 paths:
   - "src/api/**/*.ts"
@@ -610,7 +610,7 @@ type: reference
           icon: 'folder',
           color: '#9B7BC4',
           oneLiner: 'User-level rules that apply to every project',
-          when: <>Rules without <C>paths:</C> load at session start. Rules with <C>paths:</C> load when a matching file enters context</>,
+          when: <>Rules without <C>paths:</C> load at session start. Rules with <C>paths:</C> load when Claude reads, writes, or edits a matching file</>,
           description: 'Same as project .claude/rules/ but applies everywhere. Use this for conventions you want across all your work, like personal code style or commit message format.',
           docsLink: '/en/memory#organize-rules-with-claude/rules/',
           children: []
@@ -1688,8 +1688,6 @@ claude purge ~/work/my-repo --yes
 ```
 
 Pass `--all` instead of a path to purge state for every project at once, which deletes `history.jsonl` outright rather than filtering it. Pass `-i` to step through the deletion plan one item at a time.
-
-In a script, check the output rather than the exit status alone. A run that deletes everything in its plan ends with `Purged N item(s)`. Treat that line as the sign of success.
 
 The command leaves `shell-snapshots/` and `backups/` alone because those are not project-scoped, and warns about them in the plan output. If anyone ran [`/heapdump`](/docs/en/troubleshooting#high-cpu-or-memory-usage) on the machine, delete the `.heapsnapshot` files it wrote too. A heap snapshot contains the full conversation and any credentials the process held, and neither the retention sweep nor the purge touches it.
 

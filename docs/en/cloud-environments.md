@@ -15,7 +15,7 @@ source: https://code.claude.com/docs/en/cloud-environments.md
   Cloud environments apply to [cloud sessions](/docs/en/claude-code-on-the-web), which are available on Pro, Max, and Team plans, and for Enterprise users with [premium seats or Chat + Claude Code seats](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan).
 </Note>
 
-Each [cloud session](/docs/en/claude-code-on-the-web) runs in a cloud environment. You can configure an environment to allow or deny [network access](#access-levels), [set environment variables](#set-environment-variables) for the session, on Pro and Max plans store [network secrets](#add-api-credentials) that sessions use without seeing them, and run a [setup script](#setup-scripts) before Claude starts working.
+Each [cloud session](/docs/en/claude-code-on-the-web) runs in a cloud environment. You can configure an environment to allow or deny [network access](#access-levels), [set environment variables](#set-environment-variables) for the session, on Pro and Max plans store [network secrets](#add-network-secrets) that sessions use without seeing them, and run a [setup script](#setup-scripts) before Claude starts working.
 
 The same environments apply wherever you start a cloud session: the [Desktop app](/docs/en/desktop), the [Claude mobile app](/docs/en/mobile), your browser at [claude.ai/code](https://claude.ai/code), the terminal with [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-cloud), [routines](/docs/en/routines), and [Claude Tag](https://claude.com/docs/claude-tag/overview). Each of these surfaces can also route to a [self-hosted environment](/docs/en/self-hosted-environments). [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers what Claude can't use yet when a Claude Tag session runs in one.
 
@@ -59,7 +59,7 @@ Create, edit, and archive environments from the environment selector, which you 
   <Step title="Add or edit an environment">
     Select **Cloud** to list your environments. Then select **Add cloud environment**, or hover over an existing environment and select the settings icon that appears on the right.
 
-    The dialog includes the name, network access level, environment variables, and setup script. When you edit an existing cloud environment on a Pro or Max plan, the dialog also includes [network secrets](#add-api-credentials).
+    The dialog includes the name, network access level, environment variables, and setup script. When you edit an existing cloud environment on a Pro or Max plan, the dialog also includes [network secrets](#add-network-secrets).
 
     <Frame>
       <img src="https://mintcdn.com/claude-code/ZFId6l95856c5LSw/images/cloud-environment-dialog.png?fit=max&auto=format&n=ZFId6l95856c5LSw&q=85&s=30d4478b31d1f879f7ee287ddab32505" alt="The New cloud environment dialog. A Name field with the placeholder Default, a Network access selector set to Trusted with links to the network policy and access levels, an Environment variables box showing .env-format placeholder text with a note that values are visible to anyone using the environment, a Setup script box described as a Bash script that runs when a new session starts before Claude Code launches, and Cancel and Create environment buttons." width="874" height="1372" data-path="images/cloud-environment-dialog.png" />
@@ -90,19 +90,21 @@ After you edit, add, or remove a variable, an existing session in an Anthropic-h
 
 A cloud session also sets some variables itself when it starts. For [`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`](/docs/en/claude-code-on-the-web#manage-context), the value the session sets overrides one you add here, so adding that key here has no effect.
 
-Anyone who uses the environment can read the values. On Pro and Max plans, use a [network secret](#add-api-credentials) instead for a key the agent proxy can attach to a request. The [requests that never get a secret](#requests-that-never-get-the-credential) are listed there.
+Anyone who uses the environment can read the values. On Pro and Max plans, use a [network secret](#add-network-secrets) instead for a key the agent proxy can attach to a request. The [requests that never get a secret](#requests-that-never-get-the-credential) are listed there.
 
-<h3 id="add-api-credentials">
+<span id="add-api-credentials" />
+
+<h3 id="add-network-secrets">
   Add network secrets
 </h3>
 
-A network secret is an API key or token you store on a cloud environment so Claude can call that API from any session in the environment without seeing the key. Anthropic's agent proxy adds the key to requests for the hosts you list, after each request leaves the session's VM. The key never reaches Claude, the commands it runs, or the session's environment variables.
+A network secret is an API key or token you store on a cloud environment so Claude can call that API from any session in the environment without seeing the key. Anthropic's agent proxy adds the key to requests for the hosts you list, after each request leaves the session's VM, so the key itself stays outside the VM.
 
 Network secrets are available on Pro and Max plans. They aren't available on Team or Enterprise plans yet, so the **Network secrets** section doesn't appear in the environment dialog on those plans.
 
 #### Requirements
 
-Two of these decide whether you can add a secret, and two decide whether the agent proxy can use it once added:
+These requirements decide whether you can add a secret and whether the agent proxy can use it once added:
 
 * **Role**: an organization admin role in your claude.ai organization
   * On Team and Enterprise, Owners hold it and Admins don't
@@ -188,7 +190,7 @@ An Owner makes an environment available to the organization in one of two ways:
 
 Owners choose the organization's [default environment](#the-default-environment) separately, at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
 
-Every member's sessions in a shared environment read its variables, so don't include secrets in them. [Network secrets](#add-api-credentials), which give sessions a key they can't read, aren't available on Team or Enterprise plans yet.
+Every member's sessions in a shared environment read its variables, so don't include secrets in them. [Network secrets](#add-network-secrets), which give sessions a key they can't read, aren't available on Team or Enterprise plans yet.
 
 ### Set the environment a Claude Tag channel uses
 
@@ -224,7 +226,7 @@ Whichever level you pick, sessions can still reach these, because each one takes
 
 * GitHub, through its [separate proxy](#github-proxy)
 * [MCP connectors](#network-access) you enable, whose traffic travels through Anthropic's servers
-* The hosts you listed on the environment's [network secrets](#add-api-credentials), except the [hosts that never get the secret](#requests-that-never-get-the-credential)
+* The hosts you listed on the environment's [network secrets](#add-network-secrets), except the [hosts that never get the secret](#requests-that-never-get-the-credential)
 * The Anthropic API, for Claude Code's own requests, even at **None**, as noted under [Security and isolation](/docs/en/claude-code-on-the-web#security-and-isolation)
 
 ### Allow specific domains
@@ -237,7 +239,7 @@ api.example.com
 registry.example.com
 ```
 
-Sessions in this environment can now reach `api.example.com`, any subdomain of `internal.example.com`, and `registry.example.com`, and no other domains through the session's network. [GitHub traffic](#github-proxy), [MCP connector traffic](#network-access), and requests to the hosts of the environment's [network secrets](#add-api-credentials), other than the [hosts that never get the secret](#requests-that-never-get-the-credential), don't go through this allowlist. A leading `*.` matches every subdomain. To keep the [Trusted domains](#default-allowed-domains) too, check **Also include default list of common package managers**; leave it unchecked to allow only what you list.
+Sessions in this environment can now reach `api.example.com`, any subdomain of `internal.example.com`, and `registry.example.com`, and no other domains through the session's network. [GitHub traffic](#github-proxy), [MCP connector traffic](#network-access), and requests to the hosts of the environment's [network secrets](#add-network-secrets), other than the [hosts that never get the secret](#requests-that-never-get-the-credential), don't go through this allowlist. A leading `*.` matches every subdomain. To keep the [Trusted domains](#default-allowed-domains) too, check **Also include default list of common package managers**; leave it unchecked to allow only what you list.
 
 If your organization uses [artifacts](/docs/en/artifacts#availability), you don't need `*.frame.claudeusercontent.com` in the list for sessions to read them. When the list leaves that host out, Claude Code reads artifact content through the session's connection to Anthropic instead. Keep the host in an allowlist in two situations:
 
@@ -253,8 +255,8 @@ In Anthropic-hosted environments, all GitHub operations go through a dedicated p
 * **Git credentials**: the git client inside the VM uses a scoped credential, which the proxy verifies and swaps for your actual GitHub token.
 * **API requests**: requests from the built-in GitHub tools, and from `gh` under the [`proxy-injected` placeholder](#work-with-github-issues-and-pull-requests), go out with your real credentials substituted.
 * **Push restrictions**: the proxy rejects branch deletions and pushes of anything other than a branch, such as a tag. It doesn't limit which branches a push can update. To do that, use branch protection rules or rulesets on GitHub.
-* **Repository scope**: GitHub API and release-asset requests reach only repositories attached to the session, so a setup script that downloads release assets from an unattached repository gets a 403.
-* **GraphQL restrictions**: the proxy serves only a pinned set of GraphQL operations for pull-request workflows. The proxy rejects everything else on the GraphQL endpoint with a 403 that says `This GraphQL query is not enabled for this session` and names the REST fallback, `gh api repos/{owner}/{repo}/...`. The restriction applies to every request through the proxy regardless of the credentials you supply, so a `GH_TOKEN` you set gets the same 403. Claude can't reach GitHub APIs that exist only in GraphQL, such as Projects v2, through the proxy.
+* **Repository scope**: the proxy serves GitHub API requests for the repositories attached to the session. An API request for another repository gets a 403 whose message starts with `GitHub access to` and contains `is not enabled for this session`.
+* **GraphQL restrictions**: the proxy rejects requests to GitHub's GraphQL endpoint with a 403 whose message starts with `GitHub GraphQL is not available from Claude Code sessions` and names the REST fallback, `gh api repos/{owner}/{repo}/...`. `gh` subcommands that use GraphQL, such as `gh pr` and `gh issue`, get the same 403. The restriction applies to every request through the proxy regardless of the credentials you supply, so a `GH_TOKEN` you set gets the same 403. Claude can't reach GitHub APIs that exist only in GraphQL, such as Projects v2, through the proxy.
 
 Committed files from public repositories arrive through `raw.githubusercontent.com`, which the [security proxy](#security-proxy) handles instead. That domain is in the default [Trusted list](#default-allowed-domains), so those files stay reachable unless the environment's [access level](#access-levels) excludes it.
 
@@ -264,8 +266,6 @@ Cloud sessions in Anthropic-hosted environments run behind an HTTP/HTTPS network
 
 * Protection against malicious requests
 * Rate limiting and abuse prevention
-* Content filtering for enhanced security
-* A DNS-level audit trail of requested hostnames
 
 ## What's available in cloud sessions
 
@@ -293,12 +293,12 @@ Cloud sessions start from a fresh clone of your repository. Anything you commit 
 | Plugins enabled only in your user settings | No | User-scoped `enabledPlugins` lives in `~/.claude/settings.json` on your machine |
 | MCP servers you added with `claude mcp add` at the default local scope or the user scope | No | Those write to `~/.claude.json` on your machine, not the repo. Add the server with `claude mcp add --scope project`, which writes the repo's [`.mcp.json`](/docs/en/mcp#project-scope), and commit that file. A session with one repository loads it |
 | Transport variables in your repo's `.claude/settings.json` `env` block, such as `NODE_EXTRA_CA_CERTS` and the [mTLS client certificate variables](/docs/en/network-config#mtls-authentication) | No | The hosting environment manages the session's API connection, so Claude Code ignores these keys and notes each ignored key in the session's debug log |
-| API keys and tokens for services Claude calls | On Pro and Max plans, as [network secrets](#add-api-credentials) | You add the key once on the environment and the agent proxy attaches it to requests for the hosts you list. A key the agent proxy [can't attach](#requests-that-never-get-the-credential), or any key on a Team or Enterprise plan, stays in an environment variable |
+| API keys and tokens for services Claude calls | On Pro and Max plans, as [network secrets](#add-network-secrets) | You add the key once on the environment and the agent proxy attaches it to requests for the hosts you list. A key the agent proxy [can't attach](#requests-that-never-get-the-credential), or any key on a Team or Enterprise plan, stays in an environment variable |
 | Interactive auth like AWS SSO | No | Not supported. SSO requires browser-based login that can't run in a cloud session |
 
 To make your own configuration available in cloud sessions, commit it to the repo.
 
-Anyone who uses the environment can read its environment variables and setup script. The dialog's note under **Environment variables** says so and warns against putting secrets there. On Pro and Max plans, store a key the agent proxy can attach as a [network secret](#add-api-credentials) instead.
+Anyone who uses the environment can read its environment variables and setup script. The dialog's note under **Environment variables** says so and warns against putting secrets there. On Pro and Max plans, store a key the agent proxy can attach as a [network secret](#add-network-secrets) instead.
 
 #### Add personal preferences without committing to the repo
 
@@ -349,13 +349,13 @@ Cloud sessions include built-in GitHub tools that let Claude read issues, list p
 You can set `GH_TOKEN` or `GITHUB_TOKEN` yourself in [environment settings](#set-environment-variables), or leave both unset and let the [GitHub proxy](#github-proxy) authenticate for you:
 
 * If you set a token, it passes through to the container unchanged, so your scripts and GitHub's [`gh` CLI](https://cli.github.com) use it directly.
-* If you set neither and the [GitHub proxy](#github-proxy) is handling authentication for your session, both variables read as the placeholder string `proxy-injected` in the commands Claude runs, and the proxy substitutes your real credentials on outbound GitHub requests. `gh` works without a token of your own, but a script that reads `GITHUB_TOKEN` directly gets the placeholder, not a usable token.
+* If you set neither and the [GitHub proxy](#github-proxy) is handling authentication for your session, both variables read as the placeholder string `proxy-injected` in the commands Claude runs, and the proxy substitutes your real credentials on outbound GitHub requests. `gh api` calls for attached repositories work without a token of your own, but a script that reads `GITHUB_TOKEN` directly gets the placeholder, not a usable token.
 
 A token you set is an ordinary environment variable, so anyone who uses the environment can read it; the proxy path keeps the credential out of the environment configuration and the session VM.
 
 To check which case applies to your session, ask Claude to run `echo $GH_TOKEN`.
 
-GitHub's [`gh` CLI](https://cli.github.com) is pre-installed. If you need a `gh` command the built-in tools don't cover, like `gh release` or `gh workflow run`, ask Claude to run it. `gh` reads `GH_TOKEN` automatically, so you don't need to run `gh auth login`.
+GitHub's [`gh` CLI](https://cli.github.com) is pre-installed. If you need a GitHub operation the built-in tools don't cover, ask Claude to call the REST API with `gh api`. `gh` subcommands that use the REST API, such as `gh workflow list`, work too. The proxy [rejects subcommands that use GraphQL](#github-proxy), such as `gh pr` and `gh issue`. `gh` reads `GH_TOKEN` automatically, so you don't need to run `gh auth login`.
 
 ### Link output back to the session
 
