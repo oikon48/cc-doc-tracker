@@ -133,7 +133,7 @@ A background job can show the user something without starting a turn. Each of th
 | Call | What the user sees |
 | :- | :- |
 | `$.ui.status(text)` | One line under the prompt that stays until you change it. It starts with `⚠` and the mod's name, as in `⚠ my-mod: checks: 3 passing`. |
-| `$.ui.toast(text)` | A toast notification at the top right, with the mod's name above the text, that disappears after a few seconds |
+| `$.ui.toast(text)` | A toast notification with the mod's name that disappears after a few seconds. It's a box at the top right in [fullscreen rendering](/docs/en/fullscreen), and one line at the right under the prompt in the classic renderer. |
 | `$.ui.log(text)` | A dim line in the transcript that Claude doesn't read. It starts with `●` and the mod's name, as in `● my-mod: build finished`. |
 
 ### Start a turn from a background job

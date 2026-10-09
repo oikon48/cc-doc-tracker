@@ -168,7 +168,7 @@ Look them up in [Messages from the built-in guard](#messages-from-the-built-in-g
 
 ## A drawing doesn't appear or respond
 
-The mod loaded, and its pane, band, or controls don't behave as you expect.
+The mod loaded, and its pane, band, toast, or controls don't behave as you expect.
 
 ### A pane or band is empty or shows Claude Code's usual content
 
@@ -197,6 +197,18 @@ Before v2.1.289, the line showed `Error` as the reason instead.
 The call didn't come from something the user did, and the terminal is narrower than [the width that pane needs](/docs/en/plugins/mods/interface#when-a-pane-waits-for-a-wider-terminal).
 
 Open the pane from a command or a button, or check the call's `isPlaced` result. See [Open a pane at the right time](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time).
+
+### A toast doesn't appear
+
+Your mod calls [`$.ui.toast`](/docs/en/plugins/mods/api#show-something-without-starting-a-turn) in an interactive terminal session and you don't see the toast. To confirm that the call ran, look in the [debug log](#read-the-debug-log) for a line with your mod's name and the toast's text, as in `$.ui.toast (first-mod): build finished`. Then check for causes such as these:
+
+* **The line for the call is missing**: look for one that says why Claude Code refused the call, as in `first-mod: $.ui.toast dropped: timeoutMs is a whole number of ms, 1 to 60000`.
+* **A pane is holding toasts**: your mod or another one passed [`holdToasts`](/docs/en/plugins/mods/interface#hold-toasts-behind-a-dialog) when it opened the pane that's showing. Close the pane to end the hold. If the pane is yours and is meant to stay open, remove `holdToasts` from its `$.ui.open` call and open the pane again.
+* **The toast is under the prompt**: in the [classic renderer](/docs/en/fullscreen#enable-fullscreen-rendering), look at the right under the prompt. A toast there is one line that starts with the mod's name, rather than a box at the top right.
+* **Your mod raised a newer toast**: in the classic renderer, a newer toast from your mod can take the place of one that's showing or waiting to show. The debug log has another line for the older toast, which ends with `gave way, cut short` when it was showing, or `gave way, unseen` when it never appeared. To show both messages, put them in one toast.
+* **The toast ran out of time undrawn**: in fullscreen rendering, Claude Code draws at most three toasts at a time, so a toast can run out of time before it's drawn. The debug log has another line for that toast, which ends with `left the stack, never drawn`. When your mod raises several at once, put the messages in one toast.
+
+Before v2.1.290, Claude Code dropped a toast raised within two seconds of the last one it showed for your mod, and the debug log line for the dropped toast said `within 2000ms of the last; dropped`.
 
 ### Hotkeys do nothing
 

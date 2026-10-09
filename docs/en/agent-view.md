@@ -564,7 +564,7 @@ To turn off worktree isolation for a repository where git worktrees are impracti
 
 Outside a git repository, sessions write to the working directory directly and aren't isolated from each other, so avoid dispatching parallel sessions that edit the same files. If you use a different version control system, configure a [`WorktreeCreate` hook](/docs/en/worktrees#non-git-version-control) and Claude isolates edits the same way it does for git.
 
-When the hook fails in a directory that isn't a git repository, Claude skips isolation for that directory and edits the working directory in place. Inside a git repository, a session that Claude moves into a worktree before editing can't edit files in the shared checkout until that move happens.
+When the hook fails in a directory that isn't a git repository, Claude skips isolation for that directory and edits the working directory in place. Inside a git repository, a session that Claude moves into a worktree before editing can't use the `Edit`, `Write`, or `NotebookEdit` tools on the shared checkout until that move happens.
 
 To find a session's worktree path, attach and check its working directory.
 
