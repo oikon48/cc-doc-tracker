@@ -146,7 +146,15 @@ Timers stop when the module reloads. For long-running work inside a hook, [`next
 
 ## Send and receive messages between sessions
 
-A mod can send a plain-text message to another of your sessions or to one of this session's subagents, and observe the messages that arrive and leave. `$.session.send({ to, text })` sends one, the same delivery the SendMessage tool makes. `to` is `{ sessionId }` for a session, `{ agentId }` for a subagent from `$.agent.list()`, or the string address a received message came from. The call resolves once the message is queued, with `{ isDelivered: true }`. When nothing was delivered it resolves with `{ isDelivered: false, reason }`, and `reason` says why.
+A mod can send a plain-text message to another of your sessions, to one of this session's subagents, or to a teammate in its [agent team](/docs/en/agent-teams). It can also observe the messages that arrive and leave.
+
+To send one, call `$.session.send({ to, text })`, which makes the same delivery the SendMessage tool makes. Set `to` by who receives the message:
+
+* **Another of your sessions**: `{ sessionId }`
+* **A subagent or teammate**: `{ agentId }`, with an id from `$.agent.list()`
+* **The sender of a message you received**: the string address that message came from
+
+The call resolves once the message is queued, with `{ isDelivered: true }`. When nothing was delivered, it resolves with `{ isDelivered: false, reason }`, and `reason` says why.
 
 This hook answers a `/ping` command, [registered as a command](#add-a-command), by asking the session whose id you type after it for a status:
 
