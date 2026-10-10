@@ -641,7 +641,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`claudeMdExcludes`](#claudemdexcludes) | Skip specific [CLAUDE.md](/docs/en/memory#exclude-specific-claude-md-files) files when memory loads | Memory and context | Any file |
 | [`cleanupPeriodDays`](#cleanupperioddays) | Choose how many days Claude Code keeps [transcripts](/docs/en/data-usage#data-retention) before deleting them | Privacy and telemetry | Any file |
 | [`companyAnnouncements`](#companyannouncements) | Show your organization's announcements at startup | Interface and terminal | Any file |
-| [`copyFullResponse`](#copyfullresponse) | Make [`/copy`](/docs/en/commands) copy the full response without showing the code block picker | Global config settings | Global config |
+| [`copyFullResponse`](#copyfullresponse) | Make [`/copy`](/docs/en/commands) copy the full response without showing the picker | Global config settings | Global config |
 | [`copyOnSelect`](#copyonselect) | Turn off automatic copying of text you select with the mouse in [fullscreen rendering](/docs/en/fullscreen#use-the-mouse) and agent view | Global config settings | Global config |
 | [`crossSessionInbound`](#crosssessioninbound) | Choose whether Claude Code delivers [messages from your other sessions](/docs/en/cross-session-messaging#control-inbound-messages), shows a notice without delivering them, or refuses them | Agents, sessions, and worktrees | Any file |
 | [`defaultShell`](#defaultshell) | Choose whether Bash or PowerShell runs the shell commands you type with the [`!` prefix](/docs/en/interactive-mode#shell-mode-with-prefix) | Interface and terminal | Any file |
@@ -687,7 +687,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`fileCheckpointingEnabled`](#filecheckpointingenabled) | Turn off or on the file snapshots that [`/rewind`](/docs/en/checkpointing) restores | Memory and context | Any file |
 | [`fileSuggestion`](#filesuggestion) | Supply [`@` file autocomplete](/docs/en/interactive-mode#quick-commands) from your own command | Interface and terminal | Any file |
 | [`footerLinksRegexes`](#footerlinksregexes) | Make issue or review IDs in output into [clickable links](/docs/en/statusline#clickable-links) below the input box | Interface and terminal | User or managed |
-| [`forceLoginGatewayUrl`](#forcelogingatewayurl) | Set the [gateway URL](/docs/en/claude-apps-gateway#set-the-gateway-url) the login screen connects to | Authentication and providers | Managed |
+| [`forceLoginGatewayUrl`](#forcelogingatewayurl) | Set the [gateway URL](/docs/en/claude-apps-gateway#set-the-gateway-url) the login screen connects to | Authentication and providers | User or managed |
 | [`forceLoginMethod`](#forceloginmethod) | [Restrict login](/docs/en/authentication#restrict-login-to-your-organization) to claude.ai, Claude Console, or a [cloud gateway](/docs/en/claude-apps-gateway) | Authentication and providers | Any file |
 | [`forceLoginOrgUUID`](#forceloginorguuid) | [Pin claude.ai logins to your organization](/docs/en/authentication#restrict-login-to-your-organization); only a managed source enforces it | Authentication and providers | Any file |
 | [`forceRemoteSettingsRefresh`](#forceremotesettingsrefresh) | Block startup until [server-managed settings](/docs/en/server-managed-settings) are freshly fetched | Enterprise and managed settings | Managed |
@@ -1682,7 +1682,7 @@ Set the [permission mode](/docs/en/permission-modes) new sessions start in. When
   * `"acceptEdits"`: Claude Code also runs file edits and common filesystem commands such as `mkdir` and `mv` without asking
   * `"plan"`: Claude Code reads and plans but blocks edits until you approve a plan
   * `"auto"`: Claude Code runs without routine prompts; before actions such as shell commands and network requests run, a background classifier checks that they align with your request
-  * `"dontAsk"`: Claude Code auto-denies every call that would otherwise prompt; reads, other actions that need no approval, and pre-approved tools still run
+  * `"dontAsk"`: Claude Code auto-denies every call that would otherwise prompt; file reads inside your working directories, other actions that need no approval, and pre-approved tools still run, apart from reads from [network paths](/docs/en/permissions#network-paths)
   * `"bypassPermissions"`: Claude Code runs everything without asking
   * `"manual"`: an alias for `"default"`
 * **Default**: unset
@@ -2263,7 +2263,7 @@ When a managed `sandbox.credentials` entry fails validation, Claude Code keeps p
 
 * An entry in `files` or `envVars` that still has a valid `path` or `name` and a `mode` of `mask` or `deny`, such as one whose `extract` pattern has no capturing group, is degraded to `mode: "deny"` with a warning, so the credential stays blocked, not masked, until you fix the entry. A degraded `files` entry pins [`filesystem.disabled`](/docs/en/sandboxing#disable-filesystem-isolation) like an explicit `deny` entry, and the warning notes that its read block isn't enforced if managed settings turn filesystem isolation off.
 * An entry with an unknown `mode` or an invalid `path` or `name` is stripped.
-* Each case warns; whether an entry is degraded or stripped, the remaining valid entries are still enforced, and a wholly invalid `credentials` value is dropped while the rest of `sandbox` still applies.
+* Each case warns; whether an entry is degraded or stripped, the remaining valid entries are still enforced.
 
 Applies in v2.1.191 and later; before v2.1.221, every invalid entry was stripped. For the other managed keys with per-field handling, see [Invalid entries in managed settings](/docs/en/managed-settings#invalid-entries-in-managed-settings).
 
@@ -5360,7 +5360,7 @@ Turn off [Remote Control](/docs/en/remote-control): Claude Code then refuses `cl
 
 ### `enableArtifact`
 
-Turn off the [Artifact](/docs/en/artifacts) tool, which publishes session output as a private web page on claude.ai. When you turn the **Artifacts** row off in `/config`, Claude Code writes this key to your user settings, so you don't usually edit it by hand. Requires Claude Code v2.1.196 or later.
+Turn off the [Artifact](/docs/en/artifacts) tool, which publishes session output as a private web page on claude.ai. When you turn the **Artifacts** row off in `/config`, Claude Code writes this key to your user settings, so you don't usually edit it by hand.
 
 * **Scope**: [`Any file`](#scopes). Every file can turn the tool off, and none can turn it back on.
 * **Type**: Boolean
@@ -5606,7 +5606,7 @@ Unlike [`awsAuthRefresh`](#awsauthrefresh), Claude Code always runs this command
 
 Restrict which kind of account people can log in with. Set `"claudeai"` to allow only claude.ai accounts, `"console"` to allow only Claude Console accounts, or `"gateway"` to send people to a [cloud gateway](/docs/en/claude-apps-gateway) instead of a first-party login. Administrators set it in managed settings and pair it with [`forceLoginOrgUUID`](#forceloginorguuid) to keep developers' claude.ai logins inside one organization. If you set it to `"claudeai"` or `"console"` in any settings file, Claude Code also stops offering the [keyless Console sign-in](/docs/en/authentication#sign-in-without-an-api-key) in the sessions that file applies to.
 
-* **Scope**: [`Any file`](#scopes). Claude Code honors `"gateway"` only from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. It treats `"gateway"` as unset in user, project, local, HKCU, and server-managed settings, the same rule as [`forceLoginGatewayUrl`](#forcelogingatewayurl).
+* **Scope**: [`Any file`](#scopes). Claude Code honors `"gateway"` from the same sources as [`forceLoginGatewayUrl`](#forcelogingatewayurl) and treats it as unset everywhere else.
 * **Type**: string, one of:
   * `"claudeai"`: only claude.ai accounts can log in
   * `"console"`: only Claude Console accounts can log in
@@ -5627,9 +5627,9 @@ When a managed source on the machine sets `"gateway"`, Claude Code doesn't use a
 
 Set the gateway URL the `/login` Cloud gateway screen connects to, so people reach your [cloud gateway](/docs/en/claude-apps-gateway) without typing its address. The screen has no URL field: with this key set, it shows your gateway URL and connects when the person presses Enter; without it, it tells them to contact their IT administrator.
 
-Either this key or `forceLoginMethod: "gateway"` makes the machine gateway-only, except for sessions that select a cloud provider with `CLAUDE_CODE_USE_*`. `/login` then opens on the Cloud gateway screen with no login-method picker. See [Administrator policy requires a Cloud gateway sign-in](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in) for what happens to a leftover first-party login or API key. Set both keys so the screen connects instead of showing an error.
+In managed settings, either this key or `forceLoginMethod: "gateway"` makes the machine gateway-only, except for sessions that select a cloud provider with `CLAUDE_CODE_USE_*`. `/login` then opens on the Cloud gateway screen with no login-method picker. See [Administrator policy requires a Cloud gateway sign-in](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in) for what happens to a leftover first-party login or API key. Set both keys so the screen connects instead of showing an error.
 
-* **Scope**: [`Managed`](#scopes). Read only from a source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. Claude Code ignores it in HKCU and server-managed settings.
+* **Scope**: [`User or managed`](#scopes). Read from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. On a machine with none of those, Claude Code v2.1.295 or later also reads it from [user settings](/docs/en/claude-apps-gateway#set-the-gateway-url-in-user-settings). Claude Code ignores it in HKCU and server-managed settings.
 * **Type**: string, a full URL including the scheme
 * **Default**: unset, so the Cloud gateway screen shows an error telling people to contact their IT administrator
 
@@ -5657,7 +5657,7 @@ This example accepts logins from either of two organizations without pre-selecti
 }
 ```
 
-If a managed source sets an empty array, or a value Claude Code can't parse, Claude Code blocks every login with a misconfiguration message.
+If a managed source sets an empty array, or a value that isn't a string or an array of strings, users who sign in with an Anthropic account can't start Claude Code or complete a login. They see a message that names `forceLoginOrgUUID` and tells them to contact their administrator. A [`policyHelper`](#policyhelper) that emits a value of the wrong type [fails its run](#helper-failures) instead.
 
 See [Restrict login to your organization](/docs/en/authentication#restrict-login-to-your-organization) for how Claude Code treats Claude Console logins, the other login paths, and environment credentials.
 
@@ -6253,12 +6253,12 @@ Claude Code ignores this key in `settings.json`.
 
 ### `copyFullResponse`
 
-Make [`/copy`](/docs/en/commands) copy the full response every time, without the picker it otherwise shows when the response contains code blocks. Selecting **Always copy full response** in that picker sets this key to `true`. Appears in `/config` as **Skip the /copy picker**.
+Make [`/copy`](/docs/en/commands) copy the full response every time, without showing the picker. Selecting **Always copy full response** in that picker sets this key to `true`. Appears in `/config` as **Skip the /copy picker**.
 
 * **Scope**: [`Global config`](#scopes)
 * **Type**: Boolean
   * `true`: `/copy` copies the full response without showing the picker
-  * `false`: when the response contains code blocks, `/copy` shows a picker where you choose one code block or the full response
+  * `false`: when the response contains code blocks or blockquotes, `/copy` shows a picker where you choose one block or the full response
 * **Default**: `false`
 
 ```json ~/.claude.json theme={null}

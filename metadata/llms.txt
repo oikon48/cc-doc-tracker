@@ -345,6 +345,7 @@
 
 - [Configure permissions](https://code.claude.com/docs/en/permissions.md): Control what Claude Code can access and do with fine-grained permission rules, modes, and managed policies.
 - [Choose a permission mode](https://code.claude.com/docs/en/permission-modes.md): Control whether Claude asks before acting. Switch permission modes with Shift+Tab in the CLI, the mode indicator in VS Code, or the mode selector in Desktop.
+- [Auto mode classifier request charges](https://code.claude.com/docs/en/auto-mode-classifier-billing.md): Resolve the Claude Code notice saying this session isn't eligible for auto mode's no-charge classifier requests: what it means, why it appears, and what to do.
 - [Configure the sandboxed Bash tool](https://code.claude.com/docs/en/sandboxing.md): Restrict the files and network hosts Claude Code's shell commands can reach with the built-in sandbox. Turn it on, set the boundary, and fix what it breaks.
 - [Choose a sandbox environment](https://code.claude.com/docs/en/sandbox-environments.md): Compare Claude Code sandbox options: the built-in sandboxed Bash tool, sandbox runtime, dev containers, Docker, and VMs. Choose the right isolation for your threat model.
 
@@ -552,14 +553,14 @@
 
 ## Indexes
 
-- [French (221 pages)](https://code.claude.com/docs/_llms/fr.md): Documentation for French.
-- [German (221 pages)](https://code.claude.com/docs/_llms/de.md): Documentation for German.
-- [Italian (221 pages)](https://code.claude.com/docs/_llms/it.md): Documentation for Italian.
-- [Japanese (221 pages)](https://code.claude.com/docs/_llms/jp.md): Documentation for Japanese.
-- [Spanish (221 pages)](https://code.claude.com/docs/_llms/es.md): Documentation for Spanish.
-- [Korean (221 pages)](https://code.claude.com/docs/_llms/ko.md): Documentation for Korean.
-- [Simplified Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-cn.md): Documentation for Simplified Chinese.
-- [Traditional Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-tw.md): Documentation for Traditional Chinese.
-- [Russian (221 pages)](https://code.claude.com/docs/_llms/ru.md): Documentation for Russian.
-- [Indonesian (221 pages)](https://code.claude.com/docs/_llms/id.md): Documentation for Indonesian.
-- [Brazilian Portuguese (221 pages)](https://code.claude.com/docs/_llms/pt-br.md): Documentation for Brazilian Portuguese.
+- [French (221 pages)](https://code.claude.com/docs/_llms/fr.txt): Documentation for French.
+- [German (221 pages)](https://code.claude.com/docs/_llms/de.txt): Documentation for German.
+- [Italian (221 pages)](https://code.claude.com/docs/_llms/it.txt): Documentation for Italian.
+- [Japanese (221 pages)](https://code.claude.com/docs/_llms/jp.txt): Documentation for Japanese.
+- [Spanish (221 pages)](https://code.claude.com/docs/_llms/es.txt): Documentation for Spanish.
+- [Korean (221 pages)](https://code.claude.com/docs/_llms/ko.txt): Documentation for Korean.
+- [Simplified Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-cn.txt): Documentation for Simplified Chinese.
+- [Traditional Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-tw.txt): Documentation for Traditional Chinese.
+- [Russian (221 pages)](https://code.claude.com/docs/_llms/ru.txt): Documentation for Russian.
+- [Indonesian (221 pages)](https://code.claude.com/docs/_llms/id.txt): Documentation for Indonesian.
+- [Brazilian Portuguese (221 pages)](https://code.claude.com/docs/_llms/pt-br.txt): Documentation for Brazilian Portuguese.

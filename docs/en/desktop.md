@@ -353,7 +353,7 @@ To view two sessions at once, hold **Cmd** on macOS or **Ctrl** on Windows and c
 
 Worktrees are stored in `<project-root>/.claude/worktrees/` by default. You can change this to a custom directory in Settings → Claude Code under "Worktree location". You can also set a branch prefix that gets prepended to every worktree branch name, which is useful for keeping Claude-created branches organized. To remove a worktree when you're done, hover over the session in the sidebar and click the archive icon. To have sessions archive themselves when their pull request merges or closes, turn on **Auto-archive after PR merge or close** in Settings → Claude Code. Auto-archive only applies to local sessions that have finished running.
 
-To include gitignored files like `.env` in new worktrees, create a [`.worktreeinclude` file](/docs/en/worktrees#copy-gitignored-files-into-worktrees) in your project root.
+To include gitignored files like `.env` in new worktrees, create a [`.worktreeinclude` file](/docs/en/worktrees#copy-gitignored-files-into-worktrees) in your project root. See [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout) for where a worktree session reads project settings, hooks, and skills.
 
 <Note>
   Session isolation requires [Git](https://git-scm.com/downloads). Most Macs include Git by default. Run `git --version` in Terminal to check; if it prints a version number, Git is installed. If you run into Git errors, ask Claude in the [Cowork tab](https://claude.com/product/cowork) to help troubleshoot your setup.

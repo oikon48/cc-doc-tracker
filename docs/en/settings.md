@@ -488,7 +488,7 @@ Two rules qualify the root location:
 
 Before v2.1.211, Claude Code kept the file in the starting directory. It still reads a file an earlier version left there alongside the root file; where both set the same key, the root's value applies, and permission rules from both files apply. The Agent SDK's [`resolveSettings()`](/docs/en/agent-sdk/typescript#resolvesettings) helper always reads the file from the starting directory.
 
-Claude Code reads the shared `.claude/settings.json` from the session's [primary working directory](/docs/en/permissions#working-directories), so to use a file committed at the repository root, start Claude Code there. After you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory), Claude Code reads both project files from the new directory instead, placing the local file by the same rules. Reading them from the directory you moved to requires Claude Code v2.1.246 or later.
+Claude Code reads the shared `.claude/settings.json` from the session's [primary working directory](/docs/en/permissions#working-directories), so to use a file committed at the repository root, start Claude Code there. After you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory), Claude Code reads both project files from the new directory instead, placing the local file by the same rules. Reading them from the directory you moved to requires Claude Code v2.1.246 or later. For a worktree session that you start from the desktop app, see [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout).
 
 <span id="managed-settings-delivery" />
 

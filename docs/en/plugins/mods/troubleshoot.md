@@ -69,7 +69,7 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 | `disableAllHooks in managed settings` | Your organization turned off hooks from installed plugins |
 | `only managed plugins and built-in plugins run` | `allowManagedHooksOnly` is set, or `disableAllHooks` is set in a settings file other than managed settings |
 | `installed plugins that are not managed load no hooks module in this mode (--bare)` | You started Claude Code with `--bare` |
-| `another plugin of that name loads first` | Two plugins share a name. The managed one, or the one loaded first, is used. |
+| `another plugin of that name loads first` | Two plugins share a name, and [one plugin per name loads a hooks module](/docs/en/plugins/loading#hooks-when-two-enabled-plugins-share-a-name): the copy that managed settings turn on, or else the copy Claude Code loads first. |
 
 ### Messages from the built-in guard
 
@@ -155,6 +155,12 @@ The line starts with the mod's name and names a `$.prompt.submit`, `$.command.ru
 There's nothing to fix.
 
 Before v2.1.292, the call ran a second time, so the prompt was submitted, the command run, or the subagent started twice.
+
+### `$.agent.register refused: the hooks module that made the call is no longer loaded`
+
+A `$.agent.register` call rejects with your mod's name followed by `$.agent.register refused: the hooks module that made the call is no longer loaded (it was reloaded or removed)`. The agent isn't registered. The call came from a copy of your hooks module that is no longer loaded: Claude Code replaced it with a fresh copy in a reload, or unloaded the mod. Code of the old copy that runs after that gets this rejection, such as a hook that hadn't returned yet or a call waiting on another mod's `agent.register` hook.
+
+A hook that doesn't catch the rejection fails, and Claude Code [skips it](#hook-skipped). To have the copy that stays loaded register the agent, make the call in your [`session.start`](/docs/en/plugins/mods/reference#session) hook. After a reload, the fresh copy's `session.start` runs again, so that copy registers the agent.
 
 ### `mods that run in the hooks worker are off for this session`
 

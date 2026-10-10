@@ -405,6 +405,34 @@ function tagSession(
 | `tag` | `string \| null` | required | Tag string, or `null` to clear |
 | `options.dir` | `string` | `undefined` | Project directory path. When omitted, searches all project directories |
 
+### `forkSession()`
+
+Copies a session's transcript into a new session so you can take the conversation in another direction while the original stays unchanged. To branch from an earlier point in the conversation, pass `upToMessageId`.
+
+```typescript theme={null}
+function forkSession(
+  sessionId: string,
+  options?: ForkSessionOptions
+): Promise<ForkSessionResult>;
+```
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+| :- | :- | :- | :- |
+| `sessionId` | `string` | required | UUID of the session to fork |
+| `options.dir` | `string` | `undefined` | Project directory path. When omitted, searches all project directories |
+| `options.upToMessageId` | `string` | `undefined` | Copy the transcript up to and including the message with this `uuid`: a value from [`getSessionMessages()`](#getsessionmessages), or a `uuid` you set on a streamed [`SDKUserMessage`](#sdkusermessage). When omitted, copies the whole transcript |
+| `options.title` | `string` | `undefined` | Title for the fork. When omitted, the SDK derives one from the original session, followed by `(fork)` |
+
+Returns `{ sessionId }`, the new session's UUID. Pass it as [`resume`](#options) to continue the fork. The fork doesn't include the original session's [file checkpoints](/docs/en/agent-sdk/file-checkpointing), so you can't rewind it to a checkpoint captured before the fork.
+
+`forkSession()` throws when:
+
+* `sessionId` is not a UUID
+* the session cannot be found, or has no messages
+* `upToMessageId` matches no message in the transcript
+
 ### `resolveSettings()`
 
 Resolves the effective Claude Code settings for a given directory using the same merge engine as the CLI, without spawning the Claude CLI. Use it to inspect what configuration a `query()` call would see before invoking one.
@@ -476,7 +504,7 @@ Configuration object for the `query()` function.
 | `agents` | `Record<string, [`AgentDefinition`](#agentdefinition)>` | `undefined` | Programmatically define subagents |
 | `agentProgressSummaries` | `boolean` | `false` | When `true`, generate one-line progress summaries for subagents and forward them on [`task_progress`](#sdktaskprogressmessage) events via the `summary` field. Applies to foreground and background subagents |
 | `allowDangerouslySkipPermissions` | `boolean` | `false` | Enable bypassing permissions. Required when using `permissionMode: 'bypassPermissions'`, at startup or later through `setPermissionMode()`. See [plan mode](/docs/en/agent-sdk/permissions#plan-mode-plan) for how it interacts with `permissionMode: 'plan'` |
-| `allowedTools` | `string[]` | `[]` | Tools to auto-approve without prompting. This does not restrict Claude to only these tools. If you name one of the [task-tracking tools](/docs/en/agent-sdk/todo-tracking#model-availability) here, Claude Code also opts the session in. Other unlisted tools fall through to `permissionMode` and `canUseTool`. Use `disallowedTools` to block tools. See [Permissions](/docs/en/agent-sdk/permissions#allow-and-deny-rules) |
+| `allowedTools` | `string[]` | `[]` | Tools to auto-approve without prompting, apart from reads from [network paths](/docs/en/permissions#network-paths). This does not restrict Claude to only these tools. If you name one of the [task-tracking tools](/docs/en/agent-sdk/todo-tracking#model-availability) here, Claude Code also opts the session in. Other unlisted tools fall through to `permissionMode` and `canUseTool`. Use `disallowedTools` to block tools. See [Permissions](/docs/en/agent-sdk/permissions#allow-and-deny-rules) |
 | `betas` | [`SdkBeta`](#sdkbeta)`[]` | `[]` | Enable beta features |
 | `canUseTool` | [`CanUseTool`](#canusetool) | `undefined` | Custom permission function, invoked only when the [permission flow](/docs/en/agent-sdk/permissions#how-permissions-are-evaluated) falls through to a prompt. Not invoked for calls auto-approved by `allowedTools`, allow rules, or `permissionMode`. An allow rule doesn't pre-approve the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves). See [`CanUseTool`](#canusetool) for details |
 | `continue` | `boolean` | `false` | Continue the most recent conversation |

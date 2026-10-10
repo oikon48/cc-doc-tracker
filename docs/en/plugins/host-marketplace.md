@@ -131,6 +131,11 @@ These entry sources need no git account:
 * **`archive`**: a zip downloaded over HTTPS. Users need neither `git` nor an account, only network access to the URL. Requires Claude Code v2.1.224 or later. Pin each archive with `sha256` so Claude Code refuses a changed download. To send credentials with the download, see [Authenticate archive downloads](#authenticate-archive-downloads).
 * **A public git repository**: Claude Code clones a public `url` or `git-subdir` source over HTTPS without credentials when the entry gives an `https://` URL. For a `github` source, or a `git-subdir` source written as `owner/repo`, users without a GitHub SSH key set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`.
 
+Tell users without a GitHub SSH key to set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` even though some of them can install without it:
+
+* Without it, `claude plugin install` run from the shell can still install a plugin with a `github` source. When SSH to github.com is refused for a missing key or an untrusted host key, that install clones the plugin over HTTPS instead and prints `SSH not configured, cloning via HTTPS`. It stays on SSH when the user's own git or SSH configuration routes github.com, for example through `GIT_SSH_COMMAND`, a URL rewrite, or a proxy.
+* An install started inside a session and a plugin update also stay on SSH, and fail on a machine with no GitHub SSH key.
+
 For a team on one network, a `directory` marketplace on a shared filesystem also works without git accounts. Users need only read access to the path.
 
 ### What background auto-update does with credentials

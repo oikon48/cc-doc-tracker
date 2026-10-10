@@ -328,7 +328,7 @@ You can also ask about a routine's run history, for example `/schedule why did m
 
 ### Repositories and branch permissions
 
-Routines need GitHub access to clone repositories. When you create a routine from the CLI with `/schedule`, Claude checks whether your account has GitHub access for the repository you ran it from and, if it doesn't, adds a setup note naming how to grant it. See [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options) for the two ways to grant access.
+Routines need GitHub access to clone repositories. When you create a routine from the CLI with `/schedule`, Claude checks whether your account has GitHub access for the repository you ran it from and, if it doesn't, adds a setup note naming how to grant it. See [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options) for the two ways to grant access. On Team and Enterprise plans, an [Owner](/docs/en/server-managed-settings#access-control) of your Claude organization has to turn on each method before you can use it; see [Connect GitHub](/docs/en/web-quickstart#connect-github).
 
 If your GitHub connection is missing or expired when a run is due, the routine skips runs until you reconnect, for up to 72 hours. Reconnect GitHub within that window and the routine resumes on its own. After 72 hours without a connection, the routine turns off, and you turn it back on after reconnecting GitHub.
 
