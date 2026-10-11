@@ -160,7 +160,7 @@ These events let a mod act on other mods as they load, to refuse one or change t
 | [`plugin.register`](/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) | A hooks module is about to load. `e.uses` lists its events, mods API calls, environment variables, and state, as `claude plugin validate` prints them. Each call is written without the `$.` prefix, such as `fs.read`. | `{ refuse: reason }` |
 | `engine.create` | The mods API is being built for this mod | A changed mods API, to add a namespace. A mod outside the `user` [tier](#the-hook-function) can also withhold one. |
 
-A namespace you add in an `engine.create` hook can make `$` calls of its own when another mod calls its methods. While the hook that called your method is still running, those calls act for that hook. A relative path resolves against that hook's working directory, and a call that would wait for the turn, such as `$.prompt.submit` or `$.command.run`, rejects while the turn is waiting on that hook. Once that hook and every other hook on the same event have returned, a call your method makes acts as your mod's own: a relative path resolves against the session's working directory, and a prompt is queued.
+When another mod's hook calls a method on a namespace you added in `engine.create`, your method's `$` calls run in that hook's context until every hook on that event returns. For example, a relative path resolves against that hook's working directory, and `$.prompt.submit` rejects while the turn is waiting on that hook. Calls your method makes after that run in your mod's own context.
 
 ### Telemetry
 

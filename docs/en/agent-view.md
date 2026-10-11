@@ -149,7 +149,7 @@ Separately, the icon's shape has its own meaning:
 | Shape | What it means |
 | :- | :- |
 | `✻` or animated `✽` | The session process is running, or the session needs your input |
-| `∙` | The process has exited. You can still peek at the row, and when you reply or attach, Claude restarts from where it left off |
+| `∙` | The process has exited. You can still peek at the row, and when you reply or attach, Claude restarts it from its saved conversation |
 | `✢` | A [`/loop`](/docs/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
 The `#N` or `!N` label that can appear at the right edge of a row is a link to the session's [pull request or merge request](#pull-request-status), not part of the state icon.
@@ -886,7 +886,7 @@ The dispatch input expects a task description, not a conversational opener. A pr
 
 Shutting down or restarting your machine stops running background sessions. A session that was waiting on your input stays under `Needs input` when you come back. For any other running session, what agent view shows depends on how long ago it last made progress:
 
-* Within 48 hours, the session shows as failed. Attach or reply to it and it restarts from where it left off.
+* Within 48 hours, the session shows as failed. Attach or reply to it and it restarts from its saved conversation. To pick the interrupted work back up, send it a reply asking it to continue.
 * Past 48 hours, such as after the machine was off for days, the session shows as stopped with `ended while the background service was off`. Press `Enter` on the row and the footer shows `Press enter again to resume this session (it ended while the background service was off), or ctrl+x to delete it.` Press `Enter` on the same row again to resume its saved conversation. A reply, or `claude attach <id>`, resumes it without that footer prompt.
 
 When [transcript cleanup](/docs/en/settings-reference#cleanupperioddays) has removed a stopped session's saved conversation, Claude Code refuses to open the row: the message says there is nothing to resume. `claude rm <id>` deletes the row, except in the [kept cases](#what-deleting-a-session-removes) described above, and `claude respawn <id>` runs its original prompt again. See [This session's saved conversation is no longer on disk](/docs/en/errors#this-sessions-saved-conversation-is-no-longer-on-disk).

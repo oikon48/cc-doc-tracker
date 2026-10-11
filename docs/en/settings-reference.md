@@ -585,7 +585,7 @@ Every key below links to its entry. Scope lists the [files](/docs/en/settings#se
 <ReferenceFilter
   noun="settings"
   placeholder="Filter settings by key or purpose"
-  facetOrder={{ scope: ["Any file", "User, local, or managed", "User or managed", "Managed", "Global config"] }}
+  facetOrder={{ scope: ["Any file", "User, local, or managed", "User or managed", "User", "Managed", "Global config"] }}
   columnHelp={{
 topic: "The section of this page that holds the entry. Use Sort by to group the table by topic.",
 scope: "Which settings files can set the key: user (~/.claude/settings.json), project (.claude/settings.json), local (.claude/settings.local.json), or managed (deployed by your organization). Global config keys are in ~/.claude.json instead.",
@@ -834,6 +834,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`worktree`](#worktree) | Configure how Claude Code creates git [worktrees](/docs/en/worktrees) | Agents, sessions, and worktrees | Any file |
 | [`worktree.baseRef`](#worktree-baseref) | Branch new [worktrees](/docs/en/worktrees) from the remote default branch or your local HEAD | Agents, sessions, and worktrees | Any file |
 | [`worktree.bgIsolation`](#worktree-bgisolation) | Let background sessions edit the working copy without a [worktree](/docs/en/worktrees) | Agents, sessions, and worktrees | Any file |
+| [`worktree.location`](#worktree-location) | Choose where [Desktop SSH sessions](/docs/en/desktop#ssh-sessions) create their worktrees on a remote machine | Agents, sessions, and worktrees | User |
 | [`worktree.sparsePaths`](#worktree-sparsepaths) | Check out only the directories you need in each [worktree](/docs/en/worktrees) | Agents, sessions, and worktrees | Any file |
 | [`worktree.symlinkDirectories`](#worktree-symlinkdirectories) | Symlink large directories into each [worktree](/docs/en/worktrees) instead of duplicating them | Agents, sessions, and worktrees | Any file |
 | [`wslInheritsWindowsSettings`](#wslinheritswindowssettings) | Have WSL read [managed settings](/docs/en/managed-settings) from the Windows policy chain | Enterprise and managed settings | Managed |
@@ -5244,6 +5245,26 @@ Choose how [background sessions](/docs/en/agent-view#how-file-edits-are-isolated
 
 Outside a git repository, a [`WorktreeCreate` hook](/docs/en/worktrees#non-git-version-control) that fails releases the block so the session can edit the working directory in place; that release requires Claude Code v2.1.203 or later.
 
+### `worktree.location`
+
+Choose the folder on a remote machine where [Desktop SSH sessions](/docs/en/desktop#choose-where-ssh-session-worktrees-go) create their worktrees, instead of `<project-root>/.claude/worktrees/`. Only the desktop app reads this key: `--worktree`, the `EnterWorktree` tool, isolated subagents, and background sessions ignore it. Requires Claude Desktop v1.44121.0 or later.
+
+* **Scope**: [`User`](#scopes), in `~/.claude/settings.json` on the remote machine
+* **Type**: string, an absolute path or one that starts with `~/`
+* **Default**: unset, so worktrees go inside the project
+
+This example sets the folder to `~/worktrees`:
+
+```json settings.json theme={null}
+{
+  "worktree": {
+    "location": "~/worktrees"
+  }
+}
+```
+
+A **Worktree folder** set on the SSH connection in Desktop takes precedence. If your organization restricts which folders sessions may use, Desktop keeps worktrees inside the project.
+
 ## Remote, desktop, and notifications
 
 Configure Remote Control, cloud environments, the desktop app, and the notifications Claude Code sends when it needs you. See [Remote Control](/docs/en/remote-control).
@@ -5457,7 +5478,7 @@ Claude Code ignores a `true` from project or local settings, so a repository can
 
 ### `sshConfigs`
 
-Add SSH connections to the [Desktop](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) environment dropdown. Administrators use it to distribute shared connections to a team. Connections you define in managed settings show as managed, so users can select them but can't edit or delete them in the app.
+Add SSH connections to the [Desktop](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) environment dropdown. Administrators use it to distribute shared connections to a team. Connections you define in managed settings show as managed. Users can select them and [set their own **Worktree folder**](/docs/en/desktop#choose-where-ssh-session-worktrees-go) for them, but can't edit anything else or delete them in the app.
 
 * **Scope**: [`User or managed`](#scopes). The desktop app reads this key. By default, it reads managed connections from [one managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources).
 * **Type**: array of objects, each with required `id`, `name`, and `sshHost` and optional `sshPort` and `sshIdentityFile`

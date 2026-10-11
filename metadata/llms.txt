@@ -553,14 +553,14 @@
 
 ## Indexes
 
-- [French (221 pages)](https://code.claude.com/docs/_llms/fr.txt): Documentation for French.
-- [German (221 pages)](https://code.claude.com/docs/_llms/de.txt): Documentation for German.
-- [Italian (221 pages)](https://code.claude.com/docs/_llms/it.txt): Documentation for Italian.
-- [Japanese (221 pages)](https://code.claude.com/docs/_llms/jp.txt): Documentation for Japanese.
-- [Spanish (221 pages)](https://code.claude.com/docs/_llms/es.txt): Documentation for Spanish.
-- [Korean (221 pages)](https://code.claude.com/docs/_llms/ko.txt): Documentation for Korean.
-- [Simplified Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-cn.txt): Documentation for Simplified Chinese.
-- [Traditional Chinese (221 pages)](https://code.claude.com/docs/_llms/zh-tw.txt): Documentation for Traditional Chinese.
-- [Russian (221 pages)](https://code.claude.com/docs/_llms/ru.txt): Documentation for Russian.
-- [Indonesian (221 pages)](https://code.claude.com/docs/_llms/id.txt): Documentation for Indonesian.
-- [Brazilian Portuguese (221 pages)](https://code.claude.com/docs/_llms/pt-br.txt): Documentation for Brazilian Portuguese.
+- [French (222 pages)](https://code.claude.com/docs/_llms/fr.txt): Documentation for French.
+- [German (222 pages)](https://code.claude.com/docs/_llms/de.txt): Documentation for German.
+- [Italian (222 pages)](https://code.claude.com/docs/_llms/it.txt): Documentation for Italian.
+- [Japanese (222 pages)](https://code.claude.com/docs/_llms/jp.txt): Documentation for Japanese.
+- [Spanish (222 pages)](https://code.claude.com/docs/_llms/es.txt): Documentation for Spanish.
+- [Korean (222 pages)](https://code.claude.com/docs/_llms/ko.txt): Documentation for Korean.
+- [Simplified Chinese (222 pages)](https://code.claude.com/docs/_llms/zh-cn.txt): Documentation for Simplified Chinese.
+- [Traditional Chinese (222 pages)](https://code.claude.com/docs/_llms/zh-tw.txt): Documentation for Traditional Chinese.
+- [Russian (222 pages)](https://code.claude.com/docs/_llms/ru.txt): Documentation for Russian.
+- [Indonesian (222 pages)](https://code.claude.com/docs/_llms/id.txt): Documentation for Indonesian.
+- [Brazilian Portuguese (222 pages)](https://code.claude.com/docs/_llms/pt-br.txt): Documentation for Brazilian Portuguese.

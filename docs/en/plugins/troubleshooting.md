@@ -269,7 +269,7 @@ In this example, the marketplace is named `constructor`:
 Cannot add marketplace "constructor": Claude Code reserves this name and cannot register a marketplace under it. The name is set by "name" in the marketplace's marketplace.json; ask its maintainer to change it.
 ```
 
-`claude plugin marketplace add` prints the message after `Failed to add marketplace:`. When a settings file declares the marketplace under [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces), the add that Claude Code runs at startup fails with the same message, and the **Errors** tab in `/plugin` shows it.
+If a settings file declares the marketplace under [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces), Claude Code's attempt to add it at startup fails the same way, and the message appears on the **Errors** tab in `/plugin`.
 
 Give the marketplace another name, then add it again:
 
