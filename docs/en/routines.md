@@ -171,7 +171,7 @@ One-off runs count against the same hourly limit as other scheduled runs. See [U
 
 An API trigger gives a routine a dedicated HTTP endpoint. POSTing to the endpoint with the routine's bearer token starts a new session and returns a session URL. Use this to wire Claude Code into alerting systems, deploy pipelines, internal tools, or anywhere you can make an authenticated HTTP request.
 
-API triggers are added to an existing routine from the web. The CLI cannot currently create or revoke tokens.
+API triggers are added to an existing routine from the web. The CLI can't currently create, regenerate, or delete tokens.
 
 <Steps>
   <Step title="Open the routine for editing">
@@ -191,7 +191,10 @@ API triggers are added to an existing routine from the web. The CLI cannot curre
   </Step>
 </Steps>
 
-Each routine has its own token, scoped to triggering that routine only. To rotate or revoke it, return to the same modal and click **Regenerate** or **Revoke**.
+Each routine has its own token, scoped to triggering that routine only. To turn off API access or rotate the token, return to the same modal:
+
+* **Turn off API access**: click **Delete token**, the trash icon next to **Regenerate**
+* **Rotate the token**: click **Regenerate**
 
 #### Trigger a routine
 
