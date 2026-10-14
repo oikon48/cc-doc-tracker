@@ -53,19 +53,9 @@ Create a routine from the web at [claude.ai/code/routines](https://claude.ai/cod
 
 The creation form sets up the routine's prompt, repositories, environment, connectors, and triggers.
 
-Routines run autonomously as full Claude Code cloud sessions: there is no permission-mode picker, and the session runs shell commands, uses [skills](/docs/en/skills) committed to the cloned repository, and calls any connectors you include, all without stopping for approval apart from some [artifact](/docs/en/artifacts) actions.
+Routines run autonomously as full Claude Code cloud sessions: there is no permission-mode picker, and the session runs shell commands, uses [skills](/docs/en/skills) committed to the cloned repository, and calls any connectors you include, all without stopping for approval apart from some [artifact actions](#when-a-run-publishes-an-artifact-without-asking).
 
 What a routine can reach is determined by the repositories you select, the [environment's](/docs/en/cloud-environments) network access and variables, and the connectors you include. Scope each of those to what the routine actually needs.
-
-When the routine's schedule or **Run now** starts a run, Claude republishes an existing artifact without asking only when all of these hold:
-
-* You can edit the artifact and it belongs to your own organization
-* The artifact isn't shared publicly
-* If the artifact is shared with specific people or your organization, its viewers don't automatically see each new version
-* The publish carries only the page, with no supporting files or anything else added, and doesn't force over a newer version
-* The page holds no grant that reaches beyond the page, such as [connector calls](/docs/en/artifacts#pull-live-data-with-mcp-connectors)
-
-In every other case, including publishing a new artifact, Claude asks first. When a routine's job is to keep a page current, give it an artifact you already published.
 
 Routines belong to your individual claude.ai account. They are not shared with teammates, and their runs count against your account's [usage and limits](#usage-and-limits). Anything a routine does through your connected GitHub identity or connectors appears as you: commits and pull requests carry your GitHub user, and Slack messages, Linear tickets, or other connector actions use your linked accounts for those services.
 
@@ -348,6 +338,24 @@ Connectors are the [claude.ai integrations](/docs/en/mcp#use-mcp-servers-from-cl
 When you create a routine, all of your currently connected connectors are included by default. Remove any that aren't needed to limit which tools Claude has access to during the run. You can also add connectors directly from the routine form.
 
 To manage or add connectors outside of the routine form, visit [claude.ai/customize/connectors](https://claude.ai/customize/connectors) or use `/schedule update` in the CLI.
+
+### When a run publishes an artifact without asking
+
+When a routine's schedule or **Run now** starts a run, Claude can publish a new [artifact](/docs/en/artifacts) without asking. The new artifact is visible only to you until you [share it](/docs/en/artifacts#share-an-artifact). If the publish declares runtime capabilities for the page, such as [connector calls](/docs/en/artifacts#pull-live-data-with-mcp-connectors) or [file downloads](/docs/en/artifacts#offer-a-file-download), Claude asks first.
+
+In those runs, Claude republishes an existing artifact without asking only when all of these hold:
+
+* You can edit the artifact and it belongs to your own organization
+* If the publish carries more than the page, such as supporting files, you own the artifact
+* The artifact isn't shared publicly
+* If the artifact is shared with specific people or your organization, its viewers don't automatically see each new version
+* The publish doesn't force over a newer version
+* The publish doesn't declare runtime capabilities for the page
+* The existing page holds no grant that reaches beyond the page, such as [connector calls](/docs/en/artifacts#pull-live-data-with-mcp-connectors)
+
+In every other case, including a run that an API or GitHub trigger starts, Claude asks first.
+
+When a routine's job is to keep a page current, give it an artifact you already published.
 
 ### Environments and network access
 
