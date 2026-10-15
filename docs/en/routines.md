@@ -82,7 +82,7 @@ Routines belong to your individual claude.ai account. They are not shared with t
     Pick a [cloud environment](/docs/en/cloud-environments) for the routine. Environments control what the cloud session has access to:
 
     * **Network access**: set the level of internet access available during each run
-    * **Environment variables**: provide values Claude can use during each run. They're [visible to anyone who uses the environment](/docs/en/cloud-environments#what-carries-over-from-your-setup), so on Pro and Max plans, store keys for the APIs Claude calls during a run as [network secrets](/docs/en/cloud-environments#add-network-secrets) instead. That section also lists the requests that never get a secret
+    * **Environment variables**: provide values Claude can use during each run. They're [visible to anyone who uses the environment](/docs/en/cloud-environments#what-carries-over-from-your-setup), so in an Anthropic-hosted environment, store keys for the APIs Claude calls during a run as [network secrets](/docs/en/cloud-environments#add-network-secrets) instead. That section also lists the requests that never get a secret
     * **Setup script**: install dependencies and tools the routine needs. The result is [cached](/docs/en/cloud-environments#environment-caching), so the script doesn't re-run on every session
 
     A **Default** environment is provided with **Trusted** network access, which allows only the [default allowlist](/docs/en/cloud-environments#default-allowed-domains) of package registries, cloud provider APIs, container registries, and common development domains through the session's network. Connectors you add to the routine reach their services through Anthropic's servers, so they don't need allowlist changes. If your routine needs to reach your own services directly, or a domain outside that list, edit the environment's [network access](/docs/en/cloud-environments#network-access) before running. To use a separate environment, [create one](/docs/en/cloud-environments#configure-your-environment) first.
@@ -379,7 +379,7 @@ To allow additional domains on one of your own environments, follow these steps.
   </Step>
 
   <Step title="Change the network access level">
-    In the **Edit environment** dialog, change **Network access** to **Custom** and enter your domains in **Allowed domains**. Check **Also include default list of common package managers** to keep the [default allowlist](/docs/en/cloud-environments#default-allowed-domains) alongside your custom domains. Select **Full** instead for unrestricted access.
+    In the **Edit cloud environment** dialog, change **Network access** to **Custom** and enter your domains in **Allowed domains**. Check **Also include default list of common package managers** to keep the [default allowlist](/docs/en/cloud-environments#default-allowed-domains) alongside your custom domains. Select **Full** instead for unrestricted access.
   </Step>
 
   <Step title="Save">
