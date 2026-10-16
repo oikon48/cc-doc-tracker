@@ -46,7 +46,6 @@
 - [Get started with Claude Code in the cloud](https://code.claude.com/docs/en/web-quickstart.md): Run Claude Code in the cloud from your browser or phone. Connect a GitHub repository, submit a task, and review the PR without local setup.
 - [Use Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web.md): Run Claude Code sessions in the cloud from your browser, phone, Desktop app, or terminal, move them with `--cloud` and `--teleport`, and auto-fix pull requests.
 - [Automate work with routines](https://code.claude.com/docs/en/routines.md): Put Claude Code on autopilot. Define routines that run on a schedule, trigger on API calls, or react to GitHub events from cloud infrastructure.
-- [Find bugs with ultrareview](https://code.claude.com/docs/en/ultrareview.md): Run a deep, multi-agent code review in the cloud with /code-review ultra to find and verify bugs before you merge.
 
 ##### Claude Code on desktop
 
@@ -57,14 +56,30 @@
 - [Schedule recurring tasks in Claude Code Desktop](https://code.claude.com/docs/en/desktop-scheduled-tasks.md): Set up scheduled tasks in Claude Code Desktop to run Claude automatically on a recurring basis for daily code reviews, dependency audits, or morning briefings.
 - [Test iOS apps in the simulator](https://code.claude.com/docs/en/desktop-ios-simulator.md): Claude Code Desktop opens your app in the iOS Simulator pane when Claude builds, runs, or checks it, with a separate simulator for each session.
 
-##### Code review & CI/CD
+#### Code review and pull requests
+
+- [Review locally with /code-review](https://code.claude.com/docs/en/code-review-local.md): Run `/code-review` in a Claude Code session to find bugs in your branch's changes, point the review at a pull request or path, and have Claude apply the fixes.
+- [Find bugs with ultrareview](https://code.claude.com/docs/en/ultrareview.md): Run a deep, multi-agent code review in the cloud with /code-review ultra to find and verify bugs before you merge.
+- [Claude Code with GitHub Enterprise Server](https://code.claude.com/docs/en/github-enterprise-server.md): Connect Claude Code to your self-hosted GitHub Enterprise Server instance for cloud sessions, code review, and plugin marketplaces.
+
+##### Code Review
+
+- [Code Review](https://code.claude.com/docs/en/code-review.md): Catch bugs in GitHub pull requests with Code Review: Claude reviews each change, verifies its findings, and comments inline. For Team and Enterprise plans
+- [Set up Code Review](https://code.claude.com/docs/en/code-review-setup.md): Turn on Code Review for your Claude organization: connect GitHub, install the Claude GitHub App, choose repositories, and set when reviews run
+- [Customize Code Review](https://code.claude.com/docs/en/code-review-customize.md): Tune what Code Review flags on your pull requests with REVIEW.md and CLAUDE.md: recalibrate severity, skip paths, add checks, and see which copy applies.
+- [Read and request reviews on a pull request](https://code.claude.com/docs/en/code-review-pull-requests.md): Read Code Review findings on your GitHub pull request, respond to or dismiss them, and request a review with `@claude review`.
+- [Code Review costs and usage](https://code.claude.com/docs/en/code-review-costs.md): Estimate and cap what your organization spends on Claude Code Review: how reviews are billed through usage credits, what drives cost, and where to track usage.
+- [Troubleshoot Code Review](https://code.claude.com/docs/en/code-review-troubleshooting.md): Fix a Code Review that didn't start, failed, or was skipped for budget, find missing findings, and resolve setup and `REVIEW.md` problems.
+
+##### Security scans
 
 - [Catch security issues as Claude writes code](https://code.claude.com/docs/en/security-guidance.md): Install the security-guidance plugin to have Claude review its own code changes for vulnerabilities and fix them in the same session.
 - [Scan your codebase for vulnerabilities](https://code.claude.com/docs/en/claude-security.md): Install the Claude Security plugin to scan your codebase for vulnerabilities in a Claude Code session and turn findings into patches you review and apply.
-- [Code Review](https://code.claude.com/docs/en/code-review.md): Set up automated PR reviews that catch logic errors, security vulnerabilities, and regressions using multi-agent analysis of your full codebase
+
+##### Run Claude in your own CI
+
 - [Claude Code GitHub Actions](https://code.claude.com/docs/en/github-actions.md): Run Claude Code in GitHub Actions workflows to respond to @claude mentions, automate tasks, and turn issues into pull requests
 - [Use Claude Code GitHub Actions with cloud providers](https://code.claude.com/docs/en/github-actions-cloud-providers.md): Run Claude Code GitHub Actions through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry instead of the Claude API
-- [Claude Code with GitHub Enterprise Server](https://code.claude.com/docs/en/github-enterprise-server.md): Connect Claude Code to your self-hosted GitHub Enterprise Server instance for cloud sessions, code review, and plugin marketplaces.
 - [Claude Code GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md): Learn about integrating Claude Code into your development workflow with GitLab CI/CD
 
 ### Quickstart
@@ -82,6 +97,10 @@
 ### Platforms and integrations
 
 - [Platforms and integrations](https://code.claude.com/docs/en/platforms.md): Choose where to run Claude Code and what to connect it to. Compare the CLI, Desktop, VS Code, JetBrains, web, mobile, and integrations like Chrome, Slack, and CI/CD.
+
+### Code review and pull requests
+
+- [Code Review](https://code.claude.com/docs/en/code-review.md): Catch bugs in GitHub pull requests with Code Review: Claude reviews each change, verifies its findings, and comments inline. For Team and Enterprise plans
 
 ## Build with Claude Code
 
@@ -553,14 +572,14 @@
 
 ## Indexes
 
-- [French (222 pages)](https://code.claude.com/docs/_llms/fr.txt): Documentation for French.
-- [German (222 pages)](https://code.claude.com/docs/_llms/de.txt): Documentation for German.
-- [Italian (222 pages)](https://code.claude.com/docs/_llms/it.txt): Documentation for Italian.
-- [Japanese (222 pages)](https://code.claude.com/docs/_llms/jp.txt): Documentation for Japanese.
-- [Spanish (222 pages)](https://code.claude.com/docs/_llms/es.txt): Documentation for Spanish.
-- [Korean (222 pages)](https://code.claude.com/docs/_llms/ko.txt): Documentation for Korean.
-- [Simplified Chinese (222 pages)](https://code.claude.com/docs/_llms/zh-cn.txt): Documentation for Simplified Chinese.
-- [Traditional Chinese (222 pages)](https://code.claude.com/docs/_llms/zh-tw.txt): Documentation for Traditional Chinese.
-- [Russian (222 pages)](https://code.claude.com/docs/_llms/ru.txt): Documentation for Russian.
-- [Indonesian (222 pages)](https://code.claude.com/docs/_llms/id.txt): Documentation for Indonesian.
-- [Brazilian Portuguese (222 pages)](https://code.claude.com/docs/_llms/pt-br.txt): Documentation for Brazilian Portuguese.
+- [French (228 pages)](https://code.claude.com/docs/_llms/fr.txt): Documentation for French.
+- [German (228 pages)](https://code.claude.com/docs/_llms/de.txt): Documentation for German.
+- [Italian (228 pages)](https://code.claude.com/docs/_llms/it.txt): Documentation for Italian.
+- [Japanese (228 pages)](https://code.claude.com/docs/_llms/jp.txt): Documentation for Japanese.
+- [Spanish (228 pages)](https://code.claude.com/docs/_llms/es.txt): Documentation for Spanish.
+- [Korean (228 pages)](https://code.claude.com/docs/_llms/ko.txt): Documentation for Korean.
+- [Simplified Chinese (228 pages)](https://code.claude.com/docs/_llms/zh-cn.txt): Documentation for Simplified Chinese.
+- [Traditional Chinese (228 pages)](https://code.claude.com/docs/_llms/zh-tw.txt): Documentation for Traditional Chinese.
+- [Russian (228 pages)](https://code.claude.com/docs/_llms/ru.txt): Documentation for Russian.
+- [Indonesian (228 pages)](https://code.claude.com/docs/_llms/id.txt): Documentation for Indonesian.
+- [Brazilian Portuguese (228 pages)](https://code.claude.com/docs/_llms/pt-br.txt): Documentation for Brazilian Portuguese.
