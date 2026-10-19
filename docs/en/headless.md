@@ -309,7 +309,9 @@ claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
-To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes). A run where nothing sets a permission mode takes the [built-in starting permission mode](/docs/en/permission-modes#which-mode-a-session-starts-in), which can be `auto`, so pass the one you want:
+Calls to tools you didn't list run if they need no approval. In a [Manual mode](/docs/en/permission-modes#available-modes) `claude -p` run, a call that needs approval is denied unless something approves it, such as a [`PermissionRequest` hook](/docs/en/hooks#permissionrequest) or a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags). With Claude Code v2.1.302 or later, `claude -p` runs start in Manual mode when [nothing sets a permission mode](/docs/en/permission-modes#which-mode-a-non-interactive-run-starts-in).
+
+To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes) with `--permission-mode`, such as `auto`, `dontAsk`, or `acceptEdits`:
 
 * **`auto`**: pass `--permission-mode auto` to have a classifier review most actions instead of you
 * **`dontAsk`**: Claude Code denies every call that would otherwise prompt, which is useful for locked-down CI runs. Actions that need no approval in Manual mode still run, such as file reads in your working directories and the [read-only command set](/docs/en/permissions#read-only-commands), and so do actions your `--allowedTools` entries or `permissions.allow` rules cover. `AskUserQuestion`, connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool), and [reads from network paths](/docs/en/permissions#network-paths) are denied even when an allow rule matches

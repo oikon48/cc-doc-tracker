@@ -422,7 +422,7 @@ Claude Code also skips individual suggestions in several situations, including:
 * After the first turn of a conversation, in some sessions
 * The previous response ended in an error
 * While you're in plan mode
-* Your account is close to or at its usage limit. To keep suggestions on until you reach the limit, set [`CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`](/docs/en/env-vars) to `true`. Before v2.1.238, Claude Code skipped them near the limit even with the variable set to `true`
+* Your account is close to or at its usage limit. To keep this skip from applying until you reach the limit, set [`CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`](/docs/en/env-vars) to `true`. Before v2.1.238, Claude Code skipped suggestions near the limit even with the variable set to `true`
 * In an [agent team](/docs/en/agent-teams), in teammates' sessions by default. The lead's session shows suggestions
 
 The notice `Showing fewer prompt suggestions · use one to bring them back` means Claude Code is showing suggestions less often because you left many in a row unused. To return to the usual frequency, use a suggestion or set [`CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`](/docs/en/env-vars) to `true`.
