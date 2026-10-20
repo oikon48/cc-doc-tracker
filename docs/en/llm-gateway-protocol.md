@@ -15,10 +15,10 @@ This page documents the requests Claude Code sends to a gateway, including the e
 
 The [Claude apps gateway](/docs/en/claude-apps-gateway), Anthropic's self-hosted gateway, serves its own endpoint reference at `GET /protocol`, covering that gateway's sign-in, inference, managed settings, model discovery, and telemetry endpoints. It is a separate document from this guide.
 
-<Note>
-  * To roll out an existing or third-party gateway for your organization, see [Roll out an LLM gateway](/docs/en/llm-gateway-rollout)
-  * If you're an individual developer authenticating Claude Code to a gateway with a credential you were given, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect)
-</Note>
+> [!NOTE]
+>
+> * To roll out an existing or third-party gateway for your organization, see [Roll out an LLM gateway](/docs/en/llm-gateway-rollout)
+> * If you're an individual developer authenticating Claude Code to a gateway with a credential you were given, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect)
 
 This page covers:
 

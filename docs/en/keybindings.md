@@ -17,7 +17,9 @@ Claude Code supports customizable keyboard shortcuts. Run `/keybindings` to crea
 
 The keybindings configuration file is an object with a `bindings` array. Each block specifies a context and a map of keystrokes to actions.
 
-<Note>Changes to the keybindings file are automatically detected and applied without restarting Claude Code.</Note>
+> [!NOTE]
+>
+> Changes to the keybindings file are automatically detected and applied without restarting Claude Code.
 
 | Field | Description |
 | :- | :- |

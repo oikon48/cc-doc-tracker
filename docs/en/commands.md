@@ -48,9 +48,9 @@ To add your own commands, see [skills](/docs/en/skills).
 
 In the table below, `<arg>` indicates a required argument and `[arg]` indicates an optional one.
 
-<Note>
-  Not every command appears for every user. Availability depends on your platform, plan, and environment. For example, `/desktop` only shows on macOS and x64 Windows when signed in with a Claude subscription, and `/upgrade` doesn't show on Enterprise plans.
-</Note>
+> [!NOTE]
+>
+> Not every command appears for every user. Availability depends on your platform, plan, and environment. For example, `/desktop` only shows on macOS and x64 Windows when signed in with a Claude subscription, and `/upgrade` doesn't show on Enterprise plans.
 
 | Command | Purpose |
 | :- | :- |

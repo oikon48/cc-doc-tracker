@@ -11,9 +11,9 @@ source: https://code.claude.com/docs/en/self-hosted-environments-deploy.md
 
 > Run self-hosted runners in production: security hardening, network egress control, git credentials, Kubernetes and Compose recipes, and troubleshooting.
 
-<Note>
-  Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page covers running the fleet in production; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for your first runner and session.
-</Note>
+> [!NOTE]
+>
+> Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page covers running the fleet in production; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for your first runner and session.
 
 A [self-hosted environment](/docs/en/self-hosted-environments) runs Claude Code [cloud sessions](/docs/en/claude-code-on-the-web) on runners you deploy inside your network, and in production those sessions execute model-directed code on behalf of everyone who can dispatch a session to the environment. This page is for the operator taking a working environment to production. It works through the deployment in order: what to lock down before connecting real systems, the egress the fleet needs, how sessions authenticate to your git host, the deployment recipes themselves, and what to check when sessions misbehave.
 
@@ -22,7 +22,7 @@ A [self-hosted environment](/docs/en/self-hosted-environments) runs Claude Code 
 A self-hosted runner executes arbitrary, model-directed code on your infrastructure on behalf of everyone who can dispatch a session to its environment. That's any member of your Anthropic organization, and anyone who can start a [Claude Tag](https://claude.com/docs/claude-tag/overview) channel session in a scope an Owner routed to the environment. Work through each item before you connect an environment to production systems:
 
 * **Ephemeral, per-session containers**: run each runner process in a fresh container or VM that's destroyed when the process exits, with `--capacity 1` and the default `--drain-grace-sec 0` so each container serves exactly one session. At a higher capacity, or with a positive drain grace, one container serves multiple sessions from the same [locked owner](/docs/en/self-hosted-environments#key-concepts); see [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle). Don't reuse a filesystem between runner restarts, except in the deliberate [pre-warmed checkout](#reuse-a-pre-warmed-checkout) setup, and never across owners.
-  * <span id="processes-a-stopped-session-leaves" />When the runner stops a session, it sends no signal to a process still running after its shell command exited, such as a service that daemonized. Destroying the container or VM ends that process.
+  * When the runner stops a session, it sends no signal to a process still running after its shell command exited, such as a service that daemonized. Destroying the container or VM ends that process.
 * **No broad credentials in the image**: don't include long-lived SSH keys, cloud-provider credentials, or personal access tokens that grant more than a session needs. Mint credentials used during a session, such as push or API tokens, per session from your [wrapper script](/docs/en/self-hosted-environments-configuration#wrapper-scripts). The initial clone happens before the wrapper runs, so handle it with a [`checkout` lifecycle hook](/docs/en/self-hosted-environments-configuration#checkout), or with [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy) when all of a session's repositories are on github.com. For both, see [Configure git](#configure-git).
 * **Keep the host's GitHub credentials away from sessions**: Claude can use any GitHub credential a session can read, with whatever access that credential grants. Keep the runner host's own broadly scoped GitHub credentials out of anything a session can read. Such a credential can be a personal access token, the token `gh auth login` saves for your account, or a `GH_TOKEN` in the runner's environment.
   * **With [Anthropic-managed git](#use-the-anthropic-git-proxy)**: with such a credential, Claude reaches GitHub directly instead of through Anthropic-managed git.
@@ -47,9 +47,9 @@ A self-hosted runner executes arbitrary, model-directed code on your infrastruct
 
   The guard runs regardless of [`--trust-workspace`](/docs/en/self-hosted-environments-reference#runner-cli-flags), and doesn't cover repository hooks, `.mcp.json`, or Bash rules; see [Permissions and tool approval](/docs/en/self-hosted-environments-configuration#permissions-and-tool-approval) for where those grants belong.
 
-<Note>
-  If your organization has [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) enabled, add the public egress addresses of your runners and session containers to the allowlist before you start them. If you run [on-demand runners](/docs/en/self-hosted-environments-configuration#on-demand-runners), add the orchestrator host's address too. Don't rely on the allowlist as a network control for runner or session traffic. Apply default-deny egress at your own network boundary instead.
-</Note>
+> [!NOTE]
+>
+> If your organization has [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) enabled, add the public egress addresses of your runners and session containers to the allowlist before you start them. If you run [on-demand runners](/docs/en/self-hosted-environments-configuration#on-demand-runners), add the orchestrator host's address too. Don't rely on the allowlist as a network control for runner or session traffic. Apply default-deny egress at your own network boundary instead.
 
 ## Network requirements
 
@@ -62,7 +62,7 @@ These hosts are always required:
 | `api.anthropic.com` | 443, HTTPS; WSS for [Anthropic-managed git](#use-the-anthropic-git-proxy) | Runner control plane and session streaming, model inference, feature flags, product analytics, [JWKS](/docs/en/self-hosted-environments-identity) key fetches, commit signing, and Anthropic-managed git when `--use-anthropic-git-proxy` is set |
 | Your git host, such as `github.com` or your GitHub Enterprise host | 443 or 22 | Cloning and pushing repositories on each git host the runner's sessions use. On a runner that uses [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), see [when the `github.com` path is still needed](#github-com-egress-with-the-anthropic-git-proxy). |
 
-<span id="github-com-egress-with-the-anthropic-git-proxy" />A runner that uses [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy) routes its `github.com` git traffic through `api.anthropic.com`, so it doesn't need the git host path for `github.com`. It still needs that path if you set `--push-outcome-on-release` or push from a `post-session` hook.
+A runner that uses [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy) routes its `github.com` git traffic through `api.anthropic.com`, so it doesn't need the git host path for `github.com`. It still needs that path if you set `--push-outcome-on-release` or push from a `post-session` hook.
 
 Whether these hosts are needed depends on your configuration:
 
@@ -167,7 +167,7 @@ If you must configure push credentials at the image level, for example for a rea
 * A `credential.helper` that returns a minimally scoped token
 * `GIT_SSH_COMMAND` pointing at a narrowly scoped key
 
-<span id="git-must-work-without-a-prompt" />Whichever mechanism you configure must work without a prompt, because the runner's built-in clone and fetch disable the prompts that git, SSH, and Git Credential Manager would otherwise show:
+Whichever mechanism you configure must work without a prompt, because the runner's built-in clone and fetch disable the prompts that git, SSH, and Git Credential Manager would otherwise show:
 
 * The runner sets `GIT_TERMINAL_PROMPT=0`, so git doesn't ask for a username or password.
 * The runner runs SSH with `BatchMode=yes`, appended to your `GIT_SSH_COMMAND` if you set one, so SSH doesn't ask for a passphrase or host confirmation.
@@ -201,11 +201,9 @@ In exchange, the git proxy limits what the runner supports and changes what it n
 * **Host credentials for host pushes**: the runner's [`--push-outcome-on-release`](/docs/en/self-hosted-environments-reference#runner-cli-flags) push and any push your [`post-session` hook](/docs/en/self-hosted-environments-configuration#post-session) makes still use the runner host's own git credentials and its [network path to `github.com`](#github-com-egress-with-the-anthropic-git-proxy). Keep those credentials out of the [global git config](#git-proxy-replaces-global-git-config), and see [Ship git config in your image](#ship-git-config-in-your-image) for ways to supply them.
 * **Per-session decision**: Anthropic decides for each session on the runner whether to serve its git, and a session it doesn't serve fails to start. [When sessions fail to start on a runner with the git proxy](#when-anthropic-doesnt-serve-a-session) covers the causes.
 
-<span id="git-proxy-replaces-global-git-config" />
-
-<Warning>
-  With `--use-anthropic-git-proxy` set, the runner deletes and replaces the global git config of the user it runs as, and keeps no backup. It does this at startup and before each session. A login or credential helper you kept there is lost. Settings that [`--configure-git`](#let-the-runner-configure-git) writes survive. Run the runner as a dedicated user or in a container, never as your own user.
-</Warning>
+> [!WARNING]
+>
+> With `--use-anthropic-git-proxy` set, the runner deletes and replaces the global git config of the user it runs as, and keeps no backup. It does this at startup and before each session. A login or credential helper you kept there is lost. Settings that [`--configure-git`](#let-the-runner-configure-git) writes survive. Run the runner as a dedicated user or in a container, never as your own user.
 
 Keep git settings that aren't secret, such as identity and `safe.directory`, in the system git configuration.
 
@@ -217,9 +215,9 @@ Before you start the runner with `--use-anthropic-git-proxy`, confirm that the r
 * **`--capacity 1`, the default**: each runner process handles one session at a time, so run more replicas for parallelism.
 * **Git 2.32 or later**: older git ignores the per-session git configuration that the runner sets up for the git proxy.
 
-<Warning>
-  The [Kubernetes](#kubernetes) and [Docker Compose](#docker-compose) recipes on this page use `--capacity 4`. If you add `--use-anthropic-git-proxy` or `CLAUDE_RUNNER_USE_GIT_PROXY=1` to one of them without changing the capacity to `1`, the runner exits at startup every time your orchestrator restarts it. Set `--capacity 1` and run more replicas for parallelism. [When the runner exits](#when-the-runner-exits) shows the line the runner prints.
-</Warning>
+> [!WARNING]
+>
+> The [Kubernetes](#kubernetes) and [Docker Compose](#docker-compose) recipes on this page use `--capacity 4`. If you add `--use-anthropic-git-proxy` or `CLAUDE_RUNNER_USE_GIT_PROXY=1` to one of them without changing the capacity to `1`, the runner exits at startup every time your orchestrator restarts it. Set `--capacity 1` and run more replicas for parallelism. [When the runner exits](#when-the-runner-exits) shows the line the runner prints.
 
 To turn the git proxy on, add `--use-anthropic-git-proxy` to the runner's command, or set `CLAUDE_RUNNER_USE_GIT_PROXY=1` in the runner's environment. This command, run in a shell on the runner host, starts the [quickstart](/docs/en/self-hosted-environments-quickstart#set-up-manually)'s runner with the git proxy on:
 
@@ -237,9 +235,7 @@ For a session that Anthropic serves, the runner's clone and the session's own fe
 * **Bot and agent sessions**: Anthropic uses your organization's GitHub App installation token.
 * **URL rewrites**: `--git-host-rewrite` and `--git-ssh-rewrite` have no effect on a repository that the git proxy serves.
 
-<h4 id="when-anthropic-doesnt-serve-a-session">
-  When sessions fail to start on a runner with the git proxy
-</h4>
+#### When sessions fail to start on a runner with the git proxy
 
 On a runner started with `--use-anthropic-git-proxy`, a session fails to start when Anthropic doesn't serve its git. Look in the runner's log for a git error that names an `api.anthropic.com` address containing `/git_proxy/`.
 
@@ -250,7 +246,7 @@ For each session, a runner on Claude Code v2.1.267 or later also logs either a `
   * **A repository isn't on github.com**: a session with even one repository on another git host, such as GitHub Enterprise Server, isn't served, including its github.com repositories. [Turn the Anthropic git proxy off](#turn-the-anthropic-git-proxy-off) for that environment's runners.
   * **Every repository is on github.com**: report the failure to [your Anthropic account team](#report-an-issue) with the session ID from the `withheld` line. Anthropic records the reason on its side.
 * **A line containing `remote: access denied by the git proxy`**: a session that Anthropic serves can still be refused, for example when organization policy denies git access for the session, or the session isn't authorized for the repository. The runner's log then shows a line containing `remote: access denied by the git proxy`, and the rest of that line says why.
-* <span id="creator-has-no-github-connection" />**`GitHub authentication required`**: this appears when the session's creator has no working GitHub connection on claude.ai. The session's clone fails, and the git error contains `GitHub authentication required. Please reconnect your GitHub account.` Ask that person to connect or reconnect GitHub in their claude.ai settings.
+* **`GitHub authentication required`**: this appears when the session's creator has no working GitHub connection on claude.ai. The session's clone fails, and the git error contains `GitHub authentication required. Please reconnect your GitHub account.` Ask that person to connect or reconnect GitHub in their claude.ai settings.
 
 After you fix the cause, start the failed sessions again.
 
@@ -258,27 +254,25 @@ After you fix the cause, start the failed sessions again.
 
 If sessions in an environment use a repository on a git host other than github.com, such as GitHub Enterprise Server, turn `--use-anthropic-git-proxy` off for that environment's runners.
 
-<Steps>
-  <Step title="Remove the flag">
-    Remove `--use-anthropic-git-proxy` from the runner's command. If you set `CLAUDE_RUNNER_USE_GIT_PROXY` in the runner's environment, such as a pod spec or a Compose file, remove it there. In a shell, unset it:
+**1. Remove the flag**
 
-    ```bash theme={null}
-    unset CLAUDE_RUNNER_USE_GIT_PROXY
-    ```
-  </Step>
+Remove `--use-anthropic-git-proxy` from the runner's command. If you set `CLAUDE_RUNNER_USE_GIT_PROXY` in the runner's environment, such as a pod spec or a Compose file, remove it there. In a shell, unset it:
 
-  <Step title="Give the runner git credentials">
-    Provide credentials that work without a prompt for every git host the runners' sessions use, github.com included. Any credential that was in the runner user's global git config is gone, because the runner deleted that config while `--use-anthropic-git-proxy` was set. [Ship credentials in your image](#ship-git-config-in-your-image) or use a [`checkout` lifecycle hook](/docs/en/self-hosted-environments-configuration#checkout).
-  </Step>
+```bash theme={null}
+unset CLAUDE_RUNNER_USE_GIT_PROXY
+```
 
-  <Step title="Open the network path">
-    Allow the runner to reach each git host the runners' sessions use on port 443 or 22. See the git host row in [Network requirements](#network-requirements).
-  </Step>
+**2. Give the runner git credentials**
 
-  <Step title="Restart the runners">
-    Restart the runners so that they register without the git proxy. Then start each failed session again.
-  </Step>
-</Steps>
+Provide credentials that work without a prompt for every git host the runners' sessions use, github.com included. Any credential that was in the runner user's global git config is gone, because the runner deleted that config while `--use-anthropic-git-proxy` was set. [Ship credentials in your image](#ship-git-config-in-your-image) or use a [`checkout` lifecycle hook](/docs/en/self-hosted-environments-configuration#checkout).
+
+**3. Open the network path**
+
+Allow the runner to reach each git host the runners' sessions use on port 443 or 22. See the git host row in [Network requirements](#network-requirements).
+
+**4. Restart the runners**
+
+Restart the runners so that they register without the git proxy. Then start each failed session again.
 
 #### GitHub API access without the GitHub CLI
 

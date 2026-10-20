@@ -17,9 +17,9 @@ To control which tools Claude can use and when it asks first, configure [permiss
 
 To add custom tools, connect an [MCP server](/docs/en/mcp). To extend Claude with reusable prompt-based workflows, write a [skill](/docs/en/skills), which runs through the existing `Skill` tool rather than adding a new tool entry.
 
-<Info>
-  In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), a classifier decides most permission prompts instead of you. The `Permission required` column shows whether the tool prompts in [Manual mode](/docs/en/permission-modes) for paths inside the working directory. File-access tools marked No, including `Read`, `Grep`, and `Glob`, still prompt for paths outside the [working directory and additional directories](/docs/en/permissions#working-directories). `Bash` is marked Yes but runs a built-in set of [read-only commands](/docs/en/permissions#read-only-commands) without prompting.
-</Info>
+> [!NOTE]
+>
+> In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), a classifier decides most permission prompts instead of you. The `Permission required` column shows whether the tool prompts in [Manual mode](/docs/en/permission-modes) for paths inside the working directory. File-access tools marked No, including `Read`, `Grep`, and `Glob`, still prompt for paths outside the [working directory and additional directories](/docs/en/permissions#working-directories). `Bash` is marked Yes but runs a built-in set of [read-only commands](/docs/en/permissions#read-only-commands) without prompting.
 
 | Tool | Description | Permission required |
 | :- | :- | :- |
@@ -654,9 +654,9 @@ WebSearch permission rules take no specifier. A bare `WebSearch` entry in `allow
 
 The search backend is not configurable. To search with a different provider, add an [MCP server](/docs/en/mcp) that exposes a search tool.
 
-<Note>
-  WebSearch is available on the Claude API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), and Microsoft Foundry. On Google Cloud's Agent Platform it works with Opus 4, Sonnet 4, Haiku 4.5, and later models. Amazon Bedrock doesn't expose the server-side web search tool.
-</Note>
+> [!NOTE]
+>
+> WebSearch is available on the Claude API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), and Microsoft Foundry. On Google Cloud's Agent Platform it works with Opus 4, Sonnet 4, Haiku 4.5, and later models. Amazon Bedrock doesn't expose the server-side web search tool.
 
 ### Session search limit
 
@@ -696,9 +696,9 @@ What tools do you have access to?
 
 Claude gives a conversational summary. For exact MCP tool names, run `/mcp`.
 
-<Note>
-  The [advisor tool](/docs/en/advisor) is a [server tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool) that the API runs, rather than a tool that Claude Code implements. It has no name you can reference in permission rules or hook matchers.
-</Note>
+> [!NOTE]
+>
+> The [advisor tool](/docs/en/advisor) is a [server tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool) that the API runs, rather than a tool that Claude Code implements. It has no name you can reference in permission rules or hook matchers.
 
 ## See also
 

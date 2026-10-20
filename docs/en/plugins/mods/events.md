@@ -210,9 +210,9 @@ The hook denies `git push` on `main` and passes every other call through:
 
 The hook matches the text of the command, so treat it as a reminder for Claude. To block pushes to `main` for everyone, protect the branch on your Git host.
 
-<Note>
-  A `tool.check` hook can also return `allow` or `ask`. In [plan mode](/docs/en/permissions#hook-approvals-in-plan-mode), for a call that isn't read-only, such as a file edit, your hook can tighten the decision `next(e)` returns but can't loosen it. For the permission rules and `PreToolUse` hook decisions your hook's `allow` can't replace, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
-</Note>
+> [!NOTE]
+>
+> A `tool.check` hook can also return `allow` or `ask`. In [plan mode](/docs/en/permissions#hook-approvals-in-plan-mode), for a call that isn't read-only, such as a file edit, your hook can tighten the decision `next(e)` returns but can't loosen it. For the permission rules and `PreToolUse` hook decisions your hook's `allow` can't replace, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
 
 ### Rewrite or add to a prompt
 
@@ -276,9 +276,7 @@ Claude's response streams to the screen as it does without the mod. After each r
 
 To see the tool calls that the API ran itself during the request, such as calls to the [advisor tool](/docs/en/advisor), read `result.serverToolUses`. Claude Code doesn't run these calls, so no `tool.call` or `tool.check` hook fires for them. The field is absent when the response has no such calls, and it requires Claude Code v2.1.290 or later.
 
-<h3 id="hook-the-settings-hook-events">
-  Handle the settings hook events
-</h3>
+### Handle the settings hook events
 
 Settings hooks are the command, HTTP, prompt, and agent hooks you configure in settings files. Each [settings hook event](/docs/en/hooks#hook-events), such as `Stop`, `SessionEnd`, or `PostToolUse`, is also an event named `classic.` followed by the settings hook event's name, such as `classic.Stop`. `e` is the JSON a settings hook receives on stdin, including `transcript_path`.
 

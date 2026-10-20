@@ -13,11 +13,11 @@ source: https://code.claude.com/docs/en/interactive-mode.md
 
 ## Keyboard shortcuts
 
-<Note>
-  Keyboard shortcuts may vary by platform and terminal. In [fullscreen rendering](/docs/en/fullscreen), press `?` in the transcript viewer to see available shortcuts there.
-
-  **macOS users**: Option/Alt key shortcuts (`Alt+B`, `Alt+F`, `Alt+D`, `Alt+Y`, `Alt+P`) require configuring Option as Meta in your terminal. See [Enable Option key shortcuts on macOS](/docs/en/terminal-config#enable-option-key-shortcuts-on-macos) for the setting in each terminal.
-</Note>
+> [!NOTE]
+>
+> Keyboard shortcuts may vary by platform and terminal. In [fullscreen rendering](/docs/en/fullscreen), press `?` in the transcript viewer to see available shortcuts there.
+>
+> **macOS users**: Option/Alt key shortcuts (`Alt+B`, `Alt+F`, `Alt+D`, `Alt+Y`, `Alt+P`) require configuring Option as Meta in your terminal. See [Enable Option key shortcuts on macOS](/docs/en/terminal-config#enable-option-key-shortcuts-on-macos) for the setting in each terminal.
 
 ### General controls
 
@@ -62,9 +62,7 @@ source: https://code.claude.com/docs/en/interactive-mode.md
 | `Alt+D` | Delete to end of word | Deletes to the end of the current word, or to the end of the next word when the cursor is between words. Stores deleted text for pasting. Requires [Option as Meta](#keyboard-shortcuts) on macOS |
 | `Ctrl+_` or `Ctrl+Shift+-` | Undo last input edit | Restores the previous input text and cursor position |
 
-<h3 id="make-ctrl-w-delete-back-to-whitespace">
-  Word boundaries in editing shortcuts
-</h3>
+### Word boundaries in editing shortcuts
 
 The word shortcuts `Alt+B`, `Alt+F`, `Alt+D`, `Option+Delete`, and `Ctrl+Backspace` treat a word as a run of letters and digits, so punctuation such as `_`, `.`, and `/` separates words. With `src/utils/foo.ts` in the prompt, repeated presses of `Alt+B` stop at the start of `ts`, `foo`, `utils`, and `src`.
 
@@ -202,9 +200,9 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `%` | Jump to the matching `()`, `[]`, or `{}` bracket, starting from the next bracket on the current line when the cursor isn't on a bracket. Requires Claude Code v2.1.301 or later |
 | `/` | Open reverse history search, same as `Ctrl+R`. The empty search prompt shows a hint: press `Esc` then `i` then `/` to open the command menu instead |
 
-<Note>
-  In vim NORMAL mode, if the cursor is at the beginning or end of input and can't move further, `j`/`k` and `↑`/`↓` navigate command history instead. `←` on an empty prompt opens [agent view](/docs/en/agent-view) from NORMAL mode as well as INSERT; before v2.1.219, `←` on an empty prompt did nothing in NORMAL mode.
-</Note>
+> [!NOTE]
+>
+> In vim NORMAL mode, if the cursor is at the beginning or end of input and can't move further, `j`/`k` and `↑`/`↓` navigate command history instead. `←` on an empty prompt opens [agent view](/docs/en/agent-view) from NORMAL mode as well as INSERT; before v2.1.219, `←` on an empty prompt did nothing in NORMAL mode.
 
 ### Editing (NORMAL mode)
 
@@ -522,43 +520,41 @@ Spell checking is off by default, and Claude Code checks nothing in [screen read
 
 Claude Code reads the [`spellcheck`](/docs/en/settings-reference#spellcheck) setting from three places, and ignores it in a project's `.claude/settings.json` and `.claude/settings.local.json`. Turn it on from whichever one you use:
 
-<Tabs>
-  <Tab title="User settings">
-    Add `spellcheck` to `~/.claude/settings.json`. It applies in every project you open, like the rest of your [user settings](/docs/en/settings#where-settings-live):
+**User settings**
 
-    ```json theme={null}
-    {
-      "spellcheck": { "enabled": true }
-    }
-    ```
-  </Tab>
+Add `spellcheck` to `~/.claude/settings.json`. It applies in every project you open, like the rest of your [user settings](/docs/en/settings#where-settings-live):
 
-  <Tab title="Command line">
-    Save `spellcheck` in a JSON file, such as `spellcheck.json`:
+```json theme={null}
+{
+  "spellcheck": { "enabled": true }
+}
+```
 
-    ```json theme={null}
-    {
-      "spellcheck": { "enabled": true }
-    }
-    ```
+**Command line**
 
-    Then pass the file to `--settings`. It applies to that session only:
+Save `spellcheck` in a JSON file, such as `spellcheck.json`:
 
-    ```bash theme={null}
-    claude --settings spellcheck.json
-    ```
-  </Tab>
+```json theme={null}
+{
+  "spellcheck": { "enabled": true }
+}
+```
 
-  <Tab title="Managed settings">
-    Add `spellcheck` to one of your organization's [managed settings sources](/docs/en/permissions#managed-settings). It applies to every user who receives those settings, and they can't turn it off:
+Then pass the file to `--settings`. It applies to that session only:
 
-    ```json theme={null}
-    {
-      "spellcheck": { "enabled": true }
-    }
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+claude --settings spellcheck.json
+```
+
+**Managed settings**
+
+Add `spellcheck` to one of your organization's [managed settings sources](/docs/en/permissions#managed-settings). It applies to every user who receives those settings, and they can't turn it off:
+
+```json theme={null}
+{
+  "spellcheck": { "enabled": true }
+}
+```
 
 To check that spell checking is on, type a misspelled word and a space. Claude Code underlines the word. If it doesn't, see [When Claude Code underlines nothing](#when-claude-code-underlines-nothing). To turn spell checking off again, set `enabled` to `false` in the same place, or remove `spellcheck`.
 
@@ -789,13 +785,13 @@ Claude Code renders the badge as a hyperlink even when it can't detect hyperlink
 
 When you set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars), Claude Code doesn't check pull request or merge request status.
 
-<Note>
-  PR status for GitHub repositories needs a GitHub token. Claude Code finds one based on the remote's host:
-
-  * **github.com**: `GH_TOKEN` or `GITHUB_TOKEN`, or the token saved by `gh auth login`. Without one, the footer shows `install gh for PR status` when the `gh` CLI isn't installed, or `gh auth login for PR status` when it is
-  * **A GitHub Enterprise host set as `GH_HOST`**: `GH_ENTERPRISE_TOKEN` or `GITHUB_ENTERPRISE_TOKEN`, or the token saved by `gh auth login --hostname <host>`. Without one, the footer shows the same hints
-  * **Any other GitHub host**: the token saved by `gh auth login --hostname <host>`. Without one, Claude Code shows no badge and no hint
-</Note>
+> [!NOTE]
+>
+> PR status for GitHub repositories needs a GitHub token. Claude Code finds one based on the remote's host:
+>
+> * **github.com**: `GH_TOKEN` or `GITHUB_TOKEN`, or the token saved by `gh auth login`. Without one, the footer shows `install gh for PR status` when the `gh` CLI isn't installed, or `gh auth login for PR status` when it is
+> * **A GitHub Enterprise host set as `GH_HOST`**: `GH_ENTERPRISE_TOKEN` or `GITHUB_ENTERPRISE_TOKEN`, or the token saved by `gh auth login --hostname <host>`. Without one, the footer shows the same hints
+> * **Any other GitHub host**: the token saved by `gh auth login --hostname <host>`. Without one, Claude Code shows no badge and no hint
 
 ### GitLab merge requests
 
