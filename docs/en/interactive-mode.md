@@ -162,7 +162,7 @@ Claude Code keeps your vim mode and cursor position when you toggle the [transcr
 
 ### Remap INSERT-mode key sequences
 
-The [`vimInsertModeRemaps`](/docs/en/settings-reference#viminsertmoderemaps) setting maps a two-key INSERT-mode sequence to Escape, so a mapping like `jj` returns you to NORMAL mode. Requires Claude Code v2.1.208 or later.
+The [`vimInsertModeRemaps`](/docs/en/settings-reference#viminsertmoderemaps) setting maps a two-key INSERT-mode sequence to Escape, so a mapping like `jj` returns you to NORMAL mode.
 
 The following `~/.claude/settings.json` example turns on vim mode and maps `jj` to Escape:
 
@@ -223,8 +223,8 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `cc` | Change line |
 | `C` | Change to end of line |
 | `cw`/`ce`/`cb` | Change word/to end/back |
-| `s` | Substitute character: delete the character under the cursor and enter INSERT mode. Requires Claude Code v2.1.211 or later |
-| `S` | Substitute line: clear the line and enter INSERT mode. Requires Claude Code v2.1.211 or later |
+| `s` | Substitute character: delete the character under the cursor and enter INSERT mode |
+| `S` | Substitute line: clear the line and enter INSERT mode |
 | `yy`/`Y` | Yank (copy) line |
 | `yw`/`ye`/`yb` | Yank word/to end/back |
 | `p` | Paste after cursor |
@@ -678,7 +678,7 @@ In the [VS Code extension](/docs/en/vs-code#use-the-prompt-box)'s chat panel, `/
 
 Your five newest earlier side questions appear as a dimmed list above the current answer, with a count of any older ones. They stay out of the conversation history.
 
-To return to the overlay after dismissing it, run `/btw` with no question. The overlay reopens on your most recent exchange. Before v2.1.212, `/btw` without a question printed a usage message instead.
+To return to the overlay after dismissing it, run `/btw` with no question. The overlay reopens on your most recent exchange.
 
 Once the answer appears, the overlay accepts these keys.
 

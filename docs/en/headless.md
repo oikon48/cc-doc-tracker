@@ -129,7 +129,7 @@ With `--output-format json`, the response payload includes `total_cost_usd` and 
   Piped stdin is capped at 10MB. If you exceed the cap, Claude Code exits with a clear error and a non-zero status. To work with larger inputs, write the content to a file and reference the file path in your prompt instead of piping it.
 </Note>
 
-If Claude Code can't read stdin, for example because the process that started it disconnected its end, Claude Code prints a warning to stderr and continues with the prompt from the command line. Before v2.1.211, an unreadable stdin on Windows crashed the session or made it exit silently with no output.
+If Claude Code can't read stdin, for example because the process that started it disconnected its end, Claude Code prints a warning to stderr and continues with the prompt from the command line.
 
 ### Add Claude to a build script
 
@@ -198,7 +198,7 @@ claude -p "Explain recursion" --output-format stream-json --verbose --include-pa
 
 The last line of the stream is a `result` message with the final response text, cost, and session metadata.
 
-If your consumer reads the stream slowly, Claude Code waits for the queued output to drain before exiting, scaling the wait with how much is still queued, capped at 30 seconds. Before v2.1.214 the exit wait was capped at about two seconds, which could cut off the end of a large response.
+If your consumer reads the stream slowly, Claude Code waits for the queued output to drain before exiting, scaling the wait with how much is still queued, capped at 30 seconds.
 
 The following example uses [jq](https://jqlang.org/) to filter for text deltas and display only the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
 
@@ -232,7 +232,6 @@ For a forked skill started from the prompt, match `parent_tool_use_id` on the `f
 
 If some of these messages are missing from your stream, check your Claude Code version against these minimums:
 
-* **`--forward-subagent-text` and `CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`**: v2.1.211 or later
 * **Forwarding at every nesting depth**: v2.1.219 or later
 * **A forked skill that Claude starts with the Skill tool from the main conversation**: v2.1.86 or later for its `tool_use` and `tool_result` blocks, and v2.1.265 or later for its first `user` message and its text and thinking blocks
 * **Messages of subagents that a forked skill spawns, and of forked skills started inside a subagent or another forked skill**: v2.1.275 or later

@@ -230,7 +230,7 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 
 A render site is an extension point in Claude Code's interface. Each row is a value of `e.component` in a `ui.render` hook, with the fields of `e.props` and the apps that render it. `e.surface` names the app that's drawing, such as `terminal`, `desktop`, or `vscode`. [Change what Claude Code already draws](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) shows what a hook can do at a site, with an example of each choice.
 
-Rendering in the VS Code extension requires extension version 2.1.299 or later and a session that [fetches feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). [Draw in the VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension) lists what the extension draws differently.
+Rendering in the VS Code extension requires extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching) needs 2.1.304 or later. [Draw in the VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension) lists what the extension draws differently.
 
 | Site | `e.props` | `e.requestId` | Rendered on |
 | :- | :- | :- | :- |

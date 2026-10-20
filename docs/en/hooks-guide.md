@@ -482,7 +482,7 @@ Keep the matcher as narrow as possible. Matching on `.*` or leaving the matcher 
 
 ## How hooks work
 
-Claude Code fires hook events at specific points in its lifecycle. When an event fires, Claude Code runs all matching hooks in parallel; see [Hook handler fields](/docs/en/hooks#hook-handler-fields) for how duplicate handlers are treated. The table below shows each event and when it triggers:
+Claude Code fires hook events at specific points in its lifecycle. When an event fires, Claude Code runs the matching hooks in parallel; see [Hook handler fields](/docs/en/hooks#hook-handler-fields) for how duplicate handlers are treated. The table below shows each event and when it triggers:
 
 | Event | When it fires |
 | :- | :- |
@@ -854,7 +854,7 @@ The model's only job is to return its decision as JSON:
 * `"ok": true`: the action proceeds
 * `"ok": false`: what happens depends on the event:
   * `Stop` and `SubagentStop`: the `reason` is fed back to Claude so it keeps working, unless the response also sets `"impossible": true` to mark the condition as one that can never be satisfied, in which case Claude Code allows the stop and the turn ends
-  * `PreToolUse`: the tool call is denied; by default the turn ends and the deny `reason` appears in the chat as a warning line. Set `continueOnBlock: true` on the hook to instead return the `reason` to Claude as the tool error, so it can adjust and continue. Before v2.1.210, the deny `reason` was returned to Claude as the tool error and the turn continued
+  * `PreToolUse`: the tool call is denied; by default the turn ends and the deny `reason` appears in the chat as a warning line. Set `continueOnBlock: true` on the hook to instead return the `reason` to Claude as the tool error, so it can adjust and continue
   * `PostToolUse`: by default the turn ends and the `reason` appears in the chat as a warning line. Set `continueOnBlock: true` to feed the `reason` back to Claude and continue the turn instead
   * `PostToolBatch`, `UserPromptSubmit`, and `UserPromptExpansion`: the turn ends and the `reason` appears in the chat as a warning line
 
