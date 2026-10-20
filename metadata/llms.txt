@@ -45,7 +45,7 @@
 
 - [Get started with Claude Code in the cloud](https://code.claude.com/docs/en/web-quickstart.md): Run Claude Code in the cloud from your browser or phone. Connect a GitHub repository, submit a task, and review the PR without local setup.
 - [Use Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web.md): Run Claude Code sessions in the cloud from your browser, phone, Desktop app, or terminal, move them with `--cloud` and `--teleport`, and auto-fix pull requests.
-- [Automate work with routines](https://code.claude.com/docs/en/routines.md): Put Claude Code on autopilot. Define routines that run on a schedule, trigger on API calls, or react to GitHub events from cloud infrastructure.
+- [Automate work with scheduled tasks](https://code.claude.com/docs/en/routines.md): Put Claude Code on autopilot. Create scheduled tasks, formerly routines, that run in the cloud on a schedule, on API calls, or on GitHub events.
 
 ##### Claude Code on desktop
 
