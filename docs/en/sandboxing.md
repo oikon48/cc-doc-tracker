@@ -551,6 +551,10 @@ There is no way to exempt one of these paths: an `allowWrite` entry or an `Edit`
 
 If `git merge` or `git checkout` fails with `unable to unlink old` on one of these paths, see [A git command fails with `unable to unlink old`](#a-git-command-fails-with-unable-to-unlink-old).
 
+#### Denied paths that pass through a symlink
+
+On macOS, when a denied path passes through a symlink, such as a `~/.claude` that is a link into a dotfiles repository, the sandbox also denies the path's real location. This covers the sandbox's own denials and your literal `denyWrite` and `denyRead` entries.
+
 ### Network isolation
 
 A sandboxed command has no direct route to the network:
@@ -979,9 +983,19 @@ This line means `/sandbox` couldn't save the choice you made in its panel to you
 ✗ Sandbox settings not changed: /home/you/project/.claude/settings.local.json couldn't be updated (EACCES). Start Claude Code in a project folder you can write to.
 ```
 
-If the reason in parentheses is `EACCES`, `EPERM`, or `EROFS`, start Claude Code in a project folder you can write to, then run `/sandbox` again in that session.
+If the reason in parentheses is `EACCES`, `EPERM`, or `EROFS`, start Claude Code in a project folder you can write to, then run `/sandbox` again in that session. If the reason begins with `Invalid JSON syntax in settings file`, correct the JSON in your project's `.claude/settings.local.json`, then run `/sandbox` again.
 
-If the reason begins with `Invalid JSON syntax in settings file`, correct the JSON in your project's `.claude/settings.local.json`, then run `/sandbox` again.
+If no writable project folder is available to you, turn the sandbox on from your user settings instead. Add this to `~/.claude/settings.json`:
+
+```json theme={null}
+{
+  "sandbox": {
+    "enabled": true
+  }
+}
+```
+
+This turns on [auto-allow mode](#sandbox-modes). For regular permissions mode, also set [`sandbox.autoAllowBashIfSandboxed`](/docs/en/settings-reference#sandbox-autoallowbashifsandboxed) to `false`. The change takes effect in your running session at the next shell command Claude runs, and the **Mode** tab of `/sandbox` then marks the mode in effect.
 
 ## Limitations
 
