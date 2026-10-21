@@ -779,6 +779,52 @@ Then run `claude plugin list --json` again to confirm that the row is gone.
 
 Before v2.1.295, the second run fails with `Plugin "<name>" is not installed in project scope`. Run `claude update`, then run the uninstall again.
 
+### A plugin installed from a git repository shows version `unknown`
+
+`Version: unknown` in `claude plugin list` can mean Claude Code couldn't read the commit it uses as a git-sourced plugin's version. The plugin may have its own repository or be inside a git-hosted marketplace.
+
+Run these commands in your shell, replacing `formatter@my-marketplace` with the plugin's `name@marketplace` line from `claude plugin list`:
+
+**1. Update Claude Code**
+
+[Update Claude Code](/docs/en/setup#update-claude-code) to v2.1.302 or later, which clones in a format it can read the commit from:
+
+```shell theme={null}
+claude update
+```
+
+**2. Update the marketplace**
+
+Update Claude Code's copy of the marketplace, which holds the commit for plugins inside the marketplace repository:
+
+```shell theme={null}
+claude plugin marketplace update my-marketplace
+```
+
+**3. Update the plugin**
+
+Update the plugin to rewrite its recorded version:
+
+```shell theme={null}
+claude plugin update formatter@my-marketplace
+```
+
+**4. Check the version**
+
+Check the `Version:` line for a value such as a [12-character commit ID](/docs/en/plugins/loading#how-claude-code-computes-the-version):
+
+```shell theme={null}
+claude plugin list
+```
+
+`claude plugin update` [changes one scope's block per run](/docs/en/plugins/cli-reference#which-scope-the-command-updates). For a block still showing `unknown`, rerun it with that block's `Scope:` value:
+
+```shell theme={null}
+claude plugin update formatter@my-marketplace --scope project
+```
+
+If the block still shows `unknown` after the rerun, see [Get more help](/docs/en/troubleshooting#get-more-help).
+
 ### `Failed to load hooks from <path>` and hooks that don't fire
 
 A plugin's hooks don't run, or one blocks an action. Either the **Errors** tab shows a load failure for them, the hooks load and you see `<Event> hook error` notices or a blocking error in the transcript, or a hook loads without error and never fires.
@@ -789,6 +835,7 @@ The **Errors** tab shows one of these messages:
 
 * **`Failed to load hooks from <path>: <reason>`**: `hooks/hooks.json` isn't valid JSON or fails the hooks schema. The reason names the parse or validation error. Fix the file. To catch a JSON syntax problem in `hooks/hooks.json` before you publish the plugin, run `claude plugin validate <plugin-directory>` in your shell
 * **`hooks path not found: <path>`**: the manifest's `hooks` field names a file that doesn't exist at that path relative to the plugin root. Fix the path or add the file
+* **`hooks path escapes plugin directory: <path>`**: see [Path escapes plugin directory](/docs/en/errors#path-escapes-plugin-directory)
 
 #### `hook error` notices in the transcript
 

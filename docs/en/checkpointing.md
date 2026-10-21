@@ -49,6 +49,10 @@ After restoring the conversation or choosing Summarize from here, the original p
 
 Choosing Summarize up to here leaves you at the end of the conversation with the input empty. With either summarize option, a **Summarized conversation** marker appears in the conversation where the compressed messages were.
 
+#### Rewound messages can return if you exit before your next prompt
+
+To remove the returned messages again, run `/rewind` in the session and select the same prompt, then **Restore conversation**. Before you exit, send Claude a prompt, because Claude Code saves the rewound conversation together with that prompt. Files you restored stay as the rewind left them.
+
 #### Rewind past a cleared conversation
 
 If you ran `/clear` earlier in the same Claude Code process, the rewind menu shows an additional entry at the top of the list labeled `/resume <session-id> (previous session)`. Select it to resume the conversation that was active before `/clear` ran. The entry is available until you exit Claude Code or resume a different session.

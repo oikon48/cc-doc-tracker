@@ -369,6 +369,8 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 > Run `/mcp` inside a session and select the server to see its tool list. If the list is empty, the server started but didn't register any tools, which usually means it's missing a required environment variable such as an API key.
 >
 > Pass the variable with `--env KEY=value` on `claude mcp add`, or in the `env` field of the server's `.mcp.json` entry. The server's documentation lists the variables it needs.
+>
+> Before v2.1.302, `/mcp` showed the status `tools fetch failed` for a server using [protocol revision 2026-07-28](/docs/en/mcp#mcp-client-runtimes) that left `resultType`, `ttlMs`, or `cacheScope` out of its replies. If you use one of those versions and a server shows that status, [update Claude Code](/docs/en/setup#update-claude-code).
 
 > **Changes to .mcp.json don't take effect**
 >

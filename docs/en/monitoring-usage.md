@@ -1025,6 +1025,8 @@ Logged when a tool permission decision is made (accept/reject).
   * For Skill tool: includes `skill_name`
   * For Agent tool or legacy Task tool: includes `subagent_type`
 
+If you lower the OpenTelemetry SDK's `OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` below the number of attributes on a `tool_decision` event, the SDK drops the attributes that Claude Code set last. The SDK drops `permission_mode` first, `classifier_category` second, and `classifier_verdict` third, and drops the event's other attributes only after those three. This ordering requires Claude Code v2.1.302 or later.
+
 #### Permission mode changed event
 
 Logged when the permission mode changes, for example from `Shift+Tab` cycling, exiting plan mode, or an auto mode gate check.

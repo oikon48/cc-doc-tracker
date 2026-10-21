@@ -85,7 +85,7 @@ You don't need to allowlist these hosts for runner or session traffic:
 These host-side flows do reach `claude.ai`, so run them from a host whose egress allows it rather than widening session-container egress:
 
 * **The one-line installer**: fetches `install.sh` from `claude.ai` at install time.
-* **Interactive `claude auth login`**: signs in through `claude.ai`, `claude.com`, and `platform.claude.com`. The [guided setup](/docs/en/self-hosted-environments-quickstart#run-the-guided-setup), `doctor`'s signed-in mode, and [CI dispatch](/docs/en/self-hosted-environments-testing#authenticate-from-ci) use it. The browser you sign in with also loads the claude.ai sign-in page's browser checks from `hcaptcha.com`, `*.hcaptcha.com`, and `challenges.cloudflare.com`.
+* **Interactive `claude auth login`**: signs in through `claude.ai`, `claude.com`, and `platform.claude.com`. The [guided setup](/docs/en/self-hosted-environments-quickstart#run-the-guided-setup), `doctor`'s signed-in mode, and [CI dispatch](/docs/en/self-hosted-environments-testing#authenticate-from-ci) use it. The browser you sign in with also loads the claude.ai sign-in page's browser checks from `hcaptcha.com`, `*.hcaptcha.com`, and `challenges.cloudflare.com`. If your organization uses single sign-on, that browser can also be redirected through `sso.claude.com`.
 
 ### Default-deny egress
 
@@ -194,6 +194,8 @@ In exchange, the git proxy limits what the runner supports and changes what it n
 
 * **github.com only**: Anthropic serves a session only when all of its repositories are on github.com, and the git proxy doesn't support GitHub Enterprise Server yet. On a runner with the git proxy, a session with a repository on another git host [fails to start](#when-anthropic-doesnt-serve-a-session).
 * **Credentials for the session's repositories only**: Anthropic supplies git credentials for the repositories that are part of the session, not for other repositories on the same git host. A private submodule, a dependency that your package manager fetches with git, or a plugin marketplace in another repository gets no credential from Anthropic. Ask the people who create sessions to [add every repository](/docs/en/web-quickstart#start-a-task) a session needs when they create it.
+
+  Each run of a [cloud scheduled task](/docs/en/routines) is a session with the task's repositories, so ask each task's owner to [add every repository its runs need](/docs/en/routines#edit-and-control-routines).
 * **Branch pushes only**: a push that deletes a branch fails, and so does a push to any other kind of ref, such as a tag. For which branches a push can update, see [GitHub proxy](/docs/en/cloud-environments#github-proxy).
 * **Connected GitHub accounts**: ask each person who creates user sessions with a repository to [connect GitHub](/docs/en/web-quickstart#connect-github). Without their own connection, those sessions [don't start](#creator-has-no-github-connection).
 * **`--capacity 1`**: the git proxy requires one session per runner process, so run more replicas for parallelism. [Turn the Anthropic git proxy on](#turn-the-anthropic-git-proxy-on) lists the requirements.
@@ -572,7 +574,8 @@ What the reuse path does and doesn't guarantee:
 
   By default the runner leaves these in place when the session ends, so on a disk that outlives the runner process they accumulate. Every session runs as the runner's own user, so any later session that disk serves can read them. If you keep a persistent `--base-dir`, size the volume for that growth. The same applies to any setup that restarts the runner on the same filesystem, including the [Docker Compose recipe](#docker-compose).
 * **With `--remove-session-state`, per-session directories don't persist**: start the runner with [`--remove-session-state`](/docs/en/self-hosted-environments-reference#runner-cli-flags) to have it delete each session's per-session directories as the session ends. The deletion is best-effort: the directories stay when the runner is killed before its cleanup runs. The canonical clone and files a session wrote elsewhere on the host, such as the temporary directory, stay regardless.
-* **With the git proxy, the reset becomes a checkout**: with [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), the runner sanitizes the clone's `.git/` before each session, keeping the object store, refs, and shallow state but deleting the index, so each session pays a full working-tree checkout instead of a near-instant reset; it still never re-clones. Submodule pre-warms aren't supported under the proxy.
+* **With the git proxy, the reset becomes a checkout**: with [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), the runner sanitizes the clone's `.git/` before each session. It keeps the object store and shallow state, and deletes the index. Without the index, each session starts with a full working-tree checkout instead of a near-instant reset. The runner still fetches into the existing clone rather than cloning the repository again. Submodule pre-warms aren't supported under the proxy.
+* **With the git proxy, a `reftable` pre-warm loses its refs**: when the runner sanitizes `.git/` before each session, it keeps `.git/refs/` and removes the `.git/reftable/` directory. A clone pre-warmed in git's `reftable` ref format loses its refs that way, so pre-warm the clone in git's `files` ref format instead.
 * **Long clones need no workaround**: the runner bounds each git operation with a 120-second no-progress watchdog and a 30-minute hard cap, not a flat timeout, so a slow cold clone that keeps reporting progress completes.
 
 ## Pin the version
@@ -656,6 +659,15 @@ Common issues:
 * **Runner exits at startup with `RegisterRunner failed:` and a TLS certificate error**: the error can be `self signed certificate in certificate chain`, for example. The runner doesn't trust the certificate authority (CA) behind the certificate it received, as happens behind a TLS-inspecting proxy. Set [`NODE_EXTRA_CA_CERTS`](/docs/en/network-config#custom-ca-certificates) in the runner's environment to a PEM file with the proxy's root CA.
 
   You don't set it again for sessions, which inherit it. Git doesn't read it: for clones through that proxy, set [`GIT_SSL_CAINFO`](#trust-a-private-certificate-authority-with-anthropic-managed-git) too.
+* **Your start script prints a write error containing `Resource temporarily unavailable` and exits**: your script shares its stdout or stderr with the `claude self-hosted-runner` or [orchestrator](/docs/en/self-hosted-environments-configuration#on-demand-runners) process it starts, which has switched that shared pipe or socket to non-blocking mode. When the pipe is full, a write from your script fails with this operating-system error instead of waiting, and under `set -e` the script exits.
+
+  To stop the error, send the runner's or orchestrator's output to a file that your script's user can create. Append `>> "$HOME/claude-runner.log" 2>&1` to the command that starts it, ahead of any `&` that backgrounds it:
+
+  ```bash theme={null}
+  claude self-hosted-runner --environment-secret-file /etc/claude/environment-secret >> "$HOME/claude-runner.log" 2>&1
+  ```
+
+  Your script's own output still goes where it went before, while what the runner writes to stdout and stderr, its startup errors included, goes to that file. Use this shell redirect rather than [`--log-file`](/docs/en/self-hosted-environments-reference#runner-cli-flags) alone, which mirrors the log to a file while the runner keeps writing to stdout and stderr. If you already pass `--log-file`, keep it as well, because the redirect doesn't change what that file receives.
 * **Orchestrator logs `poll failed:` with a TLS certificate error and keeps retrying**: the orchestrator doesn't trust the CA behind the certificate it received, as happens behind a TLS-inspecting proxy. Set [`NODE_EXTRA_CA_CERTS`](/docs/en/network-config#custom-ca-certificates) in the orchestrator's environment to a PEM file with the proxy's root CA. Set it for the runners your `spawn-runner` hook starts too.
 
   For example, a line can end `poll failed: self signed certificate in certificate chain — retrying in 1s`, with the TLS library's words between the colon and the dash. To confirm the fix, check that `connected` is `true` in the orchestrator's [`/healthz`](/docs/en/self-hosted-environments-reference#health-endpoint) body.
@@ -670,6 +682,9 @@ Common issues:
   The runner skips only a clear refusal: the host answers that the repository wasn't found, git finds no credentials for the host, or authentication fails. A network failure, a timeout, or an HTTP `403` still fails the session start, as does a refusal for a repository the session pushes results to. The runner still fails a session that skipping would leave with no repository at all. With [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), the runner skips only a repository the git proxy itself denies.
 
   The access check runs again each time the session starts on a runner, so once the runner's git identity has read access, the next start clones the repository. Before v2.1.274, each of these refusals failed the session start.
+* **A session fails to start with `This runner couldn't read`**: the runner asked the git host for a repository with its [git credentials](#configure-git) and got a not-found answer. The repository doesn't exist, or those credentials can't reach the repository.
+  * **If you administer the runner**: give its git credentials read access to the repository, then start a new session.
+  * **If you started the session**: if the repository doesn't exist, start a new session with the right repository. If the runner can't reach the repository, ask the runner's administrator to grant access, then start a new session.
 * **Sessions take minutes to start**: the initial clone usually dominates. Watch the `claude_code_self_hosted_runner_session_init_duration_seconds` [metric](/docs/en/self-hosted-environments-reference#prometheus-metrics) to confirm, and cut the clone with a [pre-warmed checkout](#reuse-a-pre-warmed-checkout) or a smaller `CLAUDE_RUNNER_FETCH_DEPTH`.
 * **Turns fail with a 401**: when a turn ends with a 401 or 403 from the Anthropic API, the runner fetches a fresh [`CLAUDE_CODE_OAUTH_TOKEN`](/docs/en/self-hosted-environments-configuration#wrapper-scripts) from Anthropic and passes it to the session. The failed turn isn't retried. This token is short-lived, and the runner rotates it over the session's stdin.
 

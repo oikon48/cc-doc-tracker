@@ -334,6 +334,7 @@ These are the most frequently encountered errors and how to resolve them:
 | Extension shows "Not detected" in `/chrome` | Chrome extension is not installed or is disabled | Install or enable the extension in `chrome://extensions` |
 | "No tab available" | Claude tried to act before a tab was ready | Ask Claude to create a new tab and retry |
 | "Receiving end does not exist" | Extension service worker went idle | Run `/chrome` and select "Reconnect extension" |
+| "No browsers are connected" | Chrome isn't open with the extension signed in to the same claude.ai account and organization as Claude Code, or Claude Code can't reach `bridge.claudeusercontent.com` | Confirm Chrome is open and the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code. If so, check that your network lets Claude Code reach `bridge.claudeusercontent.com`, listed under [Network access requirements](/docs/en/network-config#network-access-requirements) |
 
 ## See also
 

@@ -2326,7 +2326,7 @@ This example turns off automatic compaction and routes API requests through a pr
 
     Ignoring this group in project and local settings requires Claude Code v2.1.282 or later.
   * Variables that change how Claude Code starts or syncs, such as `CLAUDE_CODE_PROCESS_WRAPPER`, `CLAUDE_CODE_SYNC_SKILLS`, `CLAUDE_CODE_SYNC_PLUGINS`, `CLAUDE_CODE_PLUGIN_CACHE_DIR`, and `CLAUDE_CODE_PLUGIN_SEED_DIR`.
-  * Variables that set the timers on an unanswered dialog: [`CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`, `CLAUDE_AFK_TIMEOUT_MS`, and `CLAUDE_AFK_COUNTDOWN_MS`](/docs/en/env-vars#variables).
+  * [`CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`](/docs/en/env-vars#variables), which sets the timer on an unanswered dialog.
   * [`CLAUDE_CODE_DISABLE_ATTACHMENTS`](/docs/en/env-vars#variables), which turns off attachment processing.
   * [`CLAUDE_CODE_DISABLE_FILE_MENTIONS`](/docs/en/env-vars#variables), which stops Claude Code from expanding `@` mentions of files and directories.
 
@@ -2359,7 +2359,7 @@ In a `-p` run or an Agent SDK session, Claude Code ignores this key. The SDK tur
 
 ### `idleCompaction`
 
-Idle compaction [compacts](/docs/en/context-window#what-survives-compaction) a long conversation that you've stepped away from, shortly before its prompt cache expires. Your next message then sends a summary instead of the whole conversation. When you come back, the conversation shows `Compacted while idle, before the prompt cache expired`.
+Idle compaction [compacts](/docs/en/context-window#what-survives-compaction) a long conversation that you've stepped away from, shortly before its prompt cache expires. Your next message then sends a summary instead of the whole conversation. When you come back, the conversation shows a line that starts with `Compacted while idle, before the prompt cache expired`.
 
 Idle compaction is on by default for conversations that meet all of these conditions:
 
@@ -2383,6 +2383,11 @@ To turn idle compaction off, set this key to `false`.
   "idleCompaction": false
 }
 ```
+
+To turn idle compaction off or on from inside a session, run `/config` and change the **Idle compaction** row. Your choice is saved to your user settings and applies right away. The row requires Claude Code v2.1.302 or later. If you run one of those versions and `/config` doesn't show the row, check for these causes:
+
+* **Another settings source sets the key**: a value in managed settings, the `--settings` flag, or a project or local settings file overrides your user settings. Change the key in that source instead
+* **Feature flags are unavailable**: where Claude Code can't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), idle compaction doesn't run, so there is nothing to turn off
 
 The key requires Claude Code v2.1.290 or later. On an earlier version, which ignores this key, turn off [`autoCompactEnabled`](#autocompactenabled) to stop idle compaction.
 
@@ -2470,7 +2475,6 @@ Let an unanswered [`AskUserQuestion`](/docs/en/tools-reference) dialog auto-cont
 * **Scope**: [`User or managed`](#scopes)
 * **Type**: string, one of `"60s"`, `"5m"`, `"10m"`, or `"never"`
 * **Default**: `"never"`
-* **Per-session overrides**: [`CLAUDE_AFK_TIMEOUT_MS`](/docs/en/env-vars) takes precedence over this key for one session
 
 ```json settings.json theme={null}
 {
@@ -4032,7 +4036,14 @@ Lock the `agents` surface. Claude Code stops loading agents from `~/.claude/agen
 
 ### `strictPluginOnlyCustomization.hooks`
 
-Lock the `hooks` surface. Claude Code stops running hooks from user, project, and local `settings.json`, and keeps running plugin hooks and hooks in managed settings.
+Lock the `hooks` surface:
+
+* **Stops running**:
+  * Hooks from user, project, and local `settings.json`
+  * Frontmatter hooks in skills, custom commands, and agents, from the sources that a [`skills`](#strictpluginonlycustomization-skills) or [`agents`](#strictpluginonlycustomization-agents) lock would block
+* **Keeps running**: plugin hooks and hooks in managed settings
+
+Skills, custom commands, and agents whose frontmatter hooks stop running still load while their own surface isn't locked.
 
 * **Scope**: [`Managed`](#scopes)
 * **Type**: the string `"hooks"` in the [`strictPluginOnlyCustomization`](#strictpluginonlycustomization) array

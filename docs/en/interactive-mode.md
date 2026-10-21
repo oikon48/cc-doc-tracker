@@ -23,7 +23,7 @@ source: https://code.claude.com/docs/en/interactive-mode.md
 
 | Shortcut | Description | Context |
 | :- | :- | :- |
-| `Ctrl+C` | Interrupt, or clear input | Interrupts a running operation. If nothing is running, the first press clears the prompt input and a second press exits Claude Code. Press `Up` while the prompt is still empty to bring the cleared draft back, which requires Claude Code v2.1.288 or later |
+| `Ctrl+C` | Interrupt, or clear input | Interrupts a running operation. If nothing is running, the first press clears the prompt input and a second press exits Claude Code. To get a cleared draft back, see [Bring back a cleared draft](#bring-back-a-cleared-draft) |
 | `Ctrl+X Ctrl+K` | Stop all running [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) in this session, and turn off [artifact auto-replies](/docs/en/artifacts#let-claude-reply-to-comments-on-its-own) for the rest of it. Press twice within 3 seconds to confirm. You can press it while a background subagent's permission prompt is open | Subagent control |
 | `Ctrl+D` | Exit Claude Code session | The first press shows a confirmation hint and a second press within 800ms exits. When the prompt has text, `Ctrl+D` deletes the character after the cursor instead |
 | `Ctrl+G` or `Ctrl+X Ctrl+E` | Open in default text editor | Edit your prompt or custom response in your default text editor. `Ctrl+X Ctrl+E` is the readline-native binding. Turn on **Show last response in external editor** in `/config` to prepend Claude's previous reply as `#`-commented context above your prompt; Claude Code strips the comment block when you save |
@@ -276,6 +276,13 @@ Claude Code keeps a history of the prompts you type, and Up-arrow recall reaches
 * Submitting the same prompt twice in a row records one history entry, so pressing Up steps to the previous distinct prompt
 * When you recall a prompt that included pasted text, Claude Code sends the full pasted content again when you resubmit. If the content has since been [cleaned up](/docs/en/claude-directory#cleaned-up-automatically), Claude Code doesn't send the literal `[Pasted text #N]` string; see [Paste large content](/docs/en/terminal-config#paste-large-content) for what happens to the prompt
 * History expansion with `!` is disabled by default
+
+### Bring back a cleared draft
+
+To get back a draft you cleared with `Ctrl+C`, press `Up`, either right away or after you've sent a message or command:
+
+* **Right after clearing the draft**: press `Up` once while the prompt is still empty. Requires Claude Code v2.1.288 or later.
+* **After sending a message or command**: press `Up` to step back to the draft. Claude Code keeps the ten most recent cleared drafts for the current session, with their pasted text and images, and discards them when you exit. Requires Claude Code v2.1.292 or later.
 
 ### Reverse search with Ctrl+R
 

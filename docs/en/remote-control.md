@@ -65,7 +65,7 @@ Pass any of these flags after `remote-control`:
 | `--remote-control-session-name-prefix <prefix>` | Prefix for auto-generated session names when no explicit name is set. Defaults to your machine's hostname, producing names like `myhost-graceful-unicorn`. Set `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` for the same effect. |
 | `-c`, `--continue` | Bring back the session that the last server in this directory started with, instead of creating a new one. See [Resume sessions after stopping the server](#resume-sessions-after-stopping-the-server). Can't be combined with `--session-id`, `--spawn`, `--capacity`, or `--create-session-in-dir`. Requires Claude Code v2.1.200 or later. |
 | `--session-id <id>` | Bring back one session by its ID. See [Resume sessions after stopping the server](#resume-sessions-after-stopping-the-server). Can't be combined with `--continue`, `--spawn`, `--capacity`, or `--create-session-in-dir`. Requires Claude Code v2.1.200 or later. |
-| `--spawn <mode>` | How the server creates sessions. • `same-dir` (default): all sessions share the current working directory, so they can conflict if editing the same files. • `worktree`: each on-demand session gets its own [git worktree](/docs/en/worktrees). Requires a git repository or a [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate). • `session`: single-session mode. Serves exactly one session and rejects additional connections. Set at startup only. Press `w` at runtime to toggle between `same-dir` and `worktree`. |
+| `--spawn <mode>` | How the server creates sessions. • `same-dir` (default when no mode is saved): all sessions share the current working directory, so they can conflict if editing the same files. • `worktree`: each on-demand session gets its own [git worktree](/docs/en/worktrees). Requires a git repository or a [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate). • `session`: single-session mode. Serves exactly one session and rejects additional connections. Set at startup only. Press `w` at runtime to toggle between `same-dir` and `worktree`. The mode you switch to becomes the [default for this project](#set-the-default-spawn-mode-for-a-project). |
 | `--capacity <N>` | Maximum number of concurrent sessions. Default is 32. Cannot be used with `--spawn=session`. |
 | `--[no-]create-session-in-dir` | Pre-create one session in the current directory when the server starts, so you have somewhere to type immediately. In `worktree` mode this session stays in the current directory while on-demand sessions get isolated worktrees. On by default. If you pass `--no-create-session-in-dir` to start with none, Claude Code archives the server's sessions when you stop it, so there's nothing to [resume](#resume-sessions-after-stopping-the-server). |
 | `--permission-mode <mode>` | Set the starting [permission mode](/docs/en/permission-modes) for the server's sessions, such as `acceptEdits`. Accepts `manual` as an alias for `default`; an unrecognized mode stops the server at startup and lists the valid modes. |
@@ -79,7 +79,7 @@ If you pass a global `claude` flag before `remote-control`, or a wrapper script 
 
 To sandbox the sessions the server starts, turn on [sandboxing](/docs/en/sandboxing) in a settings file.
 
-Claude Code checks Remote Control eligibility before printing help, so `claude remote-control --help` returns an error instead of this flag list when you aren't signed in with an eligible account.
+To print the `remote-control` flags in your terminal, run `claude remote-control --help`. Before v2.1.302, without an eligible sign-in the command returned one of the errors under [Troubleshooting](#troubleshooting) instead.
 
 **Interactive session**
 
@@ -179,7 +179,7 @@ A connected device shows the conversation in your terminal as it happens. These 
 * **Compaction and `/clear`**: while Claude Code [compacts the conversation](/docs/en/context-window#what-survives-compaction), connected devices show the progress and then where the conversation was compacted. When you run `/clear`, the conversation resets on connected devices too.
 * **Switching conversations with `/resume`**: the connected device doesn't receive the switched-to conversation's title or earlier history, but new messages in both directions go to and from whichever conversation is open in your terminal. To work on the original conversation from the device again, run `/resume` in your terminal and switch back to it.
 * **Pulling a session with `/teleport`**: when you pull a [cloud session](/docs/en/claude-code-on-the-web#from-cloud-to-terminal) into your terminal with `/teleport`, the connected device doesn't receive the pulled conversation's earlier history. New messages in both directions go to and from the pulled conversation, which is now the one open in your terminal.
-* **Messages from your other sessions**: with [cross-session messaging](/docs/en/cross-session-messaging), the same connection carries messages between your own sessions on different machines and from your [cloud sessions](/docs/en/claude-code-on-the-web).
+* **Messages from your other sessions**: with [cross-session messaging](/docs/en/cross-session-messaging), the same connection carries messages between your own sessions on different machines.
 * **Diff of your changes**: when the session's directory is in a git repository, a connected device's diff pane shows your changes. On a branch that has commits ahead of the repository's default branch, the pane shows the changes since the branch split from it, including your uncommitted edits. On the default branch itself, or on a branch that isn't ahead of it, the pane shows only your uncommitted changes.
 * **Model**: when you pick a [model](/docs/en/model-config) from a connected device, Claude Code runs the session on that model. Requires Claude Code v2.1.238 or later. A model you pick from the device's model control applies to the current session only. When you send `/model <name>` from the device to an interactive session, Claude Code also sets your default for new sessions.
 * **Effort level**: when you set the [effort level](/docs/en/model-config#adjust-effort-level) from a connected device, with `/effort` or the device's effort control, Claude Code applies it to the session on your machine. If you pinned a level with `CLAUDE_CODE_EFFORT_LEVEL`, the session keeps that level, and Claude Code refuses a different pick from the effort control. Picking a level from the effort control requires Claude Code v2.1.234 or later on your machine.
@@ -191,7 +191,7 @@ Remote Control only activates when you explicitly run `claude remote-control`, `
 
 * **`true`**: connect automatically when an interactive session starts.
 * **`false`**: turn auto-connect off, though a `true` from [managed settings](/docs/en/managed-settings) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
-* **`default`**: clear your choice and follow your organization's admin default if one is set, otherwise Claude Code's current default.
+* **`default`**: clear your choice and follow your organization's admin default if one is set, otherwise Claude Code's current default. If you set `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, see [Auto-connect with `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set](#auto-connect-with-disable-telemetry-or-do-not-track).
 
 The VS Code extension and the Desktop app also have an auto-connect toggle:
 
@@ -203,6 +203,15 @@ To turn auto-connect on from a settings file instead, set [`remoteControlAtStart
 Auto-connect signs in with your own claude.ai account, so a session it starts appears only in your own account's Claude apps and grants no one else access.
 
 With this setting on, each interactive Claude Code process registers one remote session. If you run multiple instances, each one gets its own remote session. To run multiple concurrent sessions from a single process, use [server mode](#start-a-remote-control-session) instead.
+
+#### Auto-connect with `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set
+
+With only `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set, your sessions don't auto-connect through your organization's admin default or Claude Code's own default. If something else makes Remote Control unavailable for you, such as `DISABLE_GROWTHBOOK` or an LLM gateway, start with [Requirements](#requirements) instead.
+
+Turning auto-connect on with only `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set requires Claude Code v2.1.283 or later. To auto-connect, check whether your organization requires [Trusted Devices](#trusted-devices):
+
+* **Not required**: set **Enable Remote Control for all sessions** to `true` in `/config`.
+* **Required**: Remote Control isn't available while `DISABLE_TELEMETRY` or `DO_NOT_TRACK` is set. Unset whichever of the two variables you set. If your sessions still don't auto-connect, set **Enable Remote Control for all sessions** to `true` in `/config`.
 
 ### Resume sessions after stopping the server
 
@@ -219,6 +228,15 @@ To bring back a session you started with `claude --remote-control` or `/remote-c
 If you resume the conversation in a second terminal while the first one still has Remote Control on, Claude Code prints a `Remote Control not started here` notice in the second terminal and leaves Remote Control off there instead of taking the session away from the first. Run `/remote-control` in the second terminal to move Remote Control to it.
 
 When you resume a conversation in Claude Desktop or an IDE extension that had Remote Control on, Claude Code reattaches it to the existing claude.ai session instead of adding a new one to the session list.
+
+### Set the default spawn mode for a project
+
+If `claude remote-control` prints `Spawn mode: <mode> (saved for this folder; press w to change)` at startup, the server is starting in a spawn mode saved earlier for this project.
+
+The saved mode comes from a choice you made in your own terminal. If `claude remote-control` asked `Spawn mode for this project:` there, Claude Code kept what you answered: `1` for `same-dir` or `2` for `worktree`. If you pressed `w` while it ran, Claude Code kept the mode you switched to, even on a run you started with `--spawn same-dir` or `--spawn worktree`.
+
+* While the server runs in `same-dir` or `worktree` mode, press `w` in the server's terminal to switch to the other one. Switching requires a git repository or a `WorktreeCreate` hook.
+* To use a different mode for one run, pass `--spawn <mode>`.
 
 ## Connection and security
 

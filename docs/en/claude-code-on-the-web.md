@@ -96,7 +96,7 @@ Start a cloud session from the command line with the `--cloud` flag:
 claude --cloud "Fix the authentication bug in src/auth/login.ts"
 ```
 
-This creates a new cloud session on claude.ai. The cloud VM clones your current directory's GitHub remote at your current branch, not your local checkout, so push first if you have local commits. See [Send local repositories without GitHub](#send-local-repositories-without-github) for the cases where Claude Code uploads your local repository instead of cloning.
+This creates a new cloud session on claude.ai. The cloud VM clones your current directory's GitHub remote at your current branch, not your local checkout, so push first if you have local commits. See [Send local repositories without GitHub](#send-local-repositories-without-github) for the cases where Claude Code uploads your local repository instead of cloning. If the terminal prints `Branch <name> is not on GitHub`, see [Branch is not on GitHub](#branch-is-not-on-github).
 
 `--cloud` works with a single repository at a time. The task runs in the cloud while you continue working locally. The older `--remote` spelling still works as a deprecated alias for `--cloud`.
 
@@ -397,6 +397,12 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 Run [`claude auth login`](/docs/en/cli-reference#cli-commands) in your shell to sign in with your claude.ai account, then retry the command. Inside a running session, `/login` does the same. If the error names your provider instead, see the [error table](#errors-when-sending-to-a-cloud-session): cloud sessions aren't available through third-party providers.
 
 From v2.1.274 through v2.1.289, the sign-in message read `Claude Code cloud sessions require authentication with a Claude.ai account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.`
+
+### Branch is not on GitHub
+
+When `claude --cloud` prints a line starting with `Branch <name> is not on GitHub`, the cloud session still starts, but not from your branch. The line names where the session starts instead: a pushed commit from your branch's history, or the repository's default branch. Commits that exist only on your machine and uncommitted changes aren't in the session.
+
+You see this line when, for example, you never pushed the branch, or GitHub deleted it after its pull request merged. If the starting point the line names has what your task needs, use the session as it is. Otherwise, push the branch and start a new session so that it clones your branch.
 
 ### Remote Control session expired or access denied
 

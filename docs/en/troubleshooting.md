@@ -17,6 +17,8 @@ This page covers performance, stability, and search problems once Claude Code is
 | :- | :- |
 | `command not found`, install fails, PATH issues, `EACCES`, TLS errors | [Troubleshoot installation and login](/docs/en/troubleshoot-install) |
 | Update or install download fails with `The connection dropped while downloading the update` or `aborted` | [Troubleshoot installation and login](/docs/en/troubleshoot-install#the-connection-dropped-while-downloading-the-update) |
+| Update or install fails with `Release verification failed for Claude Code` | [Troubleshoot installation and login](/docs/en/troubleshoot-install#release-verification-failed) |
+| Session footer shows `Auto-update failed · Run claude doctor` in red | [Troubleshoot installation and login](/docs/en/troubleshoot-install#auto-update-failed) |
 | Login loops, OAuth errors, `403 Forbidden`, "organization disabled", Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials | [Troubleshoot installation and login](/docs/en/troubleshoot-install#login-and-authentication) |
 | Settings not applying, hooks not firing, MCP servers not loading | [Debug your configuration](/docs/en/debug-your-config) |
 | Session started in auto mode, or Claude edits files and runs commands without asking | [Which mode a session starts in](/docs/en/permission-modes#which-mode-a-session-starts-in) |
@@ -95,6 +97,18 @@ Restarting doesn't lose your conversation. Run `claude --resume` in the same dir
 ### Garbled or corrupted text in an editor's integrated terminal
 
 If characters render as boxes, smears, or the wrong glyphs when running Claude Code in the VS Code, Cursor, or Devin Desktop integrated terminal, the terminal's GPU renderer is likely the cause. Run `/terminal-setup` inside Claude Code to set `terminal.integrated.gpuAcceleration` to `"off"`, or set it manually in your editor settings and reload the window. See [Terminal configuration](/docs/en/terminal-config) for the other settings `/terminal-setup` writes.
+
+### Stray `>0q` at startup or `>4m` after exit
+
+These characters, printed by terminals built on a VTE library older than 0.53, are the ends of two Claude Code control sequences. To stop the text, [update Claude Code](/docs/en/setup#update-claude-code) to v2.1.301 or later, which skips both sequences when it identifies such a terminal.
+
+If the text remains, print the VTE version from the terminal's shell:
+
+```bash theme={null}
+echo $VTE_VERSION
+```
+
+On a VTE-based terminal, a result below `5300` means a library older than 0.53: update or replace the terminal to get VTE 0.53 or later. Otherwise, see [Get more help](#get-more-help).
 
 ### Mouse wheel scrolls one line at a time in fullscreen rendering
 

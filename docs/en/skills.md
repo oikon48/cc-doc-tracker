@@ -47,6 +47,7 @@ Run `/doctor` at the Claude Code prompt for a setup checkup that diagnoses issue
 * **Extensions**: unused skills, MCP servers, and plugins compared with their context cost, and slow [hooks](/docs/en/hooks)
 * **`CLAUDE.md` files**: local `CLAUDE.md` files that duplicate checked-in ones, checked-in [`CLAUDE.md` content Claude could derive from the codebase](/docs/en/memory#my-claude-md-is-too-large), and the always-loaded guidance that remains, which Claude offers to migrate into skills and nested `CLAUDE.md` files that load on demand
 * **Permissions**: an offer to make [auto mode](/docs/en/permissions#permission-modes) your default permission mode and to [pre-approve](/docs/en/permissions) read-only commands that you frequently deny
+* **Usage**: on a Pro, Max, Team, or Enterprise plan, the [changes `/usage` recommends](/docs/en/costs#plan-usage-breakdown) to lower your plan usage, measured over the last 7 days. Claude proposes the changes it can make itself and reports the rest as advice, such as a command for you to run. The usage check requires Claude Code v2.1.305 or later, and `/doctor` leaves it out while [Remote Control](/docs/en/remote-control) is connected.
 
 For read-only installation diagnostics without starting a session, run `claude doctor` in your terminal instead.
 
@@ -91,6 +92,7 @@ To start one of the skill's workflows, type a subcommand after the skill name at
 | `managed-agents-onboard` | Walk through creating a new Managed Agent | Earlier than v2.1.221 |
 | `managed-agents-onboard <url>` | Build the Managed Agent that the page at the URL describes, such as a page in the [Managed Agents docs](https://platform.claude.com/docs/en/managed-agents/overview) | v2.1.290 or later |
 | `managed-agents-onboard <quickstart-name>` | Build one of the Console's quickstart templates, such as `deep-researcher`. If you give one word that isn't a template name, Claude lists the valid names | v2.1.290 or later |
+| `managed-agents-secure [<agent-id>]` | Read the settings of one Managed Agent and report where they match the [Secure your Managed Agents deployment](https://platform.claude.com/docs/en/managed-agents/secure-deployment) guide or differ from it. Requires the [`ant` CLI](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/quickstart) | v2.1.304 or later |
 | `prompt-audit` | Flag instructions written for older models in your prompts, skills, and tool descriptions and propose fixes as a diff | v2.1.221 or later |
 | `cost-optimize` | Profile where your project's Claude API spend goes and propose savings from options such as prompt caching, trimming unneeded input and output tokens, batch processing, effort, and model choice, one change at a time | v2.1.247 or later |
 | `build-eval` | Build an eval set for your Claude-powered app | v2.1.259 or later |
@@ -792,7 +794,7 @@ Claude Code also waits for the result, even when the skill doesn't set `backgrou
 * When you invoke a forked skill while an earlier invocation of the same skill is still running
 * When a [session-scoped scheduled task](/docs/en/scheduled-tasks) fires with the skill as its prompt
 
-When an agent in a [dynamic workflow](/docs/en/workflows) invokes a forked skill, that agent waits for and receives the result, even when the skill doesn't set `background: false`. Before v2.1.295, Claude Code didn't wait in this case, and when the skill ran in the background, its result arrived in your main conversation instead of reaching that agent.
+When an agent in a [dynamic workflow](/docs/en/workflows) invokes a forked skill, that agent waits for and receives the result, even when the skill doesn't set `background: false`. Before v2.1.295, when the skill ran in the background, that agent didn't wait for it. The skill's result then arrived in your main conversation instead of reaching the agent.
 
 A backgrounded fork also runs with the [narrower tool set that applies to background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background): the skill's subagent is a regular agent type, so the exemption for subagents that fork the conversation doesn't cover it. If your skill's steps depend on a tool outside that set, set `background: false` to keep the full tool set.
 

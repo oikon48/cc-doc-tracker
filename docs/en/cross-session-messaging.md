@@ -78,7 +78,7 @@ The receiving session checks each arriving message against its own [inbound cont
 * **Held**: Claude Code sets the message aside undelivered. A held message reaches Claude only when you approve it or a later mode or settings change allows it.
 * **Refused**: Claude Code drops the message without delivering it.
 
-Once delivered, the message counts toward [usage](/docs/en/costs) like a prompt you type, and the receiving Claude can reply to the sender the same way, except in the [one-way cross-machine case](#message-sessions-on-other-machines).
+Once delivered, the message counts toward [usage](/docs/en/costs) like a prompt you type. The receiving Claude can reply to the sender with `SendMessage`, except in the cases under [Replies from other machines and cloud sessions](#replies-from-other-machines-and-cloud-sessions) and [Turn off cross-session messaging](#turn-off-cross-session-messaging).
 
 Permission boundaries stay per-session. Claude is instructed never to ask another session for an action that was denied or blocked in its own session, or that its own permission settings would block, and to route that work back to you instead. On the receiving side, the [receiving session's own permission prompts and rules still apply](#how-a-session-treats-an-incoming-message) to anything the message asks for.
 
@@ -155,9 +155,13 @@ A session's row in [the listing](#see-which-sessions-claude-can-reach) can show 
 
 A session inside a container and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](/docs/en/self-hosted-environments). A session inside WSL 2 and a native Windows session on the same computer can't reach each other either.
 
-If this session isn't connected to Remote Control when Claude sends to a session beyond this machine, the message still goes through, but without a [reply address](#what-a-message-looks-like), so the receiving Claude can't answer it.
-
 To require your approval before any message goes beyond this machine, set [`isolatePeerMachines`](#require-approval-for-cross-machine-messages).
+
+#### Replies from other machines and cloud sessions
+
+A [cloud session](/docs/en/claude-code-on-the-web), including one on a [self-hosted runner](/docs/en/self-hosted-environments), can't use `SendMessage` to answer a message from another machine, even when the message carries a [reply address](#what-a-message-looks-like). The message still arrives. Read the cloud session's response in its transcript at [claude.ai/code](https://claude.ai/code).
+
+If this session isn't connected to Remote Control when Claude sends to a session beyond this machine, the message still goes through, but without a [reply address](#what-a-message-looks-like). The receiving Claude can't answer it.
 
 ## How a session treats an incoming message
 

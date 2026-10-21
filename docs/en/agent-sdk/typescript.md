@@ -665,7 +665,7 @@ interface Query extends AsyncGenerator<SDKMessage, void> {
 | `supportedModels()` | Returns available models with display info |
 | `supportedAgents()` | Returns available subagents as [`AgentInfo`](#agentinfo)`[]` |
 | `mcpServerStatus()` | Returns the status of connected MCP servers as [`McpServerStatus`](#mcpserverstatus)`[]` |
-| `getContextUsage(opts?)` | Returns an [`SDKControlGetContextUsageResponse`](#sdkcontrolgetcontextusageresponse) breaking down the session's context window usage by category, skill, and tool. With the default `detail`, it is the same data `/context` shows in an interactive session, computed with token-counting API requests that don't appear in the message stream; see [how these requests are handled](#sdkcontrolgetcontextusageresponse). The [`detail` option](#sdkcontrolgetcontextusageresponse) requires Agent SDK v0.3.257 or later |
+| `getContextUsage(opts?)` | Returns an [`SDKControlGetContextUsageResponse`](#sdkcontrolgetcontextusageresponse) breaking down the session's context window usage by category, skill, and tool. With the default `detail`, it includes the data `/context` shows in an interactive session, computed with token-counting API requests that don't appear in the message stream; see [how these requests are handled](#sdkcontrolgetcontextusageresponse). The [`detail` option](#sdkcontrolgetcontextusageresponse) requires Agent SDK v0.3.257 or later |
 | `readFile(path, options?)` | Reads a file from the session's filesystem. Claude Code resolves the path against `cwd`; [What `readFile()` can read](#what-readfile-can-read) lists the files it serves. Pass `{ maxBytes }` to change the read cap (default 1 MB, ceiling 10 MB) and `{ encoding: 'base64' }` for binary files such as images. Resolves with an [`SDKControlReadFileResponse`](#sdkcontrolreadfileresponse), or `null` on permission denial, a missing file, or a transport error. Requires TypeScript SDK v0.2.121 or later |
 | `reloadPlugins(options?)` | Reloads plugins from disk, so plugins you install or edit mid-session reach the running session. Resolves with an [`SDKControlReloadPluginsResponse`](#sdkcontrolreloadpluginsresponse) listing the session's commands, subagents, plugins, and MCP server status. Requires Agent SDK v0.2.85 or later. The [`holdOnCacheImpact` option](#sdkcontrolreloadpluginsresponse) requires Agent SDK v0.3.268 or later |
 | `reloadSkills()` | Reloads skills from disk, so skills you add or edit mid-session become available to the running session. Resolves with an [`SDKControlReloadSkillsResponse`](#sdkcontrolreloadskillsresponse) listing the skills available after the reload. Requires Agent SDK v0.3.163 or later |
@@ -868,7 +868,7 @@ The receipt is a snapshot taken at the moment the interrupt is processed, and on
 
 ### `SDKControlGetContextUsageResponse`
 
-Return type of [`getContextUsage()`](#query-object). With the default `detail`, this is the same payload Claude Code renders for the `/context` command in an interactive session, so alongside the token counts it carries display fields such as `color` and `gridRows` that Claude Code uses to draw the `/context` usage grid.
+Return type of [`getContextUsage()`](#query-object). With the default `detail`, the response includes the payload Claude Code renders for the `/context` command in an interactive session. Alongside the token counts, that payload carries display fields such as `color` and `gridRows` that Claude Code uses to draw the `/context` usage grid.
 
 The method's optional `detail` argument chooses how Claude Code counts each category. The `detail` argument requires Agent SDK v0.3.257 or later.
 
@@ -877,9 +877,25 @@ The method's optional `detail` argument chooses how Claude Code counts each cate
 
 When you send `/context` as a prompt instead of calling the method, Claude Code attaches an [`SDKContextUsage`](#sdkcontextusage) payload to the `context_usage` field of the assistant message that delivers the result. That field requires Agent SDK v0.3.232 or later.
 
+In `SDKControlGetContextUsageResponse`, `categories[].id`, `mcpInstructions`, and the `pluginId` and `path` fields of `agents` and `skills.skillFrontmatter` entries require Agent SDK v0.3.304 or later.
+
 ```typescript theme={null}
 type SDKControlGetContextUsageResponse = {
   categories: {
+    id?:
+      | "system_prompt"
+      | "system_tools"
+      | "mcp_tools"
+      | "mcp_instructions"
+      | "mcp_tools_deferred"
+      | "system_tools_deferred"
+      | "custom_agents"
+      | "memory_files"
+      | "skills"
+      | "messages"
+      | "autocompact_buffer"
+      | "compact_buffer"
+      | "free_space";
     name: string;
     tokens: number;
     color: string;
@@ -910,6 +926,10 @@ type SDKControlGetContextUsageResponse = {
     tokens: number;
     isLoaded?: boolean;
   }[];
+  mcpInstructions?: {
+    serverName: string;
+    tokens: number;
+  }[];
   deferredBuiltinTools?: {
     name: string;
     tokens: number;
@@ -926,6 +946,8 @@ type SDKControlGetContextUsageResponse = {
   agents: {
     agentType: string;
     source: string;
+    pluginId?: string;
+    path?: string;
     tokens: number;
   }[];
   slashCommands?: {
@@ -940,6 +962,9 @@ type SDKControlGetContextUsageResponse = {
     skillFrontmatter: {
       name: string;
       source: string;
+      pluginName?: string;
+      pluginId?: string;
+      path?: string;
       tokens: number;
     }[];
   };
@@ -2242,7 +2267,7 @@ If your application runs prompts on its own schedule, declare each run so Claude
 
 ### Peer origin fields
 
-A `peer` origin identifies which agent sent the message: an in-process [teammate](/docs/en/agent-teams) sending to `main` with `SendMessage`, or a [cross-session peer](/docs/en/cross-session-messaging), another of your Claude Code sessions. Cross-session peers require Claude Code v2.1.224 or later on macOS and Linux; see [cross-session messaging availability](/docs/en/cross-session-messaging#availability) for the native Windows requirement. A cross-session peer can run on the same machine, or on [another of your machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) or [in the cloud](/docs/en/claude-code-on-the-web) when its message arrives through Remote Control. The two kinds of sender fill the fields differently:
+A `peer` origin identifies which agent sent the message: an in-process [teammate](/docs/en/agent-teams) sending to `main` with `SendMessage`, or a [cross-session peer](/docs/en/cross-session-messaging), another of your Claude Code sessions. Cross-session peers require Claude Code v2.1.224 or later on macOS and Linux; see [cross-session messaging availability](/docs/en/cross-session-messaging#availability) for the native Windows requirement. A cross-session peer can run on the same machine, or on [another of your machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) when its message arrives through [Remote Control](/docs/en/remote-control).
 
 * `from`: the teammate's name, or the sender address for a cross-session peer. For a [one-way cross-machine message](/docs/en/cross-session-messaging#message-sessions-on-other-machines), the sender has no reply address and `from` is `"unknown"`. The value is sender-authored; `verifiedPeerPid` is the verified identity.
 * `fromMode`: the sending session's permission class, `bypass` or `prompting`, declared by a host that relays a peer message between your sessions, such as the [desktop app](/docs/en/desktop#work-across-sessions). Claude Code reads it in the receiving session when it applies the [inbound controls](/docs/en/cross-session-messaging#control-inbound-messages). Requires Agent SDK v0.3.234 or later.

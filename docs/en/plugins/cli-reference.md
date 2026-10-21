@@ -381,7 +381,17 @@ Claude Code prints the plugin's name, version, description, and source, then the
 
 For what the two cost figures mean, see [Measure plugin cost and usage](/docs/en/plugins/measure).
 
-For a plugin that isn't loaded, Claude Code prints ``Plugin "formatter" not found. Run `claude plugin list` to see installed plugins, or pass --plugin-dir <path> to load one from disk.`` and exits `1`.
+For a plugin that isn't loaded, Claude Code prints this message and exits `1`:
+
+```text theme={null}
+Plugin "formatter" not found. Run `claude plugin list` to see installed plugins, or pass --plugin-dir <path> to load one from disk.
+```
+
+An ID that ends in `@builtin` names one of the [plugins built into Claude Code](/docs/en/plugins/mods/overview#mods-built-into-claude-code). If you pass such an ID and Claude Code doesn't find that plugin, the message reads instead:
+
+```text theme={null}
+Plugin "<name>@builtin" not found. Built-in plugins don't appear in `claude plugin list`. To see the ones available in a session, run /plugin in Claude Code and open the Installed tab.
+```
 
 ### plugin configure
 

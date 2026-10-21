@@ -173,6 +173,8 @@ claude -p "Extract the main function names from auth.py" \
 
 If the value isn't a valid JSON Schema, `claude` exits with `Error: --json-schema is not a valid JSON Schema` followed by the validator's diagnostic. Claude Code accepts schemas that use the `format` keyword, such as `"format": "email"`, but treats `format` as an annotation and doesn't enforce it.
 
+If a run ends without valid structured output, for example because Claude declined the request, the response has no `structured_output` field. Before your script uses `structured_output`, check that the field is present.
+
 > [!TIP]
 >
 > Use a tool like [jq](https://jqlang.org/) to parse the response and extract specific fields:

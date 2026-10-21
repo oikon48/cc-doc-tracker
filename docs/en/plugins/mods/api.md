@@ -242,7 +242,7 @@ When a call's result or error contains one of these strings, keep its arguments 
 * **`the session was stopped and nobody has sent input since`**: the call was refused
 * **`was removed from the queue before it ran`**: the prompt or command left the queue without running and was dropped, for example when the user stopped the turn
 
-In this example, call `submitPrompt` from your background job in place of [`$.prompt.submit`](#start-a-turn-from-a-background-job). When the result or the error carries one of those strings, `submitPrompt` keeps the text in `pendingText` for the `turn.complete` hook to submit again:
+In this example, call `submitPrompt` from your background job in place of [`$.prompt.submit`](#start-a-turn-from-a-background-job). Put the `pendingText` variable and the `submitPrompt` function above [`register`](/docs/en/plugins/mods/reference#files), and the `turn.complete` hook inside it, because [validation](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) refuses `$` passed to a function declared inside `register`. When the result or the error carries one of those strings, `submitPrompt` keeps the text in `pendingText` for the `turn.complete` hook to submit again:
 
 ```javascript theme={null}
 // The text of the last refused or dropped prompt, or null
