@@ -26,6 +26,7 @@ Start with [Check which stage a plugin reached](#check-which-stage-a-plugin-reac
 * An update changed nothing: [Versions and updates](#versions-and-updates)
 * You're looking at the files under `~/.claude/plugins/`: [Find plugins on disk](#find-plugins-on-disk)
 * A `--plugin-dir` plugin didn't load, or a same-named plugin loaded instead: [Name conflicts](#name-conflicts)
+* A plugin under `~/.claude/skills/` or `.claude/skills/` didn't load, and no error says why: [Skills-directory plugins blocked by managed settings](#skills-directory-plugins-blocked-by-managed-settings)
 
 ## Check which stage a plugin reached
 
@@ -75,11 +76,7 @@ To share a plugin through a repository, list it under `enabledPlugins` in `.clau
 
 A cloud session doesn't add the marketplaces a repository lists under [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces), because that requires the workspace trust dialog, which a cloud session never shows.
 
-If a plugin in your repository's `.claude/skills/` doesn't load, check where you started the session and whether you trusted the folder:
-
-* **In a subdirectory**: a plugin at the repository root doesn't load. Claude Code reads the `.claude/skills/` of the session's [primary working directory](/docs/en/permissions#working-directories) and, unlike plain skills and commands, doesn't [search parent directories](/docs/en/skills#discovery-from-parent-and-nested-directories) for plugins. Launch from the repository root instead, or [move the session there with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later
-* **From the desktop app, in a worktree**: the plugin loads from the main checkout's `.claude/skills/` rather than the worktree's. See [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout)
-* **In a folder you haven't trusted**: the plugin loads only after you accept the [workspace trust dialog](/docs/en/permissions#what-runs-before-you-trust-a-folder) for that folder
+#### Trust check and component limits for repository plugins
 
 A project-scope plugin is checked into the repository and reaches every collaborator who clones it. Because that content comes from the repository rather than from you, it loads only after the same trust check that applies to project allow rules in `.claude/settings.json`. Trusting a parent folder or running with `-p` isn't enough. Components that run code are restricted further:
 
@@ -87,9 +84,32 @@ A project-scope plugin is checked into the repository and reaches every collabor
 * MCP servers it declares as an [MCP bundle](/docs/en/plugins/manifest-reference#mcpservers), a `.mcpb` or `.dxt` file, or from a file outside the plugin directory are skipped. Declare them inline or in a `.mcp.json` inside the plugin directory
 * [Background monitors](/docs/en/plugins/components#monitors) do not load
 
-Personal-scope plugins have none of these restrictions.
+Neither the trust check nor these component limits apply to a plugin under your own `~/.claude/skills/`.
 
 For how to write `--plugin-dir` and skills-directory plugins, see [Create plugins](/docs/en/plugins/create).
+
+#### Check why a repository plugin didn't load
+
+If a plugin in your repository's `.claude/skills/` doesn't load, check for these causes:
+
+* **In a subdirectory**: a plugin at the repository root doesn't load. Claude Code reads the `.claude/skills/` of the session's [primary working directory](/docs/en/permissions#working-directories) and, unlike plain skills and commands, doesn't [search parent directories](/docs/en/skills#discovery-from-parent-and-nested-directories) for plugins. Launch from the repository root instead, or [move the session there with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later
+* **From the desktop app, in a worktree**: the plugin loads from the main checkout's `.claude/skills/` rather than the worktree's. See [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout)
+* **In a folder you haven't trusted**: the plugin loads only after you accept the [workspace trust dialog](/docs/en/permissions#what-runs-before-you-trust-a-folder) for that folder
+* **In an organization that manages Claude Code**: see [Skills-directory plugins blocked by managed settings](#skills-directory-plugins-blocked-by-managed-settings)
+
+### Skills-directory plugins blocked by managed settings
+
+If a plugin folder in `~/.claude/skills/` or a project's `.claude/skills/` didn't load and you see no error, your administrator may have blocked it through [managed settings](/docs/en/managed-settings). These folders come from you or your repository rather than from a marketplace, so Claude Code skips them when your administrator sets one of these restrictions:
+
+* **Customization locked to plugins**: [`strictPluginOnlyCustomization`](/docs/en/settings-reference#strictpluginonlycustomization) set to `true` or to an array naming one or more kinds of customization to lock. The whole plugin is skipped when any one kind is locked, such as `mcp`, whichever components it has.
+* **Marketplace sources restricted**: a [`strictKnownMarketplaces`](/docs/en/settings-reference#strictknownmarketplaces) allowlist without a `{ "source": "skills-dir" }` entry, or a [`blockedMarketplaces`](/docs/en/settings-reference#blockedmarketplaces) list with one.
+
+`/plugin` and `claude plugin list` show no plugin and no error for a skipped folder. Its `/<name>:<skill>` commands and agents are missing, as are its hooks and MCP servers.
+
+Unless skills are among the locked kinds, a `SKILL.md` at the folder's root still loads as a plain skill. In that case `/<name>` keeps working, and the `/plugin` **Installed** tab lists that skill under **Skills**.
+
+* **Confirm the cause**: run `/status` in a Claude Code session. If the `Setting sources` line lists `Enterprise managed settings`, ask your administrator whether one of these settings applies to you. If it doesn't, see [Check why a repository plugin didn't load](#check-why-a-repository-plugin-didnt-load) for other causes.
+* **Load the whole plugin**: add it to a [marketplace](/docs/en/plugins/create-marketplace#create-a-marketplace) your organization allows and install it from there. To load it for one session instead, start `claude` from your shell with [`--plugin-dir`](/docs/en/plugins/cli-reference#flags-that-load-a-plugin-for-one-session) and the folder's path, which works unless your administrator has also turned off that flag.
 
 ### Plugins synced from claude.ai
 

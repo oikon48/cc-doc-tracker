@@ -30,6 +30,7 @@ Match the message you see to a section below.
 | `Opus is experiencing high load` / `Fable is experiencing high load` | [Server errors](#api-error-repeated-529-overloaded-errors) |
 | `Request timed out` | [Server errors](#request-timed-out), or [Network](#unable-to-connect-to-api) if the message mentions your internet connection |
 | `API Error: No response from API` | [Server errors](#no-response-from-api) |
+| `API Error: Stream idle timeout - no chunks received` | [Streaming idle watchdogs](/docs/en/network-config#streaming-idle-watchdogs), or [Long thinking ends in proxy timeouts](/docs/en/claude-apps-gateway-deploy#long-thinking-ends-in-proxy-timeouts) behind a Claude apps gateway |
 | `Server error mid-response. The response above may be incomplete.` | [Server errors](#the-response-above-may-be-incomplete) |
 | `Connection lost mid-response` / `Your computer went to sleep mid-response` / `The response stopped arriving` | [Server errors](#the-response-above-may-be-incomplete) |
 | `Connection closed mid-response` / `Response stalled mid-stream` | [Server errors](#the-response-above-may-be-incomplete) |
@@ -399,6 +400,7 @@ Match the message you see to a section below.
 | `is a network path, which cannot be added as a working directory` | [Configuration warnings](#working-directory-is-a-network-path) |
 | `Remote managed settings failed to load (<cause>)` | [Configuration warnings](#remote-managed-settings-failed-to-load) |
 | `Managed settings were not approved; exiting without applying them.` | [Configuration warnings](#managed-settings-were-not-approved) |
+| `Your organization's managed settings need your approval, which couldn't be asked for here.` | [Configuration warnings](#managed-settings-need-your-approval) |
 | `Claude Code can't start: your organization's managed settings block the default model` / `Claude Code can't start: your organization allows only the models listed in "availableModels"` | [Configuration warnings](#managed-settings-block-the-default-model) |
 | `Your organization's managed settings allow Claude Code to use: <providers>` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
 | `Your organization's managed settings allow Claude Code to use no API provider at all` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
@@ -2218,7 +2220,9 @@ Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the ba
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
 * Auto-compact is on by default and normally prevents this error. If you turned it off in `/config` or with [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars), turn it back on. If you keep it off, run `/compact` yourself before the window fills.
 * If the error appears near 200K tokens on a model that accepts more, one cause is a model ID that Claude Code doesn't recognize. Claude Code assumes a 200K window for such an ID, so to keep working past that point, [give it the model's real context window](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id).
+  * If you use a custom [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) and the error starts with `Prompt is too long · automatic compaction failed`, [set the model's context window](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id) or [update](/docs/en/setup#update-claude-code) to v2.1.299 or later. Before v2.1.299, Claude Code ended the turn with that message near the assumed 200K window instead of sending the request.
 * If the error appeared right after you stopped Claude while it was compacting the conversation, your conversation is unchanged and still large enough to need compacting. Run `/compact` and send your message again. To keep the error from recurring, [update Claude Code](/docs/en/setup#update-claude-code) to v2.1.304 or later. Before v2.1.304, stopping at that moment could end the turn with this error.
+* On v2.1.305, with many MCP tools and a direct connection to the Anthropic API, this error can hide an unrelated 400 or 422 error from the API. [Update Claude Code](/docs/en/setup#update-claude-code) to v2.1.306 or later to see the original error.
 
 See [Explore the context window](/docs/en/context-window) for an interactive view of how context fills up.
 
@@ -5431,7 +5435,7 @@ Mapped drive letters and `\\wsl$` paths don't count as network paths.
 
 **What to do:**
 
-* On Windows, map the share to a drive letter, for example with `net use Z: \\server\share`, and pass the drive at launch with `claude --add-dir Z:\`.
+* On Windows, map the share to a drive letter and pass the drive at launch. In PowerShell, for example, run `net use Z: \\server\share` and then `claude --add-dir Z:\`.
 * On macOS or Linux, mount the share at a local path and add that path instead.
 * If the path is in `permissions.additionalDirectories`, remove it from the settings file that lists it.
 
@@ -5468,6 +5472,18 @@ Managed settings were not approved; exiting without applying them.
 
 * Start Claude Code again and approve the dialog to continue under your organization's settings. A declined dialog isn't remembered, so it appears again at the next start.
 * If you're unsure about a setting the dialog lists, ask whoever maintains your organization's managed settings before approving
+
+### Managed settings need your approval
+
+Your organization's [server-managed settings](/docs/en/server-managed-settings) include settings that need your approval in the [security approval dialog](/docs/en/server-managed-settings#security-approval-dialogs). The `claude plugin` command you ran couldn't read from the keyboard, so it couldn't show that dialog. That happens when you pipe or redirect its input and, on macOS and Linux, it also can't open `/dev/tty`. The command stopped before making any changes:
+
+```text theme={null}
+Your organization's managed settings need your approval, which couldn't be asked for here. Run `claude` in a terminal and approve them, then run this command again.
+```
+
+**What to do:**
+
+* Run `claude` in a terminal and approve the settings when the dialog appears, then run the same `claude plugin` command again. Claude Code keeps the approval and the approved settings in your [configuration directory](/docs/en/server-managed-settings#approval-memory). If the command that stopped ran as another user or with `CLAUDE_CONFIG_DIR` set, run `claude` the same way so that both use the same directory.
 
 ### Managed settings block the default model
 
