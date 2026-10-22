@@ -15,6 +15,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+**2.1.308**
+
+* Bug fixes and reliability improvements
+
 **2.1.307**
 
 **Added**

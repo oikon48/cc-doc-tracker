@@ -124,11 +124,15 @@ Synced plugins load in Cowork sessions and in terminal sessions where you sign i
 * **[Cowork](https://claude.com/product/cowork)**: Claude Code downloads them into the session's own environment when the session starts
 * **Terminal sessions**: each time you start Claude Code, it syncs once in the background, downloading new and updated plugins and removing the ones that you or your organization turned off. Syncing in terminal sessions requires Claude Code v2.1.273 or later
 
+#### Sync timing in cloud Cowork sessions
+
+If you turn a plugin on or off for your claude.ai account during a Cowork session that runs in the cloud, keep working in that session. If nothing has changed after a few messages, start a new session.
+
 #### Sync timing in terminal sessions
 
 Because the terminal sync runs in the background, it can finish after your session has started. When it adds, updates, or removes a synced plugin in an interactive session, you see `Plugins changed. Run /reload-plugins to activate.` Run `/reload-plugins` to load the change in that session, or leave it for the next time you start Claude Code.
 
-If you enable a plugin on claude.ai while a session is running, the plugin downloads the next time you start Claude Code.
+If you turn a plugin on or off for your claude.ai account during a terminal session, Claude Code downloads or removes it the next time you start Claude Code.
 
 #### Sign-in requirements for terminal sync
 

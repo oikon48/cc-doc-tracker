@@ -306,7 +306,7 @@ When git on the runner must trust a private certificate authority (CA), such as 
 For git connections that carry a session's token to Anthropic-managed git, the runner applies the two variables as follows. A [`command` hook](/docs/en/self-hosted-environments-configuration#command) starts with the session's environment, so it gets what git inside the session gets:
 
 * **`GIT_SSL_CAINFO`**: what git checks Anthropic-managed git against depends on where git runs:
-  * **Runner's own clone and fetches**: run without the variable and check Anthropic-managed git against a per-session certificate file the runner writes. That file holds the runner host's system CA bundle plus the certificates from your file.
+  * **Runner's own clone and fetches**: run without the variable and check Anthropic-managed git against a per-session certificate file the runner writes. The runner builds that file from the runner host's system CA bundle and the certificates in your file.
   * **Git inside the session**: gets `http.sslCAInfo` configuration naming your file in place of the variable, plus `http.<url>.sslCAInfo` entries that check Anthropic-managed git against the per-session file.
   * **`checkout` and `post-session` hooks**: inherit the variable unchanged.
 * **`GIT_SSL_NO_VERIFY`**: which certificate checks stay off depends on where git runs:

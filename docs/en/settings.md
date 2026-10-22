@@ -67,7 +67,7 @@ Installing Claude Code doesn't create any settings file. If your machine or proj
 >
 > On Windows, `~/.claude` means `%USERPROFILE%\.claude`. To keep the home-directory files somewhere else, set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars); Claude Code then stores your settings, session history, and plugins there instead.
 
-Claude Code also keeps a fifth file, [`~/.claude.json`](/docs/en/claude-directory#ce-claude-json), that it writes for itself; you don't need to edit it. It holds your sign-in session, [MCP server](/docs/en/mcp) configurations, per-project state such as trust decisions, and the [global config keys](/docs/en/settings-reference#global-config-settings) that `/config` writes for you.
+Claude Code also keeps a fifth file, [`~/.claude.json`](/docs/en/claude-directory#ce-claude-json), that it writes for itself; you don't need to edit it. It holds your account details, [MCP server](/docs/en/mcp) configurations, per-project state such as trust decisions, and the [global config keys](/docs/en/settings-reference#global-config-settings) that `/config` writes for you.
 
 ### Share settings with your team
 
