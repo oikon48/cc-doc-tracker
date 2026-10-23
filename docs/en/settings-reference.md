@@ -57,7 +57,7 @@ Every key below links to its entry. Scope lists the [files](/docs/en/settings.md
 | [`awaySummaryEnabled`](#awaysummaryenabled) | Turn off the [session recap](/docs/en/interactive-mode.md#session-recap) shown when you come back to the terminal | Remote, desktop, and notifications | Any file |
 | [`awsAuthRefresh`](#awsauthrefresh) | Refresh expired [Bedrock credentials](/docs/en/amazon-bedrock.md#advanced-credential-configuration) in `.aws` with your own command | Authentication and providers | Any file |
 | [`awsCredentialExport`](#awscredentialexport) | Supply [Bedrock credentials](/docs/en/amazon-bedrock.md#advanced-credential-configuration) as JSON from your own command | Authentication and providers | Any file |
-| [`axScreenReader`](#axscreenreader) | Render [screen-reader friendly output](/docs/en/accessibility.md) | Interface and terminal | Any file |
+| [`axScreenReader`](#axscreenreader) | Render [screen-reader friendly output](/docs/en/accessibility.md) | Interface and terminal | User or managed |
 | [`bashEditDiffEnabled`](#basheditdiffenabled) | Record the [files that changed while a Bash command ran](/docs/en/hooks.md#bash) in every permission mode | Interface and terminal | User or managed |
 | [`bashOutputMaxChars`](#bashoutputmaxchars) | Set how much of a successful command's [output](/docs/en/tools-reference.md#output-limits) Claude receives inline | Memory and context | Any file |
 | [`blockedMarketplaces`](#blockedmarketplaces) | Block [plugin marketplace](/docs/en/plugins/overview.md) sources for your organization | Plugins and skills | Managed |
@@ -825,8 +825,12 @@ When you set this key, Claude Code v2.1.282 or later also ignores the [`allowed-
 * Your `~/.claude/skills/` and `~/.claude/commands/` directories, including [skills synced from claude.ai](/docs/en/skills.md#where-synced-skills-load)
 * An `--add-dir` directory
 * [Plugins declared with a `.claude-plugin` manifest](/docs/en/plugins/loading#plugins-shared-through-a-repository) inside `~/.claude/skills/` or the project's `.claude/skills/`
+* Plugins loaded for one session only, whose ids end in [`@inline`](/docs/en/plugins/loading#find-where-a-plugin-came-from), when all of these hold:
+  * The session is a [Code session](/docs/en/desktop.md#environment-configuration) or [Cowork session](/docs/en/managed-settings.md#where-and-when-a-policy-applies), other than a cloud session, for which the Claude Desktop app itself starts Claude Code
+  * Your managed settings set the key, not only an embedding host's [parent settings](/docs/en/managed-settings.md#let-an-embedding-host-add-policy)
+  * The session runs Claude Code v2.1.305 or later
 
-Skills from managed settings and bundled skills keep their `allowed-tools`. A skill's `disallowed-tools` still applies. For what a developer sees when Claude Code ignores the field, see [When only managed permission rules apply](/docs/en/skills.md#when-only-managed-permission-rules-apply).
+Skills from managed settings and bundled skills keep their `allowed-tools`. `@inline` plugins outside those Desktop sessions keep theirs too, except one named [`anthropic-skills`](/docs/en/skills#names-reserved-for-synced-skills). A skill's `disallowed-tools` still applies. For what a developer sees when Claude Code ignores the field, see [When only managed permission rules apply](/docs/en/skills.md#when-only-managed-permission-rules-apply).
 
 * **Scope**: [`Managed`](#scopes)
 * **Type**: Boolean
@@ -2352,6 +2356,7 @@ This example turns off automatic compaction and routes API requests through a pr
 
     Ignoring this group in project and local settings requires Claude Code v2.1.282 or later.
   * Variables that change how Claude Code starts or syncs, such as `CLAUDE_CODE_PROCESS_WRAPPER`, `CLAUDE_CODE_SYNC_SKILLS`, `CLAUDE_CODE_SYNC_PLUGINS`, `CLAUDE_CODE_PLUGIN_CACHE_DIR`, and `CLAUDE_CODE_PLUGIN_SEED_DIR`.
+  * The [screen reader mode](/docs/en/accessibility.md) variable `CLAUDE_AX_SCREEN_READER` and the other variables whose names start with `CLAUDE_AX_`, such as [`CLAUDE_AX_STARTUP_QUIET_MS`](/docs/en/env-vars#variables).
   * [`CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`](/docs/en/env-vars#variables), which sets the timer on an unanswered dialog.
   * [`CLAUDE_CODE_DISABLE_ATTACHMENTS`](/docs/en/env-vars#variables), which turns off attachment processing.
   * [`CLAUDE_CODE_DISABLE_FILE_MENTIONS`](/docs/en/env-vars#variables), which stops Claude Code from expanding `@` mentions of files and directories.
@@ -2552,7 +2557,7 @@ Appears in `/config` as **Auto-scroll** when fullscreen rendering is on, which w
 
 Render screen-reader friendly output: flat text without decorative borders or animations. Screen-reader mode uses the classic renderer, so the `tui` setting has no effect while it is active; attached [background sessions](/docs/en/agent-view.md) still render fullscreen.
 
-* **Scope**: [`Any file`](#scopes)
+* **Scope**: [`User or managed`](#scopes). You can also set the key in a file you pass with `--settings`. Claude Code ignores the key in project and local settings, so neither a repository nor your own `.claude/settings.local.json` can turn screen-reader mode on or off.
 * **Type**: Boolean
   * `true`: Claude Code renders flat text without decorative borders or animations, using the classic renderer
   * `false`: Claude Code renders normally
@@ -4975,6 +4980,8 @@ This example adds one connection named `Dev VM` that connects to `user@dev.examp
 ### `sshHostAllowlist`
 
 Limit the hosts a [Desktop SSH session](/docs/en/desktop.md#restrict-which-ssh-hosts-users-can-connect-to) can connect to. Only the Desktop app reads this key; the CLI doesn't. Patterns are case-insensitive: `*` matches any host, `*.example.com` matches `example.com` and every subdomain, and anything else is an exact match against the hostname after `~/.ssh/config` resolution. An empty array turns SSH sessions off.
+
+With Claude Desktop v3.1623.0 or later, a session's [jump hosts](/docs/en/desktop.md#allow-jump-hosts) have to match a pattern too.
 
 * **Scope**: [`Managed`](#scopes). By default, Desktop reads the key from [one managed source](/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
 * **Type**: array of hostname patterns

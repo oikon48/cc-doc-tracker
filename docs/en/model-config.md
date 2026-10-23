@@ -959,7 +959,7 @@ When you set an `ANTHROPIC_DEFAULT_*_MODEL` variable, the `/model` picker shows 
 When you pin a model on a third-party provider, its row in the `/model` picker shows the model's name by default if Claude Code recognizes the pinned ID, and the raw ID otherwise:
 
 * **Recognized**: the exact ID of a model Claude Code knows, such as its Anthropic API ID or your provider's or gateway's form of it, with or without the `[1m]` suffix. Pin `us.anthropic.claude-sonnet-4-5-20250929-v1:0` and the row reads `Sonnet 4.5`.
-* **Not recognized**: any other ID, such as an application inference profile ARN or a model version Claude Code doesn't know, unless a [`modelOverrides`](#override-model-ids-per-version) entry maps a model to that exact string. On Microsoft Foundry, deployment names are user-defined, so Claude Code never recognizes a pinned ID there, mapped or not, and the row shows the deployment name by default.
+* **Not recognized**: any other ID, such as an application inference profile ARN or a model version Claude Code doesn't know, unless a [`modelOverrides`](#override-model-ids-per-version) entry maps a model to that ID. On Microsoft Foundry, deployment names are user-defined, so Claude Code never recognizes a pinned ID there, mapped or not, and the row shows the deployment name by default.
 
 When a row shows the model's name, its default description includes the pinned ID so you can still see which ID is pinned.
 

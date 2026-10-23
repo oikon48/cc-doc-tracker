@@ -98,7 +98,7 @@ A review reaches your repository through the Claude GitHub App that an Owner [in
 
 ### Who controls a review
 
-* **Who can start one**: where reviews run automatically, opening or pushing to a pull request starts a review, [except on drafts and forks](/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks). A [comment command](/docs/en/code-review-pull-requests.md#comment-commands) starts one only when it comes from a person with write access to the repository.
+* **Who can start one**: where reviews run automatically, opening or pushing to a pull request starts a review, [except on drafts and forks](/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks). After some pushes, Code Review [keeps the earlier result](/docs/en/code-review-pull-requests.md#when-a-push-keeps-the-earlier-result) instead. A [comment command](/docs/en/code-review-pull-requests.md#comment-commands) starts one only when it comes from a person with write access to the repository.
 * **Which instructions it follows**: `REVIEW.md` from the base or default branch and [never from the pull request's own changes](/docs/en/code-review-customize.md#which-branch-review-md-is-read-from).
 
 ## Compare ways to get a review

@@ -55,7 +55,7 @@ Each example pairs a trigger type with the kind of work scheduled tasks are suit
 
 Create a scheduled task from the web at [claude.ai/code/routines](https://claude.ai/code/routines), from the Desktop app, or from the CLI. All three surfaces write to the same cloud account, so a scheduled task you create in one shows up in the others immediately. In the Desktop app's **Code** tab, click **Scheduled** in the sidebar or in the sidebar's **More** menu, then **New task**, and continue with [Create from the web](#create-from-the-web).
 
-Scheduled tasks run autonomously as full Claude Code cloud sessions. You don't choose a permission mode. The session runs shell commands, uses [skills](/docs/en/skills.md), and calls any connectors you include, all without stopping for approval apart from some [artifact actions](#when-a-run-publishes-an-artifact-without-asking). Outside a [project](/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories)'s threads, those skills include the ones committed to the cloned repository.
+Scheduled tasks run autonomously as full Claude Code cloud sessions. The session runs shell commands, uses [skills](/docs/en/skills.md), and calls any connectors you include. Outside a [project](/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories)'s threads, those skills include the ones committed to the cloned repository. You don't choose a permission mode when you create the task: see [Permission prompts during a run](#permission-prompts-during-a-run) for when a run stops to wait for you.
 
 What a scheduled task can reach is determined by:
 
@@ -117,7 +117,7 @@ If your task needs to reach your own services directly, or a domain outside that
 
 **6. Review connectors**
 
-Switch to the **Connectors** tab of **Advanced settings**. All of your connected [MCP connectors](/docs/en/mcp.md) are included by default. Remove any the task doesn't need: Claude can use every tool from an included connector, including writes, without asking for permission during a run.
+Switch to the **Connectors** tab of **Advanced settings**. All of your connected [MCP connectors](/docs/en/mcp.md) are included by default. Remove any the task doesn't need: Claude can use an included connector during a run, including writes. For when a run stops to ask you first, see [Permission prompts during a run](#permission-prompts-during-a-run).
 
 **7. Create the task**
 
@@ -367,7 +367,30 @@ When you create a scheduled task, all of your currently connected connectors are
 
 To manage or add connectors outside of that dialog, visit [claude.ai/customize/connectors](https://claude.ai/customize/connectors) or use `/schedule update` in the CLI.
 
+### Permission prompts during a run
+
+> [!NOTE]
+>
+> For a task that runs in your organization's self-hosted environment, see [Permissions and tool approval](/docs/en/self-hosted-environments-configuration.md#permissions-and-tool-approval).
+
+When a run starts a new session on Anthropic's cloud, that session begins in [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) unless auto mode is unavailable. In auto mode, a classifier model allows or blocks actions that would otherwise wait for your approval.
+
+A run still stops and waits for an answer in cases such as these:
+
+* **Actions that prompt even in auto mode**: for example, an action that matches an [ask rule](/docs/en/permissions.md#manage-permissions). See [How auto mode evaluates actions](/docs/en/permission-modes.md#how-auto-mode-evaluates-actions)
+* **Repeated blocks**: one block doesn't end the run. Once blocks reach auto mode's [repeated-block thresholds](/docs/en/permission-modes.md#repeated-block-thresholds), a permission prompt appears in the run's session and waits until someone answers it
+
+If auto mode is unavailable, such as when your organization turned it off or the task's model doesn't support it, the run keeps the permission mode it launched in. To answer a waiting prompt, open the run from the task's [detail page](#view-and-interact-with-runs).
+
+In a [project](/docs/en/claude-projects.md), a run can continue a thread rather than start a new session. That run keeps whatever permission mode the thread is in at the time. When that thread was made, it started in auto mode unless auto mode was unavailable. To answer a prompt waiting in that thread, see [Unblock a thread waiting on approval](/docs/en/claude-projects.md#unblock-a-thread-waiting-on-approval).
+
 ### When a run publishes an artifact without asking
+
+During a run in [auto mode](#permission-prompts-during-a-run), Claude publishes an [artifact](/docs/en/artifacts.md) without asking you once the classifier allows the publish. You're still asked first when, for example, the publish matches an [ask rule](/docs/en/permissions.md#manage-permissions). A new artifact is visible only to you until you [share it](/docs/en/artifacts.md#share-an-artifact). The [Accept edits rules](#artifacts-in-accept-edits-mode) that follow don't apply in auto mode.
+
+When a scheduled task's job is to keep a page current, give it an artifact you already published.
+
+#### Artifacts in Accept edits mode
 
 When a scheduled task's schedule or **Run now** starts a run, Claude can publish a new [artifact](/docs/en/artifacts.md) without asking. The new artifact is visible only to you until you [share it](/docs/en/artifacts.md#share-an-artifact). If the publish declares runtime capabilities for the page, such as [connector calls](/docs/en/artifacts.md#pull-live-data-with-mcp-connectors) or [file downloads](/docs/en/artifacts.md#offer-a-file-download), Claude asks first.
 
@@ -382,8 +405,6 @@ In those runs, Claude republishes an existing artifact without asking only when 
 * The existing page holds no grant that reaches beyond the page, such as [connector calls](/docs/en/artifacts.md#pull-live-data-with-mcp-connectors)
 
 In every other case, including a run that an API or GitHub trigger starts, Claude asks first.
-
-When a scheduled task's job is to keep a page current, give it an artifact you already published.
 
 ### Environments and network access
 

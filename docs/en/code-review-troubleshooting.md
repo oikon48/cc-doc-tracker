@@ -23,6 +23,7 @@ Find the **Claude Code Review** check run on your pull request, then match its t
 | **Code review found no issues** | The review finished and found nothing to flag | Nothing |
 | A title that says issues were found | The review finished with findings | If you don't see them on the diff, see [Find issues that aren't showing as inline comments](#find-issues-that-aren’t-showing-as-inline-comments) |
 | **Code review skipped — no new changes** | An automatic review didn't run on your latest push | To get a review anyway, comment `@claude review` |
+| **Code review not repeated — earlier findings still open** | An automatic review didn't run on your latest push, and Important findings from the earlier review are still open | Push a fix, or to get a review anyway, comment `@claude review`. See [When a push keeps the earlier result](/docs/en/code-review-pull-requests.md#when-a-push-keeps-the-earlier-result) |
 | **Code review failed** or **Code review timed out** | The review didn't finish | To run it again, see [Retrigger a failed or timed-out review](#retrigger-a-failed-or-timed-out-review) |
 | **Code review declined** | The review didn't run | Read the check run's summary. If it names a budget or a spend limit, see [Review didn't run and the PR shows a budget message](#review-didn’t-run-and-the-pr-shows-a-budget-message) |
 | No check run | No review started | Comment `@claude review`. If no check run appears after that, see [A comment command didn't start a review](#a-comment-command-didn’t-start-a-review) |
