@@ -319,7 +319,10 @@ groups:
 
 ### Alert on lost runners and waiting sessions
 
-On a [fixed fleet](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#scale-the-fleet), load `ClaudeRunnersBelowFloor`. With [on-demand runners](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#on-demand-runners), load `ClaudeOrchestratorSessionsWaiting` and `ClaudeOrchestratorQueueWaitHigh` instead.
+To be alerted when runners are lost, sessions wait, or the orchestrator is down, load these Prometheus alert rules beside the [sample alert rules](#sample-alert-rules):
+
+* **[Fixed fleet](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#scale-the-fleet)**: `ClaudeRunnersBelowFloor`
+* **[On-demand runners](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#on-demand-runners)**: `ClaudeOrchestratorSessionsWaiting`, `ClaudeOrchestratorQueueWaitHigh`, and `ClaudeOrchestratorAbsent`
 
 #### Alert when a fixed fleet loses runners
 
@@ -376,6 +379,27 @@ groups:
 
 * **Threshold**: if some session is always waiting, raise the `> 0` in `ClaudeOrchestratorSessionsWaiting` above the number you usually see
 * **`ClaudeOrchestratorDisconnected`**: keep it loaded from the [sample alert rules](#sample-alert-rules), because `ClaudeOrchestratorSessionsWaiting` stops firing about 2 minutes after the last orchestrator in the namespace disconnects
+
+#### Alert when the orchestrator is down
+
+To learn that the [orchestrator](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#on-demand-runners) itself is down, load `ClaudeOrchestratorAbsent`. It fires when no orchestrator in the namespace has been scraped for 5 minutes:
+
+```yaml theme={null}
+groups:
+  # On-demand runners only. Replace claude-runners with the orchestrator's namespace.
+  - name: claude-code-self-hosted-on-demand-orchestrator
+    rules:
+      - alert: ClaudeOrchestratorAbsent
+        expr: absent(claude_code_self_hosted_orchestrator_connected{namespace="claude-runners"})
+        for: 5m
+        labels: {severity: critical}
+        annotations:
+          summary: "No orchestrator has been scraped for 5 minutes. If it's down, no on-demand runner starts, and sessions wait. Check the orchestrator workload first, then its scrape target if it's running."
+```
+
+* **Namespace**: replace `claude-runners` with the orchestrator's namespace, and copy the alert for each further namespace that runs an orchestrator. If your targets have no `namespace` label, remove the matcher, or the alert fires after 5 minutes and stays on.
+* **Prometheus servers that don't scrape the orchestrator**: leave the alert out of their rule files, because on such a server it fires after 5 minutes and stays on
+* **Don't rely on the orchestrator's other alerts**: they read metrics that the orchestrator itself serves. `ClaudeOrchestratorSessionsWaiting`, `ClaudeOrchestratorQueueWaitHigh`, and the orchestrator's [sample alert rules](#sample-alert-rules) all stop firing within about 10 minutes of the orchestrator going down.
 
 ### Pass through session-child metrics
 
