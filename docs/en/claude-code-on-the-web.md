@@ -275,7 +275,7 @@ Cloud sessions support [built-in commands](https://code.claude.com/docs/en/comma
 
 * **`/model`, `/effort`, `/color`, and `/rename`**: pass the value as an argument, for example `/model sonnet`, instead of opening the terminal picker or slider. The argument forms follow each command's [availability notes](https://code.claude.com/docs/en/commands.md#all-commands).
 * **`/fast`**: toggles [fast mode](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-in-cloud-sessions) for the session when fast mode is [available on your account](https://code.claude.com/docs/en/fast-mode.md#requirements). Requires Claude Code v2.1.271 or later in the session's environment.
-* **`/config`**: in your browser at claude.ai/code, opens the Claude Code section of your settings instead of setting a value. To change a setting for a cloud session, set an [environment variable](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables) on the environment. In a session with one repository outside a [project](https://code.claude.com/docs/en/claude-projects.md)'s threads, commit the key to that repository's `.claude/settings.json` instead. [Settings in cloud sessions](https://code.claude.com/docs/en/settings.md#settings-in-cloud-sessions) lists what each session reads.
+* **`/config`**: in your browser at claude.ai/code, opens **Settings > Code** or **Settings > Claude Code** instead of setting a value. To change a setting for a cloud session, set an [environment variable](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables) on the environment. In a session with one repository outside a [project](https://code.claude.com/docs/en/claude-projects.md)'s threads, commit the key to that repository's `.claude/settings.json` instead. [Settings in cloud sessions](https://code.claude.com/docs/en/settings.md#settings-in-cloud-sessions) lists what each session reads.
 
 For context management in a cloud session outside a [project's threads](https://code.claude.com/docs/en/claude-projects.md#choose-models-and-let-claude-manage-context):
 
@@ -342,7 +342,10 @@ Sharing works as follows for Max and Pro accounts:
 * **Repository access**: verification isn't enabled by default
 * **Sensitive content**: check your session before sharing. Sessions may contain code and credentials from private GitHub repositories
 
-To require recipients to have repository access, or to hide your name from shared sessions, go to [**Settings > Claude Code > Sharing settings**](https://claude.ai/settings/claude-code).
+To require recipients to have repository access, or to hide your name from shared sessions, open Settings on claude.ai, then:
+
+* **If the Settings menu shows Code instead of Claude Code**: go to [**Privacy**](https://claude.ai/settings/data-privacy-controls), which has these settings
+* **Otherwise**: go to [**Claude Code > Sharing settings**](https://claude.ai/settings/claude-code)
 
 ### Archive sessions
 
