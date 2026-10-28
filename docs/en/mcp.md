@@ -247,7 +247,7 @@ claude mcp remove notion
 /mcp
 ```
 
-When you remove a remote server, Claude Code also deletes the OAuth tokens and client registration it stored for that server.
+When you remove a remote server, Claude Code also deletes the OAuth tokens and client registration it stored for that server. Claude Code doesn't revoke the tokens at the authorization server that issued them. To revoke the tokens where the authorization server supports revocation, run [`claude mcp logout <name>`](#authenticate-from-the-command-line) in your shell before `claude mcp remove <name>`.
 
 #### Server status
 
