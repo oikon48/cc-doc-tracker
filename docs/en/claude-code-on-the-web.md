@@ -269,6 +269,15 @@ These steps are covered elsewhere:
 * **The full walkthrough, including PR creation**: see [Review and iterate](https://code.claude.com/docs/en/web-quickstart.md#review-and-iterate)
 * **Having Claude monitor the PR for CI failures and review comments automatically**: see [Auto-fix pull requests](#auto-fix-pull-requests)
 
+#### Troubleshoot a missing file in the diff view
+
+A file you expected can be missing from the diff view's file list when it compares against the base branch, whether or not the session has pushed changes:
+
+* **No changes pushed yet**: the list has Claude's own edits, but not changes made by commands Claude ran, such as a formatter
+* **Changes pushed**: the list has pushed commits, but not changes made after the last push
+
+To add a missing change to the list, ask Claude to commit and push.
+
 ### Manage context
 
 Cloud sessions support [built-in commands](https://code.claude.com/docs/en/commands.md) that produce text output. Commands that only run in the terminal interface, such as `/plugin` or `/resume`, aren't available. Commands that open a picker or panel in the terminal behave differently in cloud sessions:

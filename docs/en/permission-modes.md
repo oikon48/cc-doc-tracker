@@ -509,7 +509,7 @@ Claude Code v2.1.261 and later also block these by default:
 * Read-only HTTP requests
 * Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms.
 
-  A push's content is still checked against the classifier's other rules, and [`permissions.deny` rules](https://code.claude.com/docs/en/permissions#manage-permissions) can still block push commands [as written](https://code.claude.com/docs/en/permissions.md#bash-rule-limits) in every mode. The remote's own branch protection still applies. From v2.1.203 until v2.1.211, only routine default-branch pushes and pushes to the branch you started on or to branches Claude created were allowed by default.
+  A push's content is still checked against the classifier's other rules, and [`permissions.deny` rules](https://code.claude.com/docs/en/permissions#manage-permissions) can still block push commands [as written](https://code.claude.com/docs/en/permissions.md#bash-rule-limits) in every mode. The remote's own branch protection still applies.
 * Deleting the exact jobs Claude created earlier in the same session
 * Reading, reviewing, or writing security-related code, configs, and threat models as part of your task
 * Messages between agents working together in the same multi-agent session

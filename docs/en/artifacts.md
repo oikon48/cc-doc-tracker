@@ -100,7 +100,7 @@ Run `/artifacts` in Claude Code to list the artifacts you own and the ones share
 
 Select an artifact, then press one of these keys:
 
-* **`Enter`**: opens it in your browser when it's already attached to the current session, and attaches it when it isn't. Before v2.1.216, `Enter` opened it in your browser
+* **`Enter`**: opens it in your browser when it's already attached to the current session, and attaches it when it isn't
 * **`o`**: opens it in your browser
 * **`c`**: copies its link
 * **`d`**: outside a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), permanently deletes an artifact you own after you confirm. Its link stops working for everyone, including you

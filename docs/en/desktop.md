@@ -169,7 +169,7 @@ To turn off external browsing entirely, set the [`disableBrowserExternalNavigati
 
 ### Review changes with diff view
 
-After Claude makes changes to your code, the diff view lets you review modifications file by file before creating a pull request. To open the diff view, click the line counts, such as `+12 -1`, in the **Changes** card of the [session details panel](#see-session-details). You can also click **Changes** in the session's title bar.
+After Claude makes changes to your code, the diff view lets you review modifications file by file before creating a pull request. To open the diff view, click the line counts, such as `+12 -1`, in the **Changes** card of the [session details panel](#see-session-details). You can also click **Changes** in the session's title bar. A cloud session's diff against the base branch can [leave out changes that aren't pushed yet](https://code.claude.com/docs/en/claude-code-on-the-web.md#troubleshoot-a-missing-file-in-the-diff-view).
 
 To comment on specific lines, hover over a line and click the **+** that appears beside its line number to open a comment box. Type your feedback and press **Enter** to add the comment. After adding comments to multiple lines, submit all comments at once:
 
