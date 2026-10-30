@@ -13,7 +13,7 @@ source: https://code.claude.com/docs/en/cloud-environments.md
 
 > [!NOTE]
 >
-> Cloud environments apply to [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), which are available on Pro, Max, and Team plans, and for Enterprise users with [premium seats or Chat + Claude Code seats](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan).
+> Cloud environments apply to [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), which are available on Pro, Max, Ultra, and Team plans, and for Enterprise users with [premium seats or Chat + Claude Code seats](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan).
 
 Each [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) runs in a cloud environment. You can configure an environment to allow or deny [network access](#access-levels), [set environment variables](#set-environment-variables) for the session, store [network secrets](#add-network-secrets) that sessions use without seeing them, and run a [setup script](#setup-scripts) before Claude starts working.
 
@@ -37,7 +37,7 @@ Each of these surfaces can also route to a [self-hosted environment](https://cod
 If you don't have an environment yet, onboarding sets up the **Default** environment. How depends on where you onboard:
 
 * **CLI flows such as `/web-setup`**: create **Default** for you
-* **Web onboarding on Pro and Max**: creates **Default** for you
+* **Web onboarding on Pro, Max, and Ultra**: you get **Default** automatically
 * **Web onboarding on Team and Enterprise**: shows a **Create your first cloud environment** form unless an Owner has turned on [Quick setup](https://code.claude.com/docs/en/claude-code-on-the-web.md#quick-setup-for-team-and-enterprise); keep the form's defaults and click **Create & finish** to get the same **Default** environment
 
 **Default** carries no configuration of its own:
@@ -98,7 +98,7 @@ Anyone who uses the environment can read the values. In an Anthropic-hosted envi
 
 A network secret is an API key or token you store on a cloud environment so Claude can call that API from any session in the environment without seeing the key. Anthropic's agent proxy adds the key to requests for the hosts you list, after each request leaves the session's VM, so the key itself stays outside the VM.
 
-Network secrets are available on Pro, Max, Team, and Enterprise plans. To check whether you can add one yourself, see [Requirements](#requirements).
+Network secrets are available on Pro, Max, Ultra, Team, and Enterprise plans. To check whether you can add one yourself, see [Requirements](#requirements).
 
 #### Requirements
 

@@ -155,18 +155,18 @@ The security model, what admins can and can't restrict, audit trails, and networ
 
 ## Where to start with Claude Tag
 
-> **[Set up Claude Tag](https://claude.com/docs/claude-tag/admins/setup-overview)**
+> [card] [Set up Claude Tag](https://claude.com/docs/claude-tag/admins/setup-overview)
 >
 > Admins: pair your Slack workspace and launch
 
-> **[Hand Claude Tag your first task](https://claude.com/docs/claude-tag/users/getting-started.md)**
+> [card] [Hand Claude Tag your first task](https://claude.com/docs/claude-tag/users/getting-started.md)
 >
 > It's already in your channel: send your first message
 
-> **[How Claude Tag works](https://claude.com/docs/claude-tag/concepts/how-it-works.md)**
+> [card] [How Claude Tag works](https://claude.com/docs/claude-tag/concepts/how-it-works.md)
 >
 > The session model, what it can read, and how memory follows places
 
-> **[Use case library](https://claude.com/docs/claude-tag/users/use-cases.md)**
+> [card] [Use case library](https://claude.com/docs/claude-tag/users/use-cases.md)
 >
 > Prompts to paste, by team and connection

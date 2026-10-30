@@ -97,7 +97,7 @@ To set a default mode for new local sessions, add `permissions.defaultMode` to y
 | **Accept edits** | `acceptEdits` | Claude auto-accepts file edits and common filesystem commands like `mkdir`, `touch`, and `mv`, but still asks before running other terminal commands. Use this when you trust file changes and want faster iteration. |
 | **Plan** | `plan` | Claude reads files and runs commands to explore, then proposes a plan without editing your source code. Good for complex tasks where you want to review the approach first. |
 | **Auto** | `auto` | Claude runs without routine prompts; before actions such as shell commands and network requests run, a background classifier checks that they align with your request. Appears when [auto mode is available](#auto-mode-availability); there is no separate Settings toggle for it. |
-| **Bypass permissions** | `bypassPermissions` | Claude runs without permission prompts, except for the [actions no mode auto-approves](https://code.claude.com/docs/en/permission-modes.md#actions-no-mode-auto-approves), safety classifiers when Claude [acts on external sites](#browse-external-sites), or desktop actions such as deleting a session, though not [archiving one](#work-across-sessions). Equivalent to `--dangerously-skip-permissions` in the CLI. On Pro and Max plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**. On Team and Enterprise plans there is no Settings toggle, and organization policy controls it instead. Only use this in sandboxed containers or VMs. |
+| **Bypass permissions** | `bypassPermissions` | Claude runs without permission prompts, except for the [actions no mode auto-approves](https://code.claude.com/docs/en/permission-modes.md#actions-no-mode-auto-approves), safety classifiers when Claude [acts on external sites](#browse-external-sites), or desktop actions such as deleting a session, though not [archiving one](#work-across-sessions). Equivalent to `--dangerously-skip-permissions` in the CLI. On Pro, Max, and Ultra plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**. On Team and Enterprise plans there is no Settings toggle, and organization policy controls it instead. Only use this in sandboxed containers or VMs. |
 
 Earlier versions of the Code tab labeled these modes Ask permissions, Auto accept edits, and Plan mode.
 
@@ -325,7 +325,7 @@ Computer use lets Claude open your apps, control your screen, and work directly 
 
 > [!NOTE]
 >
-> Computer use is a research preview on macOS and Windows that requires a Pro or Max plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running. On macOS, computer use requires macOS 14 or later.
+> Computer use is a research preview on macOS and Windows that requires a Pro, Max, or Ultra plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running. On macOS, computer use requires macOS 14 or later.
 
 Computer use is off by default. [Enable it in Settings](#enable-computer-use) before Claude can control your screen. On macOS, you also need to grant Accessibility and Screen Recording permissions.
 
@@ -367,7 +367,7 @@ Under **Computer use**, turn on **Enable computer use**:
 * **Windows**: the toggle takes effect immediately and setup is complete
 * **macOS**: continue to the next step
 
-If you don't see the toggle, confirm you're on macOS or Windows with a Pro or Max plan, then update and restart the app.
+If you don't see the toggle, confirm you're on macOS or Windows with a Pro, Max, or Ultra plan, then update and restart the app.
 
 **3. Grant macOS permissions**
 
@@ -567,7 +567,8 @@ If you have [computer use](#let-claude-use-your-computer) enabled, Dispatch-spaw
 
 #### Set up Dispatch
 
-For setup, pairing, and Dispatch settings, see the [Dispatch help article](https://support.claude.com/en/articles/13947068). Dispatch requires a Pro or Max plan and is not available on Team or Enterprise plans.
+* **Plans**: Dispatch requires a Pro, Max, or Ultra plan and is not available on Team or Enterprise plans
+* **Setup, pairing, and Dispatch settings**: see the [Dispatch help article](https://support.claude.com/en/articles/13947068)
 
 Dispatch is one of several ways to work with Claude when you're away from your terminal. For a comparison with the other options, see [Platforms and integrations](https://code.claude.com/docs/en/platforms.md#work-when-you-are-away-from-your-terminal).
 
@@ -2060,7 +2061,7 @@ This table shows the desktop app equivalent for common CLI flags. Flags not list
 | `--model sonnet` | Model picker in the row under the prompt box |
 | `--resume`, `--continue` | Click a session in the sidebar, or type `/resume` in the prompt box to pick up a session you started from the CLI |
 | `--permission-mode` | Mode selector in the row under the prompt box |
-| `--dangerously-skip-permissions` | Bypass permissions mode. On Pro and Max plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**; on Team and Enterprise plans, organization policy controls it |
+| `--dangerously-skip-permissions` | Bypass permissions mode. On Pro, Max, and Ultra plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**; on Team and Enterprise plans, organization policy controls it |
 | `--add-dir` | [Add folders to a session](#add-folders-to-a-session) in local and SSH sessions, or select [several repositories](#run-long-running-tasks-in-the-cloud) in a cloud session |
 | `--allowedTools`, `--disallowedTools` | No per-session equivalent. Permission rules in [settings files](https://code.claude.com/docs/en/settings.md) still apply. |
 | `--verbose` | [Verbose view mode](#switch-view-modes) |
@@ -2096,7 +2097,7 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 
 | Feature | CLI | Desktop |
 | - | - | - |
-| Permission modes | All modes including `dontAsk` | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro and Max plans, or through organization policy on Team and Enterprise plans |
+| Permission modes | All modes including `dontAsk` | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro, Max, and Ultra plans, or through organization policy on Team and Enterprise plans |
 | [Third-party providers](https://code.claude.com/docs/en/third-party-integrations.md) | Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry | Anthropic's API by default. For gateway routing, see [connect the desktop app to a gateway](https://code.claude.com/docs/en/llm-gateway-connect.md#desktop-app). To run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview). |
 | [MCP servers](https://code.claude.com/docs/en/mcp.md) | Configure in settings files | Connectors UI for local and SSH sessions, or settings files |
 | [Plugins](https://code.claude.com/docs/en/plugins/overview.md) | `/plugin` command | Plugin manager UI |
@@ -2158,7 +2159,7 @@ In the earlier layout, choose the environment and any project folder or reposito
 If you see `Error 403: Forbidden` or other authentication failures when using the Code tab:
 
 1. Sign out and back in from the app menu. This is the most common fix.
-2. Verify you have an active paid subscription: Pro, Max, Team, or Enterprise.
+2. Verify you have an active paid subscription: Pro, Max, Ultra, Team, or Enterprise.
 3. If the CLI works but Desktop does not, quit the desktop app completely, not just close the window, then reopen and sign in again.
 4. Check your internet connection and proxy settings.
 

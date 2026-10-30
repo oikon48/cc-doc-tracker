@@ -313,7 +313,7 @@ In all cases, no channel runs until a user opts it in for the session with `--ch
 | `channelsEnabled` | Master switch. Must be `true` for any channel to deliver messages. Blocks all channels including the development flag when off. See [Enable channels for your organization](#enable-channels-for-your-organization). | claude.ai Team and Enterprise: channels blocked. Console: channels allowed unless your organization deploys managed settings, in which case channels are blocked until this key is set |
 | `allowedChannelPlugins` | Which plugins can register once channels are enabled. Replaces the Anthropic-maintained list when set. | Anthropic default list applies |
 
-Pro and Max users without an organization skip these checks entirely: channels are available and users opt in per session with `--channels`.
+Pro, Max, and Ultra users without an organization skip these checks entirely: channels are available and users opt in per session with `--channels`.
 
 ### Enable channels for your organization
 

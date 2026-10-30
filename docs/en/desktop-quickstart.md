@@ -11,9 +11,9 @@ source: https://code.claude.com/docs/en/desktop-quickstart.md
 
 > Install the Claude desktop app, open the Code tab, and start your first Claude Code session on a project folder on your computer.
 
-The desktop app gives you Claude Code with a graphical interface. You can ask Claude to work on the code in a folder on your computer and review its changes without using a terminal.
+The desktop app gives you Claude Code with a graphical interface. You can ask Claude to work on the code in a folder on your computer, then review the changes yourself, without using a terminal.
 
-Claude Code is in the **Code** tab at the top of the app's sidebar. This page walks through installing the app and starting your first session there. Claude Code requires a [Pro, Max, Team, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
+Claude Code is in the **Code** tab at the top of the app's sidebar. This page walks through installing the app and starting your first session there. Claude Code requires a [Pro, Max, Ultra, Team, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 
 > **[Download for macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs)**
 >

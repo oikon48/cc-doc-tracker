@@ -19,7 +19,7 @@ Make sure you have:
 
 * A terminal or command prompt open
 * A code project to work with
-* A [Claude subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Team, or Enterprise), [Claude Console](https://platform.claude.com/) account, or access through a [supported cloud provider](https://code.claude.com/docs/en/third-party-integrations.md)
+* A [Claude subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Ultra, Team, or Enterprise), [Claude Console](https://platform.claude.com/) account, or access through a [supported cloud provider](https://code.claude.com/docs/en/third-party-integrations.md)
 
 > [!NOTE]
 >
@@ -113,7 +113,7 @@ Claude Code prompts you to log in on first use. For Claude subscription or Conso
 
 You can log in using any of these account types:
 
-* [Claude Pro, Max, Team, or Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (recommended)
+* [Claude Pro, Max, Ultra, Team, or Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (recommended)
 * [Claude Console](https://platform.claude.com/) (API access with pre-paid credits). On first login, a "Claude Code" workspace is automatically created in the Console for centralized cost tracking.
 * [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry](https://code.claude.com/docs/en/third-party-integrations.md) (enterprise cloud providers)
 * A self-hosted [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), if your organization runs one: your admin pre-configures the gateway URL, and `/login` opens directly on the **Cloud gateway** screen for you to sign in with corporate SSO

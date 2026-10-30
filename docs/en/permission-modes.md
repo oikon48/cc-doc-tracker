@@ -13,7 +13,7 @@ source: https://code.claude.com/docs/en/permission-modes.md
 
 A permission mode sets which actions Claude can take in a session without asking you first. In Manual mode, Claude Code stops and asks you before most actions that edit files, run shell commands, or reach the network. In [auto mode](#eliminate-prompts-with-auto-mode), a second model, the classifier, reviews actions instead of you; [how the classifier evaluates actions](#how-the-classifier-evaluates-actions) lists which actions it reviews and which skip it.
 
-With Claude Code v2.1.283 or later, auto mode is the built-in starting permission mode for interactive terminal and VS Code sessions. On earlier versions, it's the built-in starting permission mode only on Pro, Max, and Team plans. [Which mode a session starts in](#which-mode-a-session-starts-in) covers the surfaces and settings that change the starting permission mode. You can also change a running session's permission mode at any time.
+With Claude Code v2.1.283 or later, auto mode is the built-in starting permission mode for interactive terminal and VS Code sessions. On earlier versions, it's the built-in starting permission mode only on Pro, Max, Ultra, and Team plans. [Which mode a session starts in](#which-mode-a-session-starts-in) covers the surfaces and settings that change the starting permission mode. You can also change a running session's permission mode at any time.
 
 ## Available modes
 
@@ -85,7 +85,7 @@ The built-in default depends on how you run Claude Code. The first row that matc
 | Any settings file sets `disableAutoMode` to `"disable"` | `default` |
 | `claude -p` or the [Agent SDK](https://code.claude.com/docs/en/agent-sdk/permissions.md#permission-modes) | `default` |
 | Your organization has the [HIPAA configuration](#hipaa-configuration) applied and the session is [eligible for it](https://code.claude.com/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect) | `default` with Claude Code v2.1.285 or later; auto mode stays available to switch to |
-| In a terminal or through the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) | `auto` with Claude Code v2.1.283 or later; on earlier versions, `auto` on Pro, Max, or Team plans in sessions that [fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), and `default` otherwise |
+| In a terminal or through the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) | `auto` with Claude Code v2.1.283 or later; on earlier versions, `auto` on Pro, Max, Ultra, or Team plans in sessions that [fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), and `default` otherwise |
 
 When the flag, a settings file, or the built-in default selects `auto` but auto mode isn't available to the session, Claude Code starts the session in Manual instead. Auto mode is unavailable when the session doesn't meet the [availability requirements](#eliminate-prompts-with-auto-mode), such as a settings file turning it off or a model that doesn't support it, or when Anthropic has temporarily turned it off server-side.
 
@@ -94,7 +94,9 @@ The first time the built-in default starts one of your sessions in auto mode, Cl
 * In a terminal, once, at the top of the session
 * In the VS Code extension, as a card on the new-conversation screen that stays until you dismiss it
 
-If your `~/.claude/settings.json` sets a `defaultMode` other than `auto` and no other settings file sets one, your sessions keep starting in that mode. On Pro, Max, and Team plans, and in sessions that [don't fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), Claude Code asks once, in the terminal or in the VS Code extension, whether to change the setting to auto mode. If you decline, your setting stays as it is.
+If your `~/.claude/settings.json` sets a `defaultMode` other than `auto` and no other settings file sets one, your sessions keep starting in that mode.
+
+On Pro, Max, Ultra, and Team plans, and in sessions that [don't fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), Claude Code asks once whether to change the setting to auto mode. The question appears in the terminal or in the VS Code extension, and if you decline, your setting stays as it is.
 
 ### Tool calls denied in `claude -p` and Agent SDK runs
 
@@ -222,7 +224,7 @@ The same `--permission-mode` flag works with `-p` for [non-interactive runs](htt
 
 The extension never reads a project's `.claude/settings.json` or `.claude/settings.local.json` for the starting permission mode. When `claudeCode.claudeProcessWrapper` is set, items 3 and 4 don't apply: those conversations start in Manual unless item 1 or item 2 sets a permission mode.
 
-Before v2.1.283, item 3 applied only on Pro, Max, and Team plans in sessions that [fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
+Before v2.1.283, item 3 applied only on Pro, Max, Ultra, and Team plans in sessions that [fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
 
 Auto appears in the mode indicator when [auto mode is available](#eliminate-prompts-with-auto-mode).
 
@@ -239,7 +241,7 @@ The JetBrains plugin runs Claude Code in the IDE terminal, so switching permissi
 **During a session**: in the Code tab, use the mode selector in the row under the prompt box. Not every mode appears in the selector:
 
 * **Auto**: appears when [auto mode is available](#eliminate-prompts-with-auto-mode)
-* **Bypass permissions**: requires the **Allow bypass permissions mode** toggle in Desktop settings on Pro and Max plans; on Team and Enterprise plans, organization policy controls it instead
+* **Bypass permissions**: requires the **Allow bypass permissions mode** toggle in Desktop settings on Pro, Max, and Ultra plans; on Team and Enterprise plans, organization policy controls it instead
 
 Cowork doesn't use these modes. It has its own permission modes, enabled separately, and shows no mode selector at all until a mode beyond its default is enabled for your account. See the [Cowork docs](https://claude.com/docs/cowork/overview).
 
@@ -332,7 +334,7 @@ To make plan mode the default for a project's terminal sessions, set `defaultMod
 
 Auto mode lets Claude execute without routine permission prompts. A separate classifier model reviews actions before they run, blocking anything that escalates beyond your request, targets unrecognized infrastructure, or appears driven by hostile content Claude read. Explicit [ask rules](https://code.claude.com/docs/en/permissions.md#manage-permissions) still force a prompt.
 
-With Claude Code v2.1.283 or later, auto mode is the [built-in starting permission mode](#which-mode-a-session-starts-in) for interactive terminal and VS Code sessions on every plan and provider. On earlier versions, it's the built-in starting permission mode only on Pro, Max, and Team plans.
+With Claude Code v2.1.283 or later, auto mode is the [built-in starting permission mode](#which-mode-a-session-starts-in) for interactive terminal and VS Code sessions on every plan and provider. On earlier versions, it's the built-in starting permission mode only on Pro, Max, Ultra, and Team plans.
 
 The classifier also reviews each message Claude sends to another agent with [`SendMessage`](https://code.claude.com/docs/en/tools-reference), whether plain text or a structured [agent team](https://code.claude.com/docs/en/agent-teams.md) message, before Claude Code delivers it, both in auto mode and in [plan mode while the classifier reviews commands](#analyze-before-you-edit-with-plan-mode); the send review requires Claude Code v2.1.222 or later.
 
@@ -372,7 +374,10 @@ To prevent developers from using auto mode, set `disableAutoMode` to `"disable"`
 
 In auto mode, Claude Code can ask the server to check the actions that [the decision order](#how-the-classifier-evaluates-actions) sends for review, as part of the session's model requests, in place of sending its own classifier requests. These sessions ask:
 
-* **A direct connection to the Anthropic API**: in interactive terminal sessions and in `-p`, Agent SDK, [VS Code extension](https://code.claude.com/docs/en/vs-code.md), and [desktop app](https://code.claude.com/docs/en/desktop.md) sessions, whatever your plan or account type, as Anthropic rolls it out. In interactive terminal sessions, this requires Claude Code v2.1.271 or later on Pro, Max, and Team plans, and v2.1.278 or later on Enterprise plans and Claude API accounts. In `-p`, Agent SDK, VS Code extension, and desktop app sessions, this requires Claude Code v2.1.281 or later. From v2.1.282, a session that [doesn't fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), for example because you turned telemetry off, asks the server by default in any kind of session.
+* **A direct connection to the Anthropic API**: in interactive terminal sessions and in `-p`, Agent SDK, [VS Code extension](https://code.claude.com/docs/en/vs-code.md), and [desktop app](https://code.claude.com/docs/en/desktop.md) sessions, whatever your plan or account type, as Anthropic rolls it out. Check your session type against these minimum Claude Code versions:
+  * In interactive terminal sessions, asking the server requires Claude Code v2.1.271 or later on Pro, Max, Ultra, and Team plans. On Enterprise plans and Claude API accounts, those sessions require v2.1.278 or later.
+  * In `-p`, Agent SDK, VS Code extension, and desktop app sessions, asking the server requires Claude Code v2.1.281 or later
+  * From v2.1.282, a session that [doesn't fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), for example because you turned telemetry off, asks the server by default in any kind of session
 * **A cloud provider, or an LLM gateway or proxy**: on [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md), Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, and whenever you point `ANTHROPIC_BASE_URL` at an [LLM gateway or proxy](https://code.claude.com/docs/en/llm-gateway), whatever your plan. Asking by default requires Claude Code v2.1.278 or later.
 * **A signed-in [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) session**: requires Claude Code v2.1.280 or later
 * **A [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) in an Anthropic-hosted environment**: whatever your plan, when you start it from the web, the mobile app, or the desktop app with **Cloud** selected. Sessions started by a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) ask the server as Anthropic rolls it out.
