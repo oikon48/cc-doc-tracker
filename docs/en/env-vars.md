@@ -28,52 +28,52 @@ A variable you set in your shell lasts for that terminal session, while a variab
 
 Set the variable before launching `claude`:
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> export API_TIMEOUT_MS="1200000"
+> claude
+> ```
+>
+> To set it for every session, add the `export` line to `~/.bashrc`, `~/.zshrc`, or your shell's profile file.
 
-```bash theme={null}
-export API_TIMEOUT_MS="1200000"
-claude
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> $env:API_TIMEOUT_MS = "1200000"
+> claude
+> ```
+>
+> To set it for every session, run `[Environment]::SetEnvironmentVariable("API_TIMEOUT_MS", "1200000", "User")` and open a new terminal.
 
-To set it for every session, add the `export` line to `~/.bashrc`, `~/.zshrc`, or your shell's profile file.
-
-**Windows PowerShell**
-
-```powershell theme={null}
-$env:API_TIMEOUT_MS = "1200000"
-claude
-```
-
-To set it for every session, run `[Environment]::SetEnvironmentVariable("API_TIMEOUT_MS", "1200000", "User")` and open a new terminal.
-
-**Windows CMD**
-
-```batch theme={null}
-set API_TIMEOUT_MS=1200000
-claude
-```
-
-To set it for every session, run `setx API_TIMEOUT_MS "1200000"` and open a new terminal.
+> [tab] Windows CMD
+>
+> ```batch theme={null}
+> set API_TIMEOUT_MS=1200000
+> claude
+> ```
+>
+> To set it for every session, run `setx API_TIMEOUT_MS "1200000"` and open a new terminal.
 
 The assignment line prints nothing on success. To confirm the variable is set, print it in the same shell:
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> echo $API_TIMEOUT_MS
+> ```
 
-```bash theme={null}
-echo $API_TIMEOUT_MS
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> echo $env:API_TIMEOUT_MS
+> ```
 
-**Windows PowerShell**
-
-```powershell theme={null}
-echo $env:API_TIMEOUT_MS
-```
-
-**Windows CMD**
-
-```batch theme={null}
-echo %API_TIMEOUT_MS%
-```
+> [tab] Windows CMD
+>
+> ```batch theme={null}
+> echo %API_TIMEOUT_MS%
+> ```
 
 ### Set variables in settings files
 

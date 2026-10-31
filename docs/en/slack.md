@@ -242,22 +242,22 @@ If you're not an Owner, send this entry to one.
 
 ## Related resources
 
-> **[Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web.md)**
+> [card] [Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web.md)
 >
 > Learn more about cloud sessions
 
-> **[Claude for Slack](https://claude.com/claude-and-slack)**
+> [card] [Claude for Slack](https://claude.com/claude-and-slack)
 >
 > General Claude for Slack documentation
 
-> **[Claude Tag](https://claude.com/docs/claude-tag/overview)**
+> [card] [Claude Tag](https://claude.com/docs/claude-tag/overview)
 >
 > Organization-managed @Claude in Slack with admin-configured access
 
-> **[Slack App Marketplace](https://slack.com/marketplace/A08SF47R6P4)**
+> [card] [Slack App Marketplace](https://slack.com/marketplace/A08SF47R6P4)
 >
 > Install the Claude app from the Slack Marketplace
 
-> **[Claude Help Center](https://support.claude.com)**
+> [card] [Claude Help Center](https://support.claude.com)
 >
 > Get additional support

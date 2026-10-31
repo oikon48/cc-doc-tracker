@@ -234,67 +234,67 @@ Organization-level controls and usage visibility.
 
 Each tab lists what is unavailable or partially supported on that provider, with alternatives where one exists. Everything not listed works the same as on a Claude subscription, apart from the [provider-specific differences](#features-available-on-every-provider) noted above. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS, error reporting and telemetry to Anthropic are off by default. See [default behaviors by API provider](https://code.claude.com/docs/en/data-usage.md#default-behaviors-by-api-provider) for what traffic still reaches Anthropic and how to opt out.
 
-**Amazon Bedrock**
+> [tab] Amazon Bedrock
+>
+> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior), [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
+>
+> **Partial support:**
+>
+> * [Desktop](https://code.claude.com/docs/en/desktop.md): only via [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
+> * [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
+> * [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
+> * [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your AWS agreement
+>
+> **Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) or [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md). For web lookups, use the [WebFetch tool](https://code.claude.com/docs/en/tools-reference.md#webfetch-tool-behavior) with a specific URL.
 
-**Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior), [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
+> [tab] Claude Platform on AWS
+>
+> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), [GitHub Actions](https://code.claude.com/docs/en/github-actions.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
+>
+> **Available where Amazon Bedrock is not:** [web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior).
+>
+> **Partial support:**
+>
+> * [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
+>
+> **Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md).
 
-**Partial support:**
+> [tab] Google Cloud's Agent Platform
+>
+> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
+>
+> **Partial support:**
+>
+> * [Desktop](https://code.claude.com/docs/en/desktop.md): via [managed settings](https://claude.com/docs/third-party/claude-desktop/configuration) or [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
+> * [Web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior): Opus 4, Sonnet 4, Haiku 4.5, and later models
+> * [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
+> * [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
+> * [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your Google Cloud agreement
+>
+> **Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) or [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md).
 
-* [Desktop](https://code.claude.com/docs/en/desktop.md): only via [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
-* [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
-* [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
-* [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your AWS agreement
+> [tab] Microsoft Foundry
+>
+> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
+>
+> **Partial support:**
+>
+> * [Desktop](https://code.claude.com/docs/en/desktop.md): only via [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
+> * [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
+> * [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
+> * [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your Azure agreement
+>
+> **Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md).
 
-**Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) or [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md). For web lookups, use the [WebFetch tool](https://code.claude.com/docs/en/tools-reference.md#webfetch-tool-behavior) with a specific URL.
-
-**Claude Platform on AWS**
-
-**Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), [GitHub Actions](https://code.claude.com/docs/en/github-actions.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
-
-**Available where Amazon Bedrock is not:** [web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior).
-
-**Partial support:**
-
-* [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
-
-**Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md).
-
-**Google Cloud's Agent Platform**
-
-**Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
-
-**Partial support:**
-
-* [Desktop](https://code.claude.com/docs/en/desktop.md): via [managed settings](https://claude.com/docs/third-party/claude-desktop/configuration) or [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
-* [Web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior): Opus 4, Sonnet 4, Haiku 4.5, and later models
-* [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
-* [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
-* [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your Google Cloud agreement
-
-**Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) or [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md).
-
-**Microsoft Foundry**
-
-**Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), [GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
-
-**Partial support:**
-
-* [Desktop](https://code.claude.com/docs/en/desktop.md): only via [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
-* [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
-* [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
-* [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your Azure agreement
-
-**Alternatives:** for scheduling, use [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md).
-
-**Anthropic Console**
-
-**Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription).
-
-Everything in [CLI capabilities that vary by provider](#cli-capabilities-that-vary-by-provider) is available, except that [fast mode](https://code.claude.com/docs/en/fast-mode.md) with Claude Opus 5 or Claude Opus 4.8 requires [provisioned access](https://code.claude.com/docs/en/fast-mode.md#enable-fast-mode-for-your-organization). [Server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) that you configure in a claude.ai Team or Enterprise organization don't reach a session that authenticates with a Console API key. See [Platform availability](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability) for how to cover those sessions.
-
-**Partial support:**
-
-* [Desktop](https://code.claude.com/docs/en/desktop.md): via [Claude Desktop on 3P with the Claude API](https://claude.com/docs/third-party/claude-desktop/claude-api)
+> [tab] Anthropic Console
+>
+> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription).
+>
+> Everything in [CLI capabilities that vary by provider](#cli-capabilities-that-vary-by-provider) is available, except that [fast mode](https://code.claude.com/docs/en/fast-mode.md) with Claude Opus 5 or Claude Opus 4.8 requires [provisioned access](https://code.claude.com/docs/en/fast-mode.md#enable-fast-mode-for-your-organization). [Server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) that you configure in a claude.ai Team or Enterprise organization don't reach a session that authenticates with a Console API key. See [Platform availability](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability) for how to cover those sessions.
+>
+> **Partial support:**
+>
+> * [Desktop](https://code.claude.com/docs/en/desktop.md): via [Claude Desktop on 3P with the Claude API](https://claude.com/docs/third-party/claude-desktop/claude-api)
 
 ## Availability by subscription plan
 

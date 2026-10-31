@@ -557,7 +557,7 @@ To customize the base image, use a setup script to install what you need on top 
 
 With **Trusted** network access, sessions can reach the following domains by default. Domains marked with `*` indicate wildcard subdomain matching, so `*.gcr.io` allows any subdomain of `gcr.io`.
 
-> **Anthropic services**
+> [accordion] Anthropic services
 >
 > * api.anthropic.com
 > * docs.claude.com
@@ -569,7 +569,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * anthropic.com
 > * [www.anthropic.com](http://www.anthropic.com)
 
-> **Version control**
+> [accordion] Version control
 >
 > * github.com
 > * [www.github.com](http://www.github.com)
@@ -590,7 +590,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * [www.bitbucket.org](http://www.bitbucket.org)
 > * api.bitbucket.org
 
-> **Container registries**
+> [accordion] Container registries
 >
 > * registry-1.docker.io
 > * auth.docker.io
@@ -607,7 +607,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * \*.data.mcr.microsoft.com
 > * public.ecr.aws
 
-> **Cloud platforms**
+> [accordion] Cloud platforms
 >
 > * cloud.google.com
 > * accounts.google.com
@@ -638,7 +638,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * yum.oracle.com
 > * \*.r2.cloudflarestorage.com
 
-> **JavaScript and Node package managers**
+> [accordion] JavaScript and Node package managers
 >
 > * registry.npmjs.org
 > * [www.npmjs.com](http://www.npmjs.com)
@@ -650,7 +650,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * jsr.io
 > * npm.jsr.io
 
-> **Python package managers**
+> [accordion] Python package managers
 >
 > * pypi.org
 > * [www.pypi.org](http://www.pypi.org)
@@ -661,7 +661,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * pypa.io
 > * [www.pypa.io](http://www.pypa.io)
 
-> **Ruby package managers**
+> [accordion] Ruby package managers
 >
 > * rubygems.org
 > * [www.rubygems.org](http://www.rubygems.org)
@@ -676,7 +676,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * rvm.io
 > * get.rvm.io
 
-> **Rust package managers**
+> [accordion] Rust package managers
 >
 > * crates.io
 > * [www.crates.io](http://www.crates.io)
@@ -686,7 +686,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * static.rust-lang.org
 > * [www.rust-lang.org](http://www.rust-lang.org)
 
-> **Go package managers**
+> [accordion] Go package managers
 >
 > * proxy.golang.org
 > * sum.golang.org
@@ -696,7 +696,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * goproxy.io
 > * pkg.go.dev
 
-> **JVM package managers**
+> [accordion] JVM package managers
 >
 > * maven.org
 > * repo.maven.org
@@ -715,7 +715,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * spring.io
 > * repo.spring.io
 
-> **Other package managers**
+> [accordion] Other package managers
 >
 > * packagist.org (PHP Composer)
 > * [www.packagist.org](http://www.packagist.org)
@@ -741,7 +741,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * swift.org
 > * [www.swift.org](http://www.swift.org)
 
-> **Linux distributions**
+> [accordion] Linux distributions
 >
 > * archive.ubuntu.com
 > * security.ubuntu.com
@@ -753,7 +753,7 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * [www.launchpad.net](http://www.launchpad.net)
 > * \*.nixos.org
 
-> **Development tools and platforms**
+> [accordion] Development tools and platforms
 >
 > * dl.k8s.io (Kubernetes)
 > * pkgs.k8s.io
@@ -785,14 +785,14 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * pkg.stainless.com
 > * binaries.prisma.sh
 
-> **Cloud services and monitoring**
+> [accordion] Cloud services and monitoring
 >
 > * http-intake.logs.datadoghq.com
 > * \*.datadoghq.com
 > * \*.datadoghq.eu
 > * api.honeycomb.io
 
-> **Content delivery and mirrors**
+> [accordion] Content delivery and mirrors
 >
 > * sourceforge.net
 > * \*.sourceforge.net
@@ -801,14 +801,14 @@ With **Trusted** network access, sessions can reach the following domains by def
 > * fonts.googleapis.com
 > * fonts.gstatic.com
 
-> **Schema and configuration**
+> [accordion] Schema and configuration
 >
 > * json-schema.org
 > * [www.json-schema.org](http://www.json-schema.org)
 > * json.schemastore.org
 > * [www.schemastore.org](http://www.schemastore.org)
 
-> **Model Context Protocol**
+> [accordion] Model Context Protocol
 >
 > * \*.modelcontextprotocol.io
 

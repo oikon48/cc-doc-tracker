@@ -90,17 +90,17 @@ When a trigger fires, the session receives the saved prompt as its assignment an
 
 In the **Trigger** row, choose how the task starts. To combine several triggers, click **+** at the end of the row.
 
-**Schedule**
+> [tab] Schedule
+>
+> Pick a preset frequency for a recurring run. See [Add a schedule trigger](#add-a-schedule-trigger) for timezone handling, late starts, custom cron intervals, and one-off runs.
 
-Pick a preset frequency for a recurring run. See [Add a schedule trigger](#add-a-schedule-trigger) for timezone handling, late starts, custom cron intervals, and one-off runs.
+> [tab] GitHub event
+>
+> Select the repository, the event to react to, and optional filters. See [Add a GitHub trigger](#add-a-github-trigger) for the full list of supported events and filter fields.
 
-**GitHub event**
-
-Select the repository, the event to react to, and optional filters. See [Add a GitHub trigger](#add-a-github-trigger) for the full list of supported events and filter fields.
-
-**API**
-
-Select **API** here. When you click **Create**, the **API token** dialog shows the token once, so copy it before you close the dialog. See [Add an API trigger](#add-an-api-trigger) to copy the URL or generate a new token.
+> [tab] API
+>
+> Select **API** here. When you click **Create**, the **API token** dialog shows the token once, so copy it before you close the dialog. See [Add an API trigger](#add-an-api-trigger) to copy the URL or generate a new token.
 
 **4. Select repositories**
 

@@ -299,47 +299,47 @@ A [skill](https://code.claude.com/docs/en/skills.md) can give Claude domain know
 
 For example, this PreToolUse hook filters test output to show only failures:
 
-**settings.json**
+> [tab] settings.json
+>
+> Add this to your [settings.json](https://code.claude.com/docs/en/settings.md#where-settings-live) to run the hook before every Bash command:
+>
+> ```json theme={null}
+> {
+>   "hooks": {
+>     "PreToolUse": [
+>       {
+>         "matcher": "Bash",
+>         "hooks": [
+>           {
+>             "type": "command",
+>             "command": "~/.claude/hooks/filter-test-output.sh"
+>           }
+>         ]
+>       }
+>     ]
+>   }
+> }
+> ```
 
-Add this to your [settings.json](https://code.claude.com/docs/en/settings.md#where-settings-live) to run the hook before every Bash command:
-
-```json theme={null}
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/filter-test-output.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**filter-test-output.sh**
-
-The hook calls this script. Create the folder with `mkdir -p ~/.claude/hooks`, save the script below as `~/.claude/hooks/filter-test-output.sh`, and make it executable with `chmod +x ~/.claude/hooks/filter-test-output.sh`. It checks if the command is a test runner and modifies it to show only failures:
-
-```bash theme={null}
-#!/bin/bash
-input=$(cat)
-cmd=$(echo "$input" | jq -r '.tool_input.command')
-
-# If running tests, filter to show only failures
-pattern='^(npm test|pytest|go test)( [^;&|<>`$#\\[:cntrl:]]*)?$'
-if [[ "$cmd" =~ $pattern ]]; then
-  filtered_cmd="$cmd 2>&1 | grep -A 5 -E '(FAIL|ERROR|error:)' | head -100"
-  echo "$input" | jq --arg filtered "$filtered_cmd" \
-    '{hookSpecificOutput: {hookEventName: "PreToolUse", updatedInput: (.tool_input + {command: $filtered})}}'
-else
-  echo "{}"
-fi
-```
+> [tab] filter-test-output.sh
+>
+> The hook calls this script. Create the folder with `mkdir -p ~/.claude/hooks`, save the script below as `~/.claude/hooks/filter-test-output.sh`, and make it executable with `chmod +x ~/.claude/hooks/filter-test-output.sh`. It checks if the command is a test runner and modifies it to show only failures:
+>
+> ```bash theme={null}
+> #!/bin/bash
+> input=$(cat)
+> cmd=$(echo "$input" | jq -r '.tool_input.command')
+>
+> # If running tests, filter to show only failures
+> pattern='^(npm test|pytest|go test)( [^;&|<>`$#\\[:cntrl:]]*)?$'
+> if [[ "$cmd" =~ $pattern ]]; then
+>   filtered_cmd="$cmd 2>&1 | grep -A 5 -E '(FAIL|ERROR|error:)' | head -100"
+>   echo "$input" | jq --arg filtered "$filtered_cmd" \
+>     '{hookSpecificOutput: {hookEventName: "PreToolUse", updatedInput: (.tool_input + {command: $filtered})}}'
+> else
+>   echo "{}"
+> fi
+> ```
 
 To verify the setup, run `/hooks` and check that the hook appears under PreToolUse. You can also start Claude Code with `claude --debug-file ./claude-debug.txt` and ask Claude to run `npm test`. When the hook rewrites the command, that log file contains a `modified tool input keys` line listing `command` and the other Bash input fields.
 

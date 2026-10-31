@@ -217,7 +217,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `worktree.original_cwd` | The directory Claude was in before entering the worktree |
 | `worktree.original_branch` | Git branch checked out before entering the worktree. Absent for hook-based worktrees |
 
-> **Full JSON schema**
+> [accordion] Full JSON schema
 >
 > Your status line command receives this JSON structure via stdin:
 >
