@@ -366,10 +366,6 @@ upstreams:
                                        # keep the quotes: a bare 1 fails at boot
 ```
 
-> [!WARNING]
->
-> The gateway doesn't support guardrail input tags. It adds no guard content tags to prompts, so a guardrail filter that Amazon Bedrock applies only to tagged input doesn't run on traffic through the gateway. For which filters depend on input tags, see [input tags](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html) in the Amazon Bedrock documentation.
-
 Also grant `bedrock:ApplyGuardrail` on the guardrail to the principal that signs this upstream's requests: the gateway's AWS principal, or with [`assume_role`](#bedrock-in-another-aws-account) the role named in `role_arn`.
 
 Set `guardrail` on every `bedrock` upstream or on none. The gateway refuses to start on a mix, because [failover](#multiple-upstreams) could otherwise send a request to a Bedrock upstream that has no guardrail.
@@ -377,6 +373,57 @@ Set `guardrail` on every `bedrock` upstream or on none. The gateway refuses to s
 The guardrail covers Bedrock upstreams only. If you list another provider in `upstreams`, the gateway sends requests to that provider without the guardrail, or refuses to start if that provider is [`mantle`](#amazon-bedrock-mantle-endpoint).
 
 When a `/v1/messages` request whose body carries an `amazon-bedrock-*` field, such as `amazon-bedrock-guardrailConfig`, reaches a Bedrock upstream that has `guardrail` set, the gateway answers 400 instead of forwarding it.
+
+> [!WARNING]
+>
+> By default the gateway adds no input tags to prompts, so a guardrail filter that Amazon Bedrock applies only to tagged input doesn't run on traffic through the gateway. To add the tags, set [`input_tagging`](#add-guardrail-input-tags). For which filters depend on input tags, see [input tags](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html) in the Amazon Bedrock documentation.
+
+##### Add guardrail input tags
+
+To have the gateway add the input tags that an Amazon Bedrock guardrail's [prompt attacks filter](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-prompt-attack.html) needs, set `input_tagging` in the `guardrail` block and restart the gateway. Set the same value on every `bedrock` upstream, or the gateway refuses to start. Requires Claude Code v2.1.316 or later on the gateway server. A gateway on a version that lacks the key exits at startup with `Unrecognized key(s) in object: 'input_tagging'`.
+
+> [!WARNING]
+>
+> According to [Amazon Bedrock's documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html), every filter in the guardrail stops evaluating untagged content once a request carries input tags. Try `input_tagging` on a test gateway before you set it on one that developers use.
+
+`input_tagging` takes one of these values:
+
+| `input_tagging` | Where the gateway tags text | After the guardrail blocks a prompt |
+| :- | :- | :- |
+| `last_message` | The `user` messages since Claude's last reply | In Claude Code, the next prompt can pass, and Claude then receives the blocked prompt as part of the conversation |
+| `user_messages` | `user` messages | Later prompts in the session can be blocked as well, until the developer removes the blocked prompt |
+| `all_messages` | `user` and `assistant` messages | Same as `user_messages` |
+| `all_messages_and_system` | The system prompt and every message, including [mid-conversation system messages](https://code.claude.com/docs/en/llm-gateway-protocol.md#feature-pass-through) | Same as `user_messages` |
+
+With `last_message`, if the `user` messages since Claude's last reply hold no text to tag, the gateway tags the mid-conversation system messages since that reply instead. A tool call counts as a reply.
+
+Amazon Bedrock's guidance for the prompt attacks filter is to [tag user input so that the system prompt is excluded](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-prompt-attack.html). If you set `all_messages_and_system`, a filter that flags Claude Code's own system prompt can block requests.
+
+The example below tags text in every `user` message:
+
+```yaml theme={null}
+upstreams:
+  - provider: bedrock
+    region: us-east-1
+    auth: {}
+    guardrail:
+      id: gr-abc123
+      version: "1"
+      input_tagging: user_messages
+```
+
+`user` messages can also hold text that Claude Code adds, such as [system reminders](https://code.claude.com/docs/en/glossary.md#system-reminder), so check on the test gateway that ordinary requests aren't blocked.
+
+In Anthropic's testing, a tagged session kept its [prompt cache](https://code.claude.com/docs/en/prompt-caching.md) reads from one prompt to the next, and the tags added no input tokens.
+
+##### What input tags don't cover
+
+No `input_tagging` value stops a developer who deliberately puts text where no tag goes. Don't count on the guardrail to evaluate these parts of a request:
+
+* **Content the gateway doesn't tag**: messages that your `input_tagging` value leaves out, tool definitions, tool call inputs, images, and PDFs, among others. Unless you set `all_messages_and_system`, the system prompt is untagged too.
+* **Tool results**: these hold what Claude's tools return, such as file contents and web pages. In Anthropic's testing, a word filter didn't evaluate them, with or without tags.
+
+If your AWS account or organization enforces a guardrail, see [Amazon Bedrock's documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-enforcements.html) for how that guardrail treats input tags.
 
 ##### Bedrock in another AWS account
 
@@ -813,7 +860,7 @@ Each key under `upstream_model` must match the `name` of a configured upstream, 
 
 ### `managed`
 
-The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; the first match is selected, then merged onto the `match: {}` catch-all base. They are served per-user at `GET /managed/settings` with ETag/304 caching.
+The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; by default the first match is selected, then merged onto the `match: {}` catch-all base. A user who matches two role policies gets only the first, so the second policy's deny rules don't apply unless you [apply every matching policy](#apply-every-matching-policy). Policies are served per-user at `GET /managed/settings` with ETag/304 caching.
 
 ```yaml theme={null}
 managed:
@@ -854,6 +901,8 @@ The gateway validates the `model` value itself before it relays a request, so a 
 
 An authenticated user who matches no policy gets the gateway's defaults, which means every model in the catalog and no managed settings. Add a `match: {}` catch-all last if you want a guaranteed default policy.
 
+Put organization-wide deny rules in the `match: {}` policy, because a group policy's rules apply only while the user's token carries that group.
+
 > [!NOTE]
 >
 > The gateway keeps no user directory of its own. It authorizes each request from the user's IdP token, reading group membership from the token's `groups` claim and evaluating policies against it. There is no roster to enumerate and no accounts to pre-create, and therefore no SCIM endpoint, because there is nothing for SCIM to sync into.
@@ -866,6 +915,52 @@ An authenticated user who matches no policy gets the gateway's defaults, which m
 > * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
 >
 > Claude Desktop follows [its own schedule](#when-a-policy-change-reaches-claude-desktop).
+
+#### Apply every matching policy
+
+A user who matches several role policies gets only the first unless you set `policy_mode: layered` beside `policies`. With `layered`, every policy that matches the user applies, down to the first `match: {}` policy.
+
+`policy_mode` requires Claude Code v2.1.316 or later on the gateway server. A gateway on a version that lacks it refuses to start when it finds the key. Upgrade every replica before you add the key, and remove the key before you roll back to an earlier version. This example has one group that loses `WebFetch` and one that gains Opus:
+
+```yaml theme={null}
+managed:
+  policy_mode: layered
+  policies:
+    - match: { groups: [no-web] }
+      cli:
+        permissions: { deny: ["WebFetch"] }
+    - match: { groups: [opus-users] }
+      cli:
+        availableModels: [opus, sonnet]
+    - match: {}
+      cli:
+        availableModels: [sonnet]
+        enforceAvailableModels: true
+```
+
+The table shows what a user in both `no-web` and `opus-users` receives under the default, `first_match`, and under `layered`.
+
+| Setting | `first_match` | `layered` |
+| - | - | - |
+| `availableModels` | `sonnet` | `opus`, `sonnet` |
+| `enforceAvailableModels` | `true` | `true` |
+| `permissions.deny` | `WebFetch` | `WebFetch` |
+
+The gateway merges each matching policy onto the ones listed below it, by the same [merge rules](#managed) as the base layer:
+
+* **Allow-lists, single values, and blocks such as `sandbox`**: each comes whole from the first-listed matching policy that sets it, so two groups' `availableModels` lists don't add up.
+* **Deny-lists and hook arrays**: these add up across every matching policy, so a user in two groups gets both groups' deny rules.
+* **`env`, `modelOverrides`, and `skillOverrides`**: entries merge by name, and the first-listed matching policy that sets a name supplies its value.
+* **`desktop` keys**: these merge by [the rules for the base `desktop` block](#how-a-role-policy-inherits-the-base-desktop-block).
+
+> [!WARNING]
+>
+> Policies can add up to looser rules than any one of them gives alone. For example, the `match: {}` policy sets `sandbox.enabled: true`, one group's policy sets `permissions.allow: ["Bash"]`, and another group's sets `sandbox.enabled: false`. A user in both groups receives `Bash` allowed with the sandbox off. In this case, list the policy that allows `Bash` first, and copy the `match: {}` policy's whole `sandbox` block into it.
+
+With `layered`, the gateway refuses to start on some settings, including these:
+
+* **A `!` pattern**: a [`!` negation](https://code.claude.com/docs/en/permissions#special-characters-and-negation) in a `Read` or `Edit` rule in any policy's `permissions.deny` or `permissions.ask` list, the `match: {}` policy's included
+* **A limit on hooks outside the catch-all**: `disableAllHooks`, `allowedHttpHookUrls`, or `httpHookAllowedEnvVars` in any policy other than `match: {}`
 
 #### Start sessions on a model the policy allows
 
