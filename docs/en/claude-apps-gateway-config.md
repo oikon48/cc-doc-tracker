@@ -219,7 +219,7 @@ For local development, point `postgres_url` at a throwaway Postgres container, f
 
 ### `upstreams`
 
-`upstreams` is an ordered list. The gateway forwards inference to the first upstream that resolves the requested model.
+`upstreams` is an ordered list. The gateway forwards inference to the first upstream that resolves the requested model, passing over any upstream whose [`groups` list](#send-each-team-to-its-own-upstream) leaves the developer out.
 
 On `5xx`, `429`, `401`, `403`, `404`, or timeout the gateway fails over to the next upstream; other `4xx` doesn't, because those errors are attributable to the request rather than the upstream. A `401` or `403` means the upstream rejected the credential the gateway used, or denied it access, for example to the requested model. A `404` means that upstream doesn't serve the requested model, so a later upstream in the list still can.
 
@@ -236,7 +236,7 @@ Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Micro
 The gateway returns one upstream's error response, or its own `502`, depending on how the upstreams answered:
 
 * **An upstream returned a status the gateway doesn't [fail over](#multiple-upstreams) on**: that upstream's response. The gateway tries no further upstreams.
-* **Every upstream the gateway tried failed in a way it [fails over on](#multiple-upstreams)**: the last `429`. When none returned a `429`, the gateway prefers, in order, the last `401` or `403`, the last `404`, and the last `501`. When none returned any of those, the gateway's own `502`, `all upstreams failed (N attempted)`, where N counts every entry in [`upstreams`](#upstreams), including entries the gateway skipped because they don't serve the requested model.
+* **Every upstream the gateway tried failed in a way it [fails over on](#multiple-upstreams)**: the last `429`. When none returned a `429`, the gateway prefers, in order, the last `401` or `403`, the last `404`, and the last `501`. When none returned any of those, the gateway's own `502`, `all upstreams failed (N attempted)`. N counts your [`upstreams`](#upstreams) entries, including skipped ones, minus any whose [`groups`](#send-each-team-to-its-own-upstream) list leaves the developer out.
 
 When the gateway returns an upstream's response, it keeps the upstream's status code. Whether it keeps the upstream's message depends on the provider. An Anthropic API upstream's error body reaches the developer unchanged.
 
@@ -425,6 +425,39 @@ No `input_tagging` value stops a developer who deliberately puts text where no t
 
 If your AWS account or organization enforces a guardrail, see [Amazon Bedrock's documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-enforcements.html) for how that guardrail treats input tags.
 
+##### Log which guardrail filter fired
+
+To find out which Amazon Bedrock guardrail filter blocked a developer's request, set `guardrail_trace: true` on the Bedrock upstream, restart the gateway, and have the developer send the request again. Then find the request's `guardrail.trace` event in the [audit log](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#logs). Requires Claude Code v2.1.314 or later on the gateway server. An earlier gateway refuses to start when it finds `guardrail_trace`.
+
+```yaml theme={null}
+upstreams:
+  - provider: bedrock
+    region: us-east-1
+    auth: {}
+    guardrail:
+      id: gr-abc123
+      version: "1"
+    guardrail_trace: true              # default false; beside guardrail, not inside it
+```
+
+The gateway writes a `guardrail.trace` event, without the matched text, when a filter fired or the guardrail's action is `INTERVENED`. Find the developer's events by `email` or `sub`. One streamed request can produce several events, and one of them can have an empty `filters` list, so read every event that has the same `request_id`:
+
+| Field | What it holds |
+| - | - |
+| `request_id` | The request's ID |
+| `sub`, `email` | The developer's user ID and email |
+| `upstream` | The upstream the reply came from |
+| `action` | The guardrail's action, such as `INTERVENED` |
+| `filters` | The filters that fired. The list is empty when AWS sends no filter detail |
+| `filters[].side` | `input` or `output` |
+| `filters[].guardrail` | The guardrail's ID |
+| `filters[].policy` | The Bedrock policy and list, such as `contentPolicy.filters` or `sensitiveInformationPolicy.piiEntities` |
+| Other `filters[]` fields | An entry can also carry fields such as `action`, `name`, `type`, `confidence`, `filterStrength`, `score`, and `threshold` |
+
+The event leaves out the text a filter matched, including the `match` field of Bedrock's trace. Developers don't receive Bedrock's trace data, because the gateway removes it from each reply, streamed or not.
+
+If a client sends an `amazon-bedrock-*` field in a `/v1/messages` request body, the gateway answers 400 on an upstream that sets `guardrail_trace`.
+
 ##### Bedrock in another AWS account
 
 Set `assume_role` on a Bedrock upstream and the gateway uses its own AWS identity only to call `sts:AssumeRole` on a role you name, which can be in a different AWS account from the gateway. Every Bedrock request from that upstream is signed with the one-hour credentials STS returns, so no long-lived access key crosses accounts.
@@ -467,7 +500,9 @@ The role's trust policy names the gateway's own principal, such as its IRSA or E
 * If STS refuses or is unreachable, the gateway doesn't send the request with the upstream's own credentials. It logs the STS error with what to check, then tries the next upstream you listed. [Upstream error messages](#upstream-error-messages) covers what the client receives when no upstream succeeds. A later upstream without `assume_role` would serve the request with its own credentials, so list one only if that is what you want.
 * The gateway calls the regional STS endpoint `sts.<region>.amazonaws.com`, which its network must reach. For the FIPS endpoint, set `AWS_USE_FIPS_ENDPOINT=true` in the gateway's environment rather than `use_fips_endpoint` in an AWS config file.
 * `assume_role` applies to `provider: bedrock` only and needs SigV4 source credentials: the gateway refuses to start when it's set beside `aws_bearer_token`.
-* Every developer the gateway admits can use this upstream; [`managed`](#managed) governs which developers may use which models. To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account. A request for a built-in model name can still [reach this upstream](#multiple-upstreams), and the gateway signs it with the same role. List this upstream last unless its account should also serve those models.
+* Without a [`groups` list](#send-each-team-to-its-own-upstream), every developer the gateway admits can use this upstream. To limit which models a developer can use, set `availableModels` in a [`managed`](#managed) policy.
+* To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account.
+* A request for a built-in model name can still [reach this upstream](#multiple-upstreams), and the gateway signs it with the same role. List this upstream last unless its account should also serve those models.
 
 This example gives one model a custom id that only the isolated upstream serves:
 
@@ -679,7 +714,11 @@ The gateway tries upstreams in order. `5xx`, `429`, `401`, `403`, `404`, timeout
 
 `429` is per-upstream capacity, so provisioned-throughput (PT) exhaustion fails over to on-demand. If you set [`forward_user_identity: true`](#per-user-identity-headers-for-a-proxy-you-run) on an upstream, a `429` to a request that carried the developer's email is a per-user denial instead and doesn't fail over.
 
-Every request starts at the first upstream. A request reaches a later upstream only when every upstream ahead of it has failed or doesn't serve the requested model.
+A request moves past an upstream only in these cases:
+
+* The upstream has failed
+* The upstream doesn't serve the requested model
+* The upstream has a [`groups` list](#send-each-team-to-its-own-upstream) that leaves the developer out
 
 The gateway keeps no record of failed upstreams, so while an upstream is down, every request that reaches it still tries it and waits for it to fail before moving on.
 
@@ -732,13 +771,83 @@ models:
 | - | - |
 | Different regions | One Amazon Bedrock upstream per region, each with its own `region:`. With [`auto_include_builtin_models: true`](#models) the cross-region inference profiles route automatically; for region-pinned deployments use a `models:` block. |
 | Different accounts | One Amazon Bedrock upstream per account. The default chain (`auth: {}`) uses the pod's identity; for a second account, add [`assume_role`](#bedrock-in-another-aws-account) to reach it with short-lived credentials, or set explicit credentials or a bearer token in `auth:`. |
+| Different teams | Give each team's upstream a `groups` list, so that only developers in those IdP groups reach it. See [Send each team to its own upstream](#send-each-team-to-its-own-upstream). |
 | Provisioned throughput | Map the model to the provisioned-throughput ARN in `models:` for that upstream's name. Other upstreams keep the on-demand ID, so PT capacity is exhausted before failing over. |
 | VPC / FIPS endpoints | Set `base_url:` on the upstream to your VPC endpoint or FIPS endpoint URL |
-| Model-scoped routing | Only a custom model `id`, one that isn't a built-in Claude model, skips the upstreams absent from its `upstream_model:` map. A `mantle` upstream is tried only for the models listed in its [`models` field](#amazon-bedrock-mantle-endpoint). On every other upstream the gateway tries built-in models in order and uses the provider's default ID where the map has no entry, so for built-in models the map changes which ID an upstream receives rather than whether it is tried; an upstream that rejects the ID follows the same [failover rules](#upstreams) as any other upstream error. |
+| Model-scoped routing | A custom model `id`, one that isn't a built-in Claude model, skips the upstreams absent from its `upstream_model:` map. An upstream with a `models` list, which a [`mantle` upstream](#amazon-bedrock-mantle-endpoint) must have, is tried only for those models. |
+| Built-in model routing | On an upstream with no `models` or `groups` list, the gateway tries built-in models in order and uses the provider's default ID where the `upstream_model:` map has no entry. For a built-in model the provider has a default ID for, the map changes which ID an upstream receives rather than whether it is tried. An upstream that rejects the ID follows the same [failover rules](#upstreams) as any other upstream error. |
 
 Failing over between cloud providers, or to the direct Anthropic API, changes which agreement, geography, and other terms govern the request.
 
 The CLI applies the same feature gating to gateways regardless of which upstream serves a given request, so by default failover doesn't send a body field an upstream would reject. If you set the [one-hour cache TTL](#one-hour-prompt-cache) in a policy, it goes to every upstream in the list, so set it only if all of them accept it.
+
+#### Send each team to its own upstream
+
+To send each team's requests to its own AWS account or Google Cloud project, list one upstream per team and give each one a `groups` list. Only developers in a listed IdP group reach that upstream, on the first try and on [failover](#multiple-upstreams). Every provider takes `groups`. Requires Claude Code v2.1.314 or later on the gateway server.
+
+This example gives the `payments-eng` and `search-eng` groups an AWS account each, and adds an upstream with no `groups` list that every developer can use:
+
+```yaml theme={null}
+upstreams:
+  - name: bedrock-payments
+    provider: bedrock
+    region: us-east-1
+    auth: {}
+    assume_role:
+      role_arn: arn:aws:iam::111111111111:role/claude-gateway-bedrock
+    groups: [payments-eng]
+  - name: bedrock-search
+    provider: bedrock
+    region: us-east-1
+    auth: {}
+    assume_role:
+      role_arn: arn:aws:iam::222222222222:role/claude-gateway-bedrock
+    groups: [search-eng]
+  - name: bedrock-shared               # no groups: open to everyone, so listed last
+    provider: bedrock
+    region: us-east-1
+    auth: {}
+```
+
+With the example config, each developer's requests start at the first upstream in their row and move to the next on failover:
+
+| Developer's groups | Upstreams, in order |
+| - | - |
+| `payments-eng` | `bedrock-payments`, then `bedrock-shared` |
+| `search-eng` | `bedrock-search`, then `bedrock-shared` |
+| `payments-eng` and `search-eng` | `bedrock-payments`, then `bedrock-search`, then `bedrock-shared` |
+| Neither | `bedrock-shared` |
+
+When a team's upstream denies the requested model with a `403`, the gateway tries the next upstream in that team's row that serves the model. To keep the team on one upstream, give every upstream a `groups` list, and make sure no other upstream lists a group the team's developers are in. That team then has no failover, and requests from developers in no listed group [fail with a `400`](#what-happens-when-a-developer-is-in-no-listed-group).
+
+To get each developer to the upstream you intend, write entries that match exactly and put open upstreams last:
+
+* **Entries**: write each group exactly as your IdP sends it in the [groups claim](#oidc), which [`match.groups`](#managed) also reads. The gateway refuses to start when it finds an empty list or an empty entry. It doesn't check an entry against your IdP, so an entry that matches no one raises no warning.
+* **Order**: put an upstream that has no `groups` list last. It serves everyone, so listed earlier it takes a team's requests ahead of that team's own upstream.
+
+> [!WARNING]
+>
+> A gateway earlier than v2.1.314 refuses to start when it finds `groups`, so upgrade every replica before you add it.
+>
+> Before you roll back, remove each upstream that has a `groups` list and every `upstream_model` key or pricing override that names it, and keep at least one upstream. With only the `groups` key gone, that upstream is open to every developer. A key or override that still names a removed upstream stops the gateway from starting, with `references unknown upstream`.
+
+##### What happens when a developer is in no listed group
+
+If every upstream has a `groups` list, a developer in none of those groups sees this error, and the gateway contacts no provider:
+
+```text theme={null}
+API Error: 400 you aren't in a group that can use this gateway. Ask your administrator to add you to one
+```
+
+Add the developer to a listed group in your IdP, or add an upstream with no `groups` list.
+
+The gateway reads a developer's groups again at each token refresh. If your IdP leaves groups out of a refresh, the developer then has none:
+
+* **[`oidc.allowed_groups`](#oidc) is set**: the gateway refuses the refresh, and the session ends
+* **Otherwise, an upstream has no `groups` list**: the developer's requests move to it
+* **Otherwise, every upstream has a `groups` list**: the developer's requests fail with that error
+
+If your IdP's userinfo endpoint returns the groups claim and `oidc.google_groups` isn't set, set [`oidc.userinfo_fallback`](#oidc) to `true` to fill in the groups from there.
 
 ## Optional sections
 
@@ -834,9 +943,12 @@ A gateway server earlier than v2.1.271 refuses to start if you set a `multiplier
 
 #### Send the rates to signed-in clients
 
-With v2.1.268 or later on the gateway server, the gateway also puts the rates from `pricing` into the [`managed`](#managed) policies it serves, as the [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) managed setting. Developers matched by a policy then see the `pricing` rates for the first upstream that serves each model ID in `/usage`, the status line, and OpenTelemetry. A developer who matches no policy receives no managed settings, so their figures stay at list price. Clients apply the setting in Claude Code v2.1.242 or later.
+With v2.1.268 or later on the gateway server, the gateway also puts the rates from `pricing` into the [`managed`](#managed) policies it serves, as the [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) managed setting.
+
+Developers matched by a policy then see the `pricing` rates in `/usage`, the status line, and OpenTelemetry. A developer who matches no policy receives no managed settings, so their figures stay at list price. Clients apply the setting in Claude Code v2.1.242 or later.
 
 * What the gateway adds: unless a policy's `cli` block already sets `modelPricing`, the gateway adds the `multiplier` and, for every model ID a client can request, the override row of the first upstream that serves that ID. A rate that only a failover upstream charges stays on the gateway.
+* Upstreams with a [`groups` list](#send-each-team-to-its-own-upstream): when one is the first upstream that serves a model ID, the gateway adds no row for that ID. Developers then see Claude Code's own rate for that ID, which is the model's standard rate when Claude Code recognizes the ID, times the `multiplier`.
 * Opt one policy out: set `modelPricing` to `{}` in that policy's `cli` block, and its developers stay at list price.
 * Keep a policy's own rates: a policy whose `cli` block sets `modelPricing` with its own `multiplier` or `overrides` keeps that `modelPricing` whole, and the gateway adds no rates of its own to it.
 
