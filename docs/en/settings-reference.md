@@ -1272,7 +1272,7 @@ On Linux and WSL2 the sandbox needs `bubblewrap` and `socat`; see [Set up Linux 
 
 ### `sandbox.failIfUnavailable`
 
-Make Claude Code exit with an error at startup when `sandbox.enabled` is `true` but the sandbox can't start, because a dependency is missing or the platform is unsupported. Without this key, Claude Code runs commands unsandboxed. Managed deployments that require sandboxing as a security gate can use this setting.
+Make Claude Code exit with an error at startup when `sandbox.enabled` is `true` but the sandbox can't start because the platform doesn't support it or the dependency check fails. Without this key, Claude Code runs commands unsandboxed. Managed deployments that require sandboxing as a security gate can use this setting.
 
 On a platform the sandbox doesn't support, Claude Code doesn't start with this key on. See [Enforce sandboxing with managed settings](https://code.claude.com/docs/en/sandboxing.md#enforce-sandboxing-with-managed-settings).
 
@@ -5092,10 +5092,12 @@ If you set [`managedSourcesBehavior`](#managedsourcesbehavior) to `"merge"` in y
 
 ### `sshHostCommands`
 
-Add SSH connections whose host comes from a command to the [Desktop](https://code.claude.com/docs/en/desktop.md#create-an-ssh-connection-from-a-command) environment selector. When you create a connection or replace its host, Desktop runs the entry's command on your computer and connects to the host that the command prints. Requires Claude Desktop v3.6556.0 or later on macOS or Linux, signed in with a Claude account.
+Add SSH connections whose host comes from a command to the [Desktop](https://code.claude.com/docs/en/desktop.md#create-an-ssh-connection-from-a-command) environment selector. When you create a connection or create another machine for it, Desktop runs the entry's command on your computer and connects to the host that the command prints.
+
+Requires Claude Desktop v3.6556.0 or later on macOS or Linux, or v4.16336.0 or later on Windows, signed in with a Claude account. On Windows, Desktop also has to [connect through the OpenSSH client](https://code.claude.com/docs/en/desktop.md#use-your-ssh-configuration).
 
 * **Scope**: [`User or managed`](#scopes). Only the desktop app reads this key. It reads managed entries from [one managed settings file or MDM policy](https://code.claude.com/docs/en/desktop.md#distribute-commands-to-your-team) on the computer, and ignores the key in [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md).
-* **Type**: array of objects, each with required `id`, `name`, and `command` and optional `sshIdentityFile` and `startDirectory`. Desktop starts `command` without a shell, so [write it as a program and plain arguments](https://code.claude.com/docs/en/desktop.md#write-the-command).
+* **Type**: array of objects, each with required `id`, `name`, and `command` and optional `sshIdentityFile` and `startDirectory`. Desktop doesn't read `command` as shell syntax, so pipes and variables don't work: [write it as a program and its arguments](https://code.claude.com/docs/en/desktop.md#write-the-command).
 * **Default**: unset
 
 This example adds one connection named `Dev box`, where `acme-dev create` stands for your own tool:
@@ -5111,6 +5113,8 @@ This example adds one connection named `Dev box`, where `acme-dev create` stands
   ]
 }
 ```
+
+On Windows, a bare name such as `acme-dev` doesn't work, so [start the command with the program's full path](https://code.claude.com/docs/en/desktop.md#write-the-command-on-windows).
 
 Before Claude Code v2.1.307, the Edit tool refused a change that added this key to a valid settings file, with the error `Unrecognized field: sshHostCommands`. On those versions, add the key in a text editor instead; Claude Code loads a file that holds the key. In Desktop, the version that counts is the [Code tab's Claude Code version](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab), not your terminal's.
 
