@@ -2188,6 +2188,7 @@ type SDKInformationalMessage = {
   level: "info" | "notice" | "suggestion" | "warning";
   tool_use_id?: string;
   prevent_continuation?: boolean;
+  tag?: string;
   uuid: UUID;
   session_id: string;
 };
@@ -2563,8 +2564,11 @@ interface HookCallbackMatcher {
   matcher?: string;
   hooks: HookCallback[];
   timeout?: number; // Timeout in seconds for all hooks in this matcher
+  onFailure?: "continue" | "block"; // "block" blocks the action when a callback fails
 }
 ```
+
+To decide what `onFailure` covers, see [Block the action when a callback fails](https://code.claude.com/docs/en/agent-sdk/hooks.md#block-the-action-when-a-callback-fails).
 
 ### `HookInput`
 

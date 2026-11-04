@@ -45,7 +45,7 @@ Every key below links to its entry. Scope lists the [files](https://code.claude.
 | [`autoCompactWindow`](#autocompactwindow) | Set how full the context gets before Claude Code [compacts](https://code.claude.com/docs/en/context-window.md) | Memory and context | Any file |
 | [`autoConnectIde`](#autoconnectide) | Connect to a running [VS Code](https://code.claude.com/docs/en/vs-code.md) or [JetBrains](https://code.claude.com/docs/en/jetbrains.md#from-external-terminals) IDE automatically from an external terminal | Global config settings | Global config |
 | [`autoContinueAtUsageLimit`](#autocontinueatusagelimit) | Wait in the open session and [continue the task automatically](https://code.claude.com/docs/en/interactive-mode.md#wait-for-a-usage-limit-to-reset) after a claude.ai usage limit resets | Interface and terminal | User or managed |
-| [`autoInstallIdeExtension`](#autoinstallideextension) | Turn off automatic install of the [IDE extension](https://code.claude.com/docs/en/vs-code.md#install-the-extension) from a VS Code terminal | Global config settings | Global config |
+| [`autoInstallIdeExtension`](#autoinstallideextension) | Let `/ide` install the [IDE extension](https://code.claude.com/docs/en/vs-code.md#install-the-extension) from an external terminal | Global config settings | Global config |
 | [`autoMemoryDirectory`](#automemorydirectory) | Store [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) in a directory you choose | Memory and context | Any file |
 | [`autoMemoryEnabled`](#automemoryenabled) | Turn [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) off or on | Memory and context | Any file |
 | [`autoMode`](#automode) | Add your own allow and deny rules to the [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) classifier | Permission settings | User or managed |
@@ -5828,12 +5828,12 @@ Claude Code ignores this key in `settings.json`.
 
 ### `autoInstallIdeExtension`
 
-Install the Claude Code IDE extension automatically when you run Claude Code from a VS Code terminal. Appears in `/config` as **Auto-install IDE extension** when you run Claude Code inside a VS Code or JetBrains terminal.
+Let [`/ide`](https://code.claude.com/docs/en/commands) install the Claude Code IDE extension in a running VS Code, Cursor, or Devin Desktop when you run the command from an external terminal. Claude Code doesn't install the extension when you start it. Appears in `/config` as **Auto-install IDE extension** when you run Claude Code inside a VS Code or JetBrains terminal.
 
 * **Scope**: [`Global config`](#scopes)
 * **Type**: Boolean
-  * `true`: Claude Code installs the IDE extension automatically when you run it from a VS Code terminal
-  * `false`: Claude Code doesn't install the extension automatically
+  * `true`: `/ide` installs the extension
+  * `false`: `/ide` doesn't install the extension
 * **Default**: `true`
 * **Per-session overrides**: [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](https://code.claude.com/docs/en/env-vars) set to `1` skips the install for one session even when this key is `true`
 
