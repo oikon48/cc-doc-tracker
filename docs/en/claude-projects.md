@@ -393,6 +393,7 @@ Settings save as you change them; a text field you're editing, such as the goal 
 | Plugins | Plugins | The plugins that load into each new cloud thread |
 | Usage | Usage | [Token use](#usage-and-cost) by thread and by model |
 | Memory | Memory | The project's [memory files](#give-a-project-standing-context) |
+| Auto-continue when usage limits reset | General | Whether a thread or the project conversation that [stops at a usage limit](#usage-limit-reached) continues on its own when the limit resets. On by default. |
 | Restart Claude | General | Restarts the project conversation when [Claude stops responding there](#claude-hasnt-responded) |
 | Pause, Archive, Delete | General | Stops, hides, or removes the project; see [Pause, archive, or delete a project](#pause-archive-or-delete-a-project) |
 
@@ -408,7 +409,7 @@ All three controls are at the bottom of **Project settings > General**:
 
 Project usage counts against the same [plan limits](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit) as your other Claude Code sessions, and a project can't spend past those limits on its own.
 
-A thread that reaches your plan's limit waits and continues on its own when the limit resets, so work you left running starts using your next usage window without a message from you. [A thread hit the usage limit](#usage-limit-reached) covers what you see, how to stop it, and the one case that doesn't wait.
+A thread that stops at your plan's limit waits and by default continues on its own when the limit resets. Its work then counts against your next usage window. To keep threads from continuing, see [A thread hit the usage limit](#usage-limit-reached).
 
 Work goes past your plan's limits only if you have turned on [usage credits](https://code.claude.com/docs/en/costs.md#add-usage-credits-to-your-subscription) for your account. A thread can't turn them on for you.
 
@@ -489,9 +490,9 @@ To fix GitHub access for "Couldn't start the session" or "Unable to access your 
 
 ### A thread hit the usage limit
 
-When a thread or the project conversation reaches your plan's five-hour or weekly limit, it keeps retrying on its own and continues when the limit resets. A thread that a scheduled task started doesn't wait: its turn stops with a limit error, and you send it a message after the limit resets.
+When a thread or the project conversation stops at your plan's five-hour or weekly limit, it waits and by default continues on its own when the limit resets.
 
-While a thread waits, it shows **Service is busy** with "Claude is still retrying and will continue automatically." You don't need to do anything for the work to continue. If you'd rather it not use your next usage window, click **Stop** in the thread, or [pause the project](#pause-archive-or-delete-a-project) to hold every thread. [Usage limit errors](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit) explain the limits and when they reset.
+To keep a thread or conversation from continuing at the reset time its message shows, turn off **Auto-continue when usage limits reset** in [**Project settings > General**](#project-settings-reference) before then. The setting is for the whole project, not only the thread you're looking at. To continue with the setting off, send the thread or conversation a message after the reset. [Usage limit errors](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit) explain the limits and when they reset.
 
 ### Additional usage credits are required
 
