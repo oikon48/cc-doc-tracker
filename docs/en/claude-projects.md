@@ -100,7 +100,7 @@ At [claude.ai/code](https://claude.ai/code) or in the Code tab of the desktop ap
 Scope the project to one stream of work you'll keep adding to, such as everything it takes to keep one API under its latency target. [When to use a project](#when-to-use-a-project) has more examples. Then fill in the dialog's fields:
 
 * **Name**: how the project appears in the **Projects** list.
-* **Goal** (optional): one line of what you're trying to get done, such as "Hold p95 API latency under 200 ms". Claude in the conversation works toward it. Without a goal, Claude works from the tasks you send, and you can add a goal later in **Project settings > General**.
+* **What do you want to work on?** (optional): one line that becomes the project's goal, such as "Hold p95 API latency under 200 ms". Claude in the conversation works toward it. Without a goal, Claude works from the tasks you send, and you can add a goal later in **Project settings > General**.
 * **Context** (optional): the GitHub repositories this project works on, plus any files, folders, or Google Drive folders threads should read. Click **Add** for each. Add the repositories most tasks need rather than every one the work might touch; [Decide which repositories to add](#decide-which-repositories-to-add) covers the choice, and you can add more later in **Project settings > Environment**.
 
 Standing rules for how threads should work go in [project instructions](#give-a-project-standing-context), which you set after the project exists.
@@ -515,7 +515,7 @@ These messages name their own cause. The table gives the next step for each.
 | "Unable to connect to repository" with "Claude couldn't access your repository or environment" | Your GitHub account needs push access to the repository, and the environment must still exist. Check both in **Project settings > Environment**, then retry |
 | "Couldn't show the setup proposal" | The app you have open is older than the **Setup recommendations** Claude sent. Refresh the page or restart the desktop app, or ask Claude to propose the setup again |
 | "The project's environment was removed" | Choose a different environment in **Project settings > Environment**; the change applies to new threads |
-| "Setup script failed" | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](https://code.claude.com/docs/en/web-quickstart.md#setup-script-failed) lists common causes |
+| "Setup script failed" | [Setup script failed](https://code.claude.com/docs/en/web-quickstart.md#setup-script-failed) lists common causes. Fix the script in the environment, then ask Claude in the project conversation to run the task in a new thread, so the script runs again |
 | "Claude ran out of context on this turn" | The thread filled its context window. If the message says the thread continues in a fresh session, it carries on by itself; otherwise ask Claude in the project conversation to start a new thread for the remaining work |
 | "Couldn't start in" followed by your folder's name | You allowed a thread to run on your computer, but the session couldn't start there. When a line under the message gives the reason, fix that, then ask Claude to run the task again |
 | "Claude is out of date on your device" | The computer you picked to run a thread has a Claude Code version older than v2.1.280. Update Claude Code there, or update the desktop app if that's what connects the folder, then ask Claude to run the task again |
