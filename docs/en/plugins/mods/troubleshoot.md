@@ -73,7 +73,7 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 
 ### Messages from the built-in guard
 
-On a machine with managed settings, or in a session whose credential is a Team or Enterprise `/login`, the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
+Where the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) loads, it can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
 
 | Message contains | What it means | Where it appears |
 | :- | :- | :- |

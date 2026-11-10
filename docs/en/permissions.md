@@ -258,7 +258,7 @@ A Bash rule matches the command text Claude writes, after Claude Code splits [co
 | :- | :- | :- |
 | `Bash(curl *)` | `curl https://example.com` | `/usr/bin/curl https://example.com`, `sh -c 'curl https://example.com'` |
 | `Bash(rm *)` | `rm -rf build/` | `/bin/rm -rf build/`, `bash -c 'rm -rf build/'` |
-| `Bash(git push *)` | `git push origin main` | `git -C . push origin main`, `git -c push.default=current push origin main`, `git 'push' origin main` |
+| `Bash(git push *)` | `git push origin main` | `git -C . push origin main`, `git -c push.default=current push origin main` |
 
 Your other rules and the permission mode decide the commands in the last column.
 
@@ -278,6 +278,7 @@ In Manual mode, commands from this set still prompt in these cases:
 * **`docker` pointed at another daemon**: read-only forms of `docker` prompt when the command carries a flag that selects a different daemon, such as `-H`, `--context`, or Podman's `--url` and `--connection`.
 * **`file` with path-opening flags**: `file` prompts when it passes `-m`/`--magic-file` or `-f`/`--files-from`, because those flags make `file` open the paths named in the flag's value.
 * **`ps` that could print environment variables**: `ps` prompts when one of its arguments could act as the `e` option, such as in `ps auxe` or `ps aux -e`, because that option prints process environment variables. `ps aux` and `ps -ef` run without a prompt. The check on dashed forms such as `ps aux -e` requires Claude Code v2.1.290 or later.
+* **`which` with flags beyond lookup and display**: `which` prompts when it passes a flag such as `-i`/`--read-alias` or `--read-functions`. `which node` and `which -a node` run without a prompt.
 * **Network paths on Windows**: a command whose arguments include a network (UNC) path, such as `\\server\share\file`, prompts because accessing a network path can send your Windows credentials to the host it names. The same check applies to [PowerShell tool](https://code.claude.com/docs/en/tools-reference.md#powershell-tool) commands.
 * **Writes to special shell variables**: a command that sets, unsets, or loops over certain special shell variables, such as `PATH` or `IFS`, prompts even when the rest of the command is read-only.
 * **Commands the analysis can't parse**: when Claude Code can't fully parse a command, it asks for approval instead of treating the command as read-only. Commands longer than 10,000 characters always prompt because they exceed what the analysis parses.
@@ -636,15 +637,15 @@ Path patterns share the `//`, `~/`, and `/` anchors from [Read and Edit rules](#
 
 PreToolUse hook decisions don't bypass permission rules. Claude Code evaluates deny and ask rules regardless of what a PreToolUse hook returns: a matching deny rule blocks the call, and a matching ask rule still prompts even when the hook returned `"allow"` or `"ask"`. This preserves the deny-first precedence described in [Manage permissions](#manage-permissions), including deny rules set in managed settings.
 
-That precedence covers hooks in settings files and in a plugin's `hooks/hooks.json`. A [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) you install that handles the [`tool.check`](https://code.claude.com/docs/en/plugins/mods/events#approve-or-refuse-a-tool-call-before-the-user-is-asked) event gives its answer after the `PreToolUse` hooks have run. With [managed settings](https://code.claude.com/docs/en/settings.md#check-what-your-organization-enforces) on the machine, or a Team or Enterprise [`/login`](https://code.claude.com/docs/en/authentication#authentication-precedence) as the session's credential, these outcomes stay in place by default when the mod approves a call:
+That precedence covers hooks in settings files and in a plugin's `hooks/hooks.json`. A [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) you install that handles the [`tool.check`](https://code.claude.com/docs/en/plugins/mods/events#approve-or-refuse-a-tool-call-before-the-user-is-asked) event gives its answer after the `PreToolUse` hooks have run. With [managed settings](https://code.claude.com/docs/en/settings.md#check-what-your-organization-enforces) or a [`managed-mcp.json` file](https://code.claude.com/docs/en/managed-mcp#deploy-managed-mcp-json), or a Team or Enterprise [`/login`](https://code.claude.com/docs/en/authentication#authentication-precedence) as the session's credential, these outcomes stay in place by default when the mod approves a call:
 
-* A call that a deny rule refuses stays refused, and your organization can change that.
+* A call that a deny rule refuses stays refused.
 * A call that an ask rule would prompt for still prompts you.
 * A call that a `PreToolUse` hook or [`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) would prompt for still prompts you.
 * A call that a `PreToolUse` hook blocked stays blocked, whichever settings file the hook comes from.
 * A call that your [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags) or Agent SDK [`canUseTool` callback](https://code.claude.com/docs/en/agent-sdk/user-input#handle-tool-approval-requests) would be asked about is still put to that tool or callback.
 
-With neither managed settings nor a Team or Enterprise `/login` as the session's credential, the mod can approve a call that a deny rule refuses or a `PreToolUse` hook blocked. A session that runs on an API key or a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token) instead isn't using that login, even when that login is stored.
+Your setup might lack managed settings, a `managed-mcp.json` file, and a Team or Enterprise `/login` as the session's credential. In that setup, the mod can approve a call that a deny rule refuses or a `PreToolUse` hook blocked. A session that runs on an API key or a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token) instead isn't using that login, even when that login is stored.
 
 In that setup you aren't prompted when the mod approves a call that an ask rule, a `PreToolUse` hook, or `permissions.blockReadsOutsideWorkingDirectories` would prompt for. Your `--permission-prompt-tool` or `canUseTool` callback isn't asked about a call the mod approves, either. Auto mode, plan mode, and `dontAsk` mode each add an outcome of their own in every setup:
 
