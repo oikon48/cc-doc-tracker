@@ -257,15 +257,15 @@ Rendering in the VS Code extension requires extension version 2.1.299 or later. 
 | [`AbovePrompt`](https://code.claude.com/docs/en/plugins/mods/interface#pick-where-to-draw) | `hasSurvey`, `isWorking`, `maxRows`, `bodyColumns`, `scroll`, `view` | One instance | Terminal, Desktop |
 | [`Placed`](https://code.claude.com/docs/en/plugins/mods/interface#place-a-row-in-the-transcript) | `id`, `plugin`, `onScreen` | The `requestId` that `$.ui.place` returned | Terminal |
 | [`Backdrop`](https://code.claude.com/docs/en/plugins/mods/interface#put-a-backdrop-behind-the-conversation) | `id`, `plugin`, `glass`, `colorScheme` | `backdrop` | `desktop` and `mobile` surfaces. Your hook runs when the Desktop or mobile app asks to draw a backdrop. |
-| `UserMessage` | `text`, `origin`, `isExpanded`, and `task` or `from` by origin | The message id | Terminal, Desktop, VS Code |
-| `AssistantMessage` | The reply's text | The message id | Terminal, Desktop, VS Code |
+| `UserMessage` | `text`, `origin`, `isExpanded`, and `task` or `from` by origin | The drawn row's id | Terminal, Desktop, VS Code |
+| `AssistantMessage` | The reply's text | The drawn row's id | Terminal, Desktop, VS Code |
 | `ToolUse`, `ToolResult`, `ToolGroup` | The tool's name, input, and result | The tool call id | Terminal, Desktop, VS Code |
-| `CommandOutput` | `command`, `text` | The message id | Terminal, Desktop |
+| `CommandOutput` | `command`, `text` | The drawn row's id | Terminal, Desktop |
 | [`AskUserQuestion`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) | The question and options | The tool call id | Terminal, Desktop, VS Code |
 | `ToolProgress` | `kind` | The tool call id | Terminal |
 | [`Spinner`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) | `word`, `message`, `suffix`, `mode` | The agent id | Terminal, Desktop, VS Code |
-| `TurnDuration` | `word`, `durationMs` | The message id | Terminal |
-| `InfoNotice` | `text`, `command` | The message id | Terminal |
+| `TurnDuration` | `word`, `durationMs` | The drawn row's id | Terminal |
+| `InfoNotice` | `text`, `command` | The notice's `text` prefixed with `notice:` | Terminal |
 | `SessionMode` | `modes` | One instance | Terminal, Desktop |
 | `PromptHint` | `isDraft`, `isWorking`, `hint` | One instance | Terminal, Desktop |
 
