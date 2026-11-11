@@ -30,12 +30,6 @@ jobs:
     permissions:
       contents: write  # Need write permission to commit changes
       issues: write    # Need write permission to create issues on failure
-      id-token: write  # Need for Claude Code Action OIDC authentication
-
-    outputs:
-      changed: ${{ steps.git-check.outputs.changed }}
-      changed_files: ${{ steps.git-check.outputs.changed_files }}
-      commit_sha: ${{ steps.get-sha.outputs.sha }}
 
     steps:
       - name: Checkout repository
@@ -116,12 +110,6 @@ jobs:
           git pull --rebase origin main
           git push
 
-      - name: Get commit SHA
-        id: get-sha
-        if: steps.git-check.outputs.changed == 'true'
-        run: |
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-
       - name: Report status
         if: always()
         run: |
@@ -159,19 +147,3 @@ jobs:
               body: body,
               labels: ['bug', 'documentation', 'automated']
             });
-
-  # Notify changes via Discord
-  notify:
-    needs: fetch-docs
-    if: needs.fetch-docs.outputs.changed == 'true'
-    permissions:
-      contents: read   # Required for checkout in reusable workflow
-      id-token: write  # Required for Claude Code Action OIDC authentication
-    uses: ./.github/workflows/notify-changes.yml
-    with:
-      commit_sha: ${{ needs.fetch-docs.outputs.commit_sha }}
-      changed_files_count: ${{ fromJson(needs.fetch-docs.outputs.changed_files) }}
-      tracker_name: 'Claude Code Docs'
-    secrets:
-      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
