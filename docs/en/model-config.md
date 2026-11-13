@@ -908,7 +908,7 @@ See the [`idleCompaction`](https://code.claude.com/docs/en/settings-reference#id
 
 ### Correct the window for a gateway or custom model ID
 
-Either of these startup warnings means Claude Code doesn't recognize your session's model ID, so it can't tell the model's context window and assumes 200K tokens:
+Either of these warnings means Claude Code doesn't recognize your session's model ID, so it can't tell the model's context window and assumes 200K tokens:
 
 ```text theme={null}
 ⚠ Model "my-gateway-opus" isn't recognized · context assumed to be 200k tokens · ...
