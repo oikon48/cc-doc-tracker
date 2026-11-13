@@ -2896,7 +2896,7 @@ The reason after the colon says what refused the switch:
 * **A reason a hook wrote**: a PreModelSwitch hook supplied that reason when it [denied the switch or asked for confirmation](https://code.claude.com/docs/en/hooks.md#premodelswitch-decision-control). Address what it asks, or pick a model your hooks allow.
 * **`PreModelSwitch hook <name> did not respond before its timeout`**: a hook that doesn't answer before its [timeout](https://code.claude.com/docs/en/hooks.md#timeouts) blocks the switch. Fix the hanging command or raise that hook's `timeout`, then switch again.
 * **`confirmation required, and this session cannot ask`**: a hook answered `ask` without a reason, and a control request has no way to show the confirmation prompt. A `/model` command in a [`-p` run](https://code.claude.com/docs/en/headless) reports the same condition with `(run /model interactively to confirm)` after the reason. Make the switch from an interactive session, or change the hook's decision for this model.
-* **`so organization-managed PreModelSwitch hooks could not be checked`**: Claude Code couldn't tell which PreModelSwitch hooks your organization's [managed plugins](https://code.claude.com/docs/en/settings-reference.md#enabledplugins) deliver, for example because a managed plugin failed to load. One of those hooks might block the switch, so Claude Code refuses rather than apply the switch unchecked. The start of the reason names what failed. Claude Code re-checks on every switch attempt, so a failure that has since cleared stops blocking; if it keeps failing, run `claude --debug` and switch again to capture the details, then fix the plugin or ask your admin to fix it.
+* **`so organization-managed PreModelSwitch hooks could not be checked`**: Claude Code before v2.1.323 refuses when it can't tell which PreModelSwitch hooks your [managed plugins](https://code.claude.com/docs/en/settings-reference.md#enabledplugins) deliver. The text before this phrase names what failed. To stop the refusal, update Claude Code. To also get a failed plugin's hooks running, fix the plugin or ask your admin. For details, start `claude --debug` in your shell and switch models, then read the [debug log](https://code.claude.com/docs/en/hooks.md#debug-hooks).
 * **`a PreModelSwitch hook failed before answering`** or **`PreModelSwitch hooks were cancelled (the control stream closed) before answering`**: the hook run ended without a verdict, and Claude Code doesn't treat that as approval. Run `claude --debug` to see what failed, then switch again.
 
 Before v2.1.260, the managed-plugin refusal read `plugin hooks could not be loaded, so PreModelSwitch hooks could not be checked; see the debug log`. Claude Code retried the plugin load once and then refused later switches in the session, even when your organization managed no plugins. Restart the session to run the plugin load again on those versions.
@@ -4538,11 +4538,10 @@ Claude Code rejects both a path that points outside the plugin as written, such 
 commands path escapes plugin directory: ./commands/deploy.md — it resolves to /home/user/shared/deploy.md, outside the plugin directory
 ```
 
-A message that gives the full path of one of a marketplace plugin's own files, such as `hooks/hooks.json`, means Claude Code skipped that file. That happens when Claude Code can't confirm the file is inside the plugin or, for a plugin in a [local marketplace](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins), inside that marketplace. The message reports each of these files under the component name shown:
+A message that gives the full path of one of a marketplace plugin's own files, such as `hooks/hooks.json`, means Claude Code skipped that file. When Claude Code can't confirm the file is inside the plugin, or inside its marketplace for a plugin in a [local marketplace](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins), it skips the file. The message reports these files under the component name shown:
 
 * `hooks/hooks.json`: `hooks`
 * `monitors/monitors.json`: `monitors`
-* `settings.json`: `settings`
 * `SKILL.md` at the plugin root: `skills`
 
 For example, this message is for a `hooks/hooks.json` that resolves outside both the plugin and its local marketplace:
