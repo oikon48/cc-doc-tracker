@@ -31,8 +31,8 @@ Unlike [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.m
 Before using Remote Control, confirm that your environment meets these conditions:
 
 * **Subscription**: available on Pro, Max, Ultra, Team, and Enterprise plans. API keys are not supported. On Team and Enterprise, an Owner must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
-* **Custom roles**: if your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), your roles must give you both the cloud sessions permission and the **Claude Code remote control** permission. If either is missing, starting Remote Control shows [`Remote Control is disabled by your organization's policy`](#remote-control-is-disabled-by-your-organizations-policy). Ask an Owner to check your roles and add what's missing at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
-* **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already. Without an eligible login, `claude remote-control` exits with an error, while `claude --remote-control` still starts an interactive session and shows a Remote Control failure notification shortly after launch.
+* **Custom roles**: if your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), your roles must give you both the cloud sessions permission and the **Claude Code remote control** permission. If either is missing, `/remote-control` shows [`Remote Control is disabled by your organization's policy`](#remote-control-is-disabled-by-your-organizations-policy). Ask an Owner to check your roles and add what's missing at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
+* **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already. Without an eligible login, `claude remote-control` exits with an error, while `claude --remote-control` starts an interactive session with Remote Control off.
 * **API endpoint**: not available in any of these configurations:
   * You use Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
   * You point [`ANTHROPIC_BASE_URL`](https://code.claude.com/docs/en/env-vars) at a host other than `api.anthropic.com`, such as an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) or proxy. Unset the variable to use Remote Control.
@@ -207,8 +207,8 @@ Claude Code declines the fork in cases such as these:
 
 Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To turn auto-connect on for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions**. The toggle takes three values:
 
-* **`true`**: connect automatically when an interactive session starts.
-* **`false`**: turn auto-connect off, though a `true` from [managed settings](https://code.claude.com/docs/en/managed-settings.md) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
+* **`on`**: connect automatically when an interactive session starts.
+* **`off`**: turn auto-connect off, though a `true` from [managed settings](https://code.claude.com/docs/en/managed-settings.md) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
 * **`default`**: clear your choice and follow your organization's admin default if one is set, otherwise Claude Code's current default. If you set `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, see [Auto-connect with `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set](#auto-connect-with-disable-telemetry-or-do-not-track).
 
 The VS Code extension and the Desktop app also have an auto-connect toggle:
@@ -228,8 +228,8 @@ With only `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set, your sessions don't auto-co
 
 Before you turn auto-connect on with only `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set, confirm that your Claude Code version meets the [requirement for these variables](#requirements). Then check whether your organization requires [Trusted Devices](#trusted-devices):
 
-* **Not required**: set **Enable Remote Control for all sessions** to `true` in `/config`.
-* **Required**: Remote Control isn't available while `DISABLE_TELEMETRY` or `DO_NOT_TRACK` is set. Unset whichever of the two variables you set. If your sessions still don't auto-connect, set **Enable Remote Control for all sessions** to `true` in `/config`.
+* **Not required**: turn on **Enable Remote Control for all sessions** in `/config`.
+* **Required**: Remote Control isn't available while `DISABLE_TELEMETRY` or `DO_NOT_TRACK` is set. Unset whichever of the two variables you set. If your sessions still don't auto-connect, turn on **Enable Remote Control for all sessions** in `/config`.
 
 ### Resume sessions after stopping the server
 
@@ -433,7 +433,7 @@ At [claude.ai/code](https://claude.ai/code) or in the Desktop app, **Remote Cont
 
 You're not signed in with a claude.ai account, or another credential is taking precedence over your login. The message takes one of these forms:
 
-* Signed out, from `/remote-control` or `--remote-control`: `Remote Control requires a claude.ai subscription.` or `/remote-control requires a claude.ai subscription.`
+* Signed out, from `/remote-control`: `Remote Control requires a claude.ai subscription.` or `/remote-control requires a claude.ai subscription.`
 * Signed out, from `claude remote-control`: `You must be logged in to use Remote Control. Remote Control is only available with claude.ai subscriptions.`
 * Signed in, but an API key or token is in use: `Remote Control requires claude.ai subscription auth.` followed by the credential in use, such as `ANTHROPIC_API_KEY is set, so this session is using API-key auth`. An `apiKeyHelper` setting and `ANTHROPIC_AUTH_TOKEN` are named the same way.
 
@@ -476,7 +476,7 @@ The message names what routed the session away from the Anthropic API, such as `
 
 A policy blocks Remote Control. Check these causes in order:
 
-* **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](https://code.claude.com/docs/en/managed-settings.md), independent of the organization-wide toggle and of how you're signed in.
+* **The error mentions `disableRemoteControl`**: remove the key from your settings files. If it's in [managed settings](https://code.claude.com/docs/en/managed-settings.md), ask your administrator. Changing your sign-in or the organization toggle won't help.
 * **Your claude.ai plan is Pro, Max, or Ultra**: Claude Code is still signed in under a Team or Enterprise organization from an earlier login, so it checks that organization's Remote Control policy. Run `/status` to see which plan and organization your sign-in uses. Run `claude auth logout` then `claude auth login` to sign in again under your current plan.
 * **The message doesn't say to contact your organization admin**: your organization has the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) applied, which turns Remote Control off. To confirm, run `/status` and look for `HIPAA` on the `Organization configuration` line. An Owner sees the **Remote Control** toggle grayed out in [admin settings](https://claude.ai/admin-settings/claude-code) and can't turn it on. If you have questions about the configuration, ask an Owner, who can contact your organization's Anthropic account team. Before v2.1.267, this case showed "Remote Control isn't available for your organization due to its compliance policy" instead.
 * **Remote Control works for others in your organization but not for you**: if your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), your roles can be the cause. Remote Control needs both the cloud sessions permission and the **Claude Code remote control** permission. Ask an Owner to check whether your roles include both and add what's missing at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
@@ -502,10 +502,10 @@ Claude Code couldn't fetch your organization's policy and has no saved copy on t
 
 The message takes one of these forms:
 
-* From `/remote-control`, `claude remote-control`, or `claude --remote-control`: `Couldn't verify your organization's policy for remote control. Check your network connection and try again.`
+* From `/remote-control` or `claude remote-control`: `Couldn't verify your organization's policy for remote control.` followed by what to do next
 * From [auto-connect](#enable-remote-control-for-all-sessions) when a session starts: `couldn't verify your organization's policy — check your network connection and try again`, prefixed with `Remote Control failed` in the notification and `Remote Control disconnected` in the conversation. The session then leaves Remote Control off.
 
-Restore your network connection, then run `/remote-control` or run the command again. Each attempt checks for the policy again, so you don't need to restart Claude Code. If the message keeps appearing, run `claude doctor` and read its `Organization policy` line, which says why the policy didn't load.
+Restore your network connection first. Restart Claude Code if the message says to, then run `/remote-control` or run the command again. If the message keeps appearing, run `claude doctor` and read its `Organization policy` line, which says why the policy didn't load.
 
 Before v2.1.281, this state showed `Remote Control is disabled by your organization's policy` instead.
 
@@ -535,13 +535,21 @@ Before v2.1.318, a session that failed this way showed `Session failed: spawn er
 
 This warning in the terminal running [`claude remote-control`](#start-a-remote-control-session) means the program file the server started from is missing, and new sessions run the newer version that replaced it. To move the server to that version too, stop it and run `claude remote-control` again. If Claude Code is installed on network storage, restart the server now and follow [Install on network storage](https://code.claude.com/docs/en/setup.md#install-on-network-storage). Otherwise, new sessions start without a restart.
 
-When the program file is gone and Claude Code finds no newer version to run, new sessions fail. The terminal shows an error such as `Session failed: spawn error:` followed by an `ENOENT` message. Stop the server, [install Claude Code](https://code.claude.com/docs/en/setup.md#install-claude-code) again if `claude` doesn't run in your shell, and run `claude remote-control` again. Before v2.1.318, new sessions failed this way even with a newer version installed.
+When the program file is gone and Claude Code finds no newer version to run, new sessions fail. The terminal shows an error such as `Session failed: program not found:`, or `Session failed: spawn error:` with `ENOENT`. Stop the server, [install Claude Code](https://code.claude.com/docs/en/setup.md#install-claude-code) again if `claude` doesn't run in your shell, and run `claude remote-control` again. Before v2.1.318, new sessions failed this way even with a newer version installed.
 
 ### "Couldn't reconnect to your Remote Control session"
 
 When you resume a conversation with `claude --resume` or `claude --continue`, Claude Code reconnects to the Remote Control session recorded in that conversation. This message means the reconnection failed for a reason that may be temporary, such as a network interruption or a server error, so Claude Code can't confirm whether the remote session still exists.
 
+The full message looks like this:
+
+```text theme={null}
+Couldn't reconnect to your Remote Control session. Retry, or start a fresh session without --resume.
+```
+
 Run `/remote-control` to retry the connection, or start a new session with `claude --remote-control` to create a new Remote Control session. Your local session keeps running without Remote Control in the meantime.
+
+If the server reports that the previous session is gone, you don't see this message. Claude Code starts a new session in its place or shows [`Previous session is unavailable — run /remote-control to start a new one`](#previous-session-is-unavailable).
 
 ### "Previous session is unavailable — run /remote-control to start a new one"
 
