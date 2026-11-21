@@ -53,7 +53,7 @@ Learn more: [Share session output as artifacts](https://code.claude.com/docs/en/
 
 ### Auto memory
 
-Notes Claude writes for itself based on your corrections and preferences, stored per git repository under `~/.claude/projects/`. All worktrees of the same repository share one auto memory directory. The first 200 lines or 25 KB of the `MEMORY.md` index loads at the start of every session. Auto memory is the Claude-written counterpart to [CLAUDE.md](#claude-md), which you write.
+Notes Claude writes for itself based on your corrections and preferences, stored per git repository under `~/.claude/projects/`. All worktrees of the same repository share one auto memory directory. The first 200 lines or 25 KB of the `MEMORY.md` index loads at session start while auto memory is on. Auto memory is the Claude-written counterpart to [CLAUDE.md](#claude-md), which you write.
 
 Learn more: [Auto memory](https://code.claude.com/docs/en/memory.md#auto-memory)
 
@@ -148,7 +148,7 @@ Learn more: [Explore the context window](https://code.claude.com/docs/en/context
 
 ### Dispatch
 
-A phone-initiated task router that spawns a Claude Code session in the Desktop app when you send a coding task from the Claude mobile app. Your prompt routes to the right tool automatically. Available on Pro, Max, and Ultra plans.
+A phone-initiated task router that spawns a Claude Code session in the Desktop app when you send a coding task from the Claude mobile app. Your prompt routes to the right tool automatically. Not available to new users.
 
 Learn more: [Sessions from Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch)
 
@@ -353,7 +353,7 @@ Learn more: [Context Claude Code adds outside the system prompt](https://code.cl
 
 ### Teleport
 
-A command, `/teleport`, that pulls a cloud Claude Code session into your local terminal. Claude fetches the branch, loads the conversation history, and resumes from the cloud session's last state. The reverse direction is `--cloud`, which sends a local task to run in the cloud.
+A command, `/teleport`, that pulls a cloud Claude Code session into your local terminal. The reverse direction is `--cloud`, which sends a local task to run in the cloud.
 
 Learn more: [Continue a cloud session in your terminal](https://code.claude.com/docs/en/claude-code-on-the-web.md#from-cloud-to-terminal)
 
