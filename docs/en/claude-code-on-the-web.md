@@ -472,8 +472,8 @@ Cloud sessions stop after a period of inactivity and the session's VM is reclaim
 
 Reopen the session from [claude.ai/code](https://claude.ai/code) to provision a fresh VM:
 
-* **Restored**: your conversation history
-* **Not restored**: background work that was still running or pending when the VM was reclaimed, including:
+* **Restored**: your conversation history, and tracking of [MCP tasks](https://code.claude.com/docs/en/mcp.md#mcp-task-results-in-the-cloud) still running on a connector
+* **Not restored**: other background work that was still running or pending when the VM was reclaimed, including:
   * **Shell commands**: Claude Code tells Claude which commands stopped. Ask Claude to rerun the ones you still need.
   * **Subagents**: Claude Code tells Claude which subagents stopped, and which of those can be [resumed](https://code.claude.com/docs/en/sub-agents.md#resume-subagents) instead of started over. Ask Claude to continue their work.
   * **Session-scoped scheduled tasks**: tasks you [scheduled in the session](https://code.claude.com/docs/en/scheduled-tasks.md) and a `/loop` waiting for its next iteration don't carry over to the reopened session. Ask Claude to schedule the tasks again, or run `/loop` again to restart the loop.
