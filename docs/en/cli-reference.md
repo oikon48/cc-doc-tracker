@@ -9,7 +9,7 @@ source: https://code.claude.com/docs/en/cli-reference.md
 
 # CLI reference
 
-> Complete reference for Claude Code command-line interface, including commands and flags.
+> Reference for the Claude Code command-line interface, including commands and flags.
 
 ## CLI commands
 
