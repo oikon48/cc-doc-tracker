@@ -112,7 +112,7 @@ Messages such as these mean that `/ship` left newer work off your open pull requ
 
 | Message | What it means | What to do |
 | :- | :- | :- |
-| `/ship didn't commit your uncommitted work` | Where a watch can start, the review and the watch go on without that work, and your unpushed commits [can go up with Claude's next push](https://code.claude.com/docs/en/ship-command.md#keep-working-while-a-watch-runs). Cases such as these lead to it: a public repository, auto-merge turned on, a merge or rebase under way, or a session where [no watch can start](#no-watch-started) | If the message gives a `git push` line, commit the work yourself, then run that line. Otherwise, run `/ship` again when the message says to |
+| `/ship didn't commit your uncommitted work` | Causes include a public repository, auto-merge turned on, and a merge or cherry-pick in progress. If [no watch can start](#no-watch-started), the review covers your uncommitted work. Otherwise, a review doesn't cover it, and your unpushed commits [can go up with Claude's next push](https://code.claude.com/docs/en/ship-command.md#keep-working-while-a-watch-runs) | If the message gives a `git push` line, commit the work yourself, then run that line. Otherwise, run `/ship` again when the message says to |
 | `Nothing pushed` or `Nothing committed or pushed`, with a sentence about your unpushed commits | `/ship` held those commits back. No review or watch starts, and a running watch on that pull request ends. One cause is a file in them with a name such as `password.txt` | If the commits should go up, run the `git push` line in the message. If not, take the file out of every unpushed commit. Then run `/ship` again |
 
 Before v2.1.331, `/ship` prints neither message. It doesn't commit your uncommitted work once a pull request is open, so commit it, then push it, as in `git push origin <branch>` in your shell. It doesn't hold back your unpushed commits, which [can go up with Claude's next push](https://code.claude.com/docs/en/ship-command.md#keep-working-while-a-watch-runs).
@@ -243,6 +243,24 @@ These messages are about a custom skill or command. Its name is one that the bui
 | `Nothing started. A custom /ship isn't loaded`, or the same for `/steward` | To run the built-in command, type the same line again. To run the custom one, rename it, then restart Claude Code |
 
 Leave a repository's `.claude/skills/steward/SKILL.md` as it is, because PR Steward and the watch read it as instructions. Neither message counts that file, so one that names `/steward` is about another skill or command.
+
+### Keep a custom /ship or /steward without renaming
+
+If you've already created your own skill or command called `/ship` or `/steward` and don't want the built-in versions to override it, you can turn them off. To do that, use the `CLAUDE_CODE_DISABLE_SHIP` environment variable, which turns off both together and requires Claude Code v2.1.331 or later. Before you set it, [remove any `"off"` entry](#a-skilloverrides-entry-turns-off-%2Fship-or-%2Fsteward) for your command under `skillOverrides`.
+
+Add this [`env`](https://code.claude.com/docs/en/settings-reference#env) entry to your [user settings file](https://code.claude.com/docs/en/settings.md#settings-files-and-who-they-affect), or to a project's `.claude/settings.json` for everyone who starts sessions in its top folder, then restart Claude Code:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_DISABLE_SHIP": "1"
+  }
+}
+```
+
+To check that your command loaded, type `/` at the Claude Code prompt and look for its description or first line.
+
+If your command is named `steward` and the repository has a `.claude/skills/steward/SKILL.md` file, check [which one runs](https://code.claude.com/docs/en/skills.md#resolve-skills-that-share-a-name).
 
 ## Related resources
 
