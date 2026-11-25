@@ -495,7 +495,7 @@ To change or turn off automatic backgrounding:
 
 Some calls never move to the background:
 
-* Calls from [subagents](https://code.claude.com/docs/en/sub-agents.md); Claude Code backgrounds only main-conversation calls
+* Calls from [subagents](https://code.claude.com/docs/en/sub-agents.md), except an [MCP task in the cloud](#mcp-tasks-in-the-cloud)
 * Calls to IDE servers
 * Calls in [non-interactive mode](https://code.claude.com/docs/en/headless.md), unless `CLAUDE_AUTO_BACKGROUND_TASKS` is set to `1`, since a one-shot run can end before the result arrives
 
@@ -503,7 +503,7 @@ A call waiting on an open [elicitation dialog](#respond-to-mcp-elicitation-reque
 
 ### MCP tasks that run on the server
 
-An MCP task is a long job, such as a report export or a build, that an MCP server runs itself using the [MCP tasks extension](https://modelcontextprotocol.io/extensions/tasks/overview). Claude's tool call returns once the server accepts the job, so Claude keeps working unless you [make Claude wait](#make-claude-wait-for-the-result-of-an-mcp-task). When the job ends, the transcript says so and Claude gets the result. Ask Claude for it.
+An MCP task is a long job, such as a report export or a build, that an MCP server runs itself using the [MCP tasks extension](https://modelcontextprotocol.io/extensions/tasks/overview). In the main conversation, Claude's tool call returns once the server accepts the job, so Claude keeps working unless you [make Claude wait](#make-claude-wait-for-the-result-of-an-mcp-task). When the job ends, the transcript says so and Claude gets the result. Ask Claude for it.
 
 Meanwhile, the footer shows a count such as `1 MCP task`, and Claude Code follows the task by checking its status with the server. A task on a remote server keeps running after you exit. To follow it again, [resume the same session](#exit-clear-or-resume-while-an-mcp-task-runs).
 
@@ -521,7 +521,7 @@ When the task ends, a line such as this one appears in the transcript:
 MCP task <server task id> (<server>/<tool>) completed.
 ```
 
-The result goes to Claude, not into the transcript, so ask Claude for it. If Claude is idle when the result arrives, Claude starts on it unprompted.
+The result goes to Claude, not into the transcript, so ask Claude for it. If Claude is idle when the result arrives, Claude starts on it unprompted. When a [subagent's call](#requirements-for-mcp-tasks) becomes a task in a terminal session, the subagent waits for the result.
 
 #### Answer a question from an MCP task
 
@@ -529,11 +529,11 @@ A running task can open an [elicitation dialog](#respond-to-mcp-elicitation-requ
 
 Unless you've set Claude to [wait for the result](#make-claude-wait-for-the-result-of-an-mcp-task), press `Esc` in the dialog to answer later. To reopen the question, run `/tasks`, open the task's details, and press `Enter`. Answering later requires Claude Code v2.1.324 or later.
 
-Use an interactive terminal session for tasks that ask questions, because no dialog opens in these other places:
+Outside an interactive terminal session, check whether you can answer, because some sessions cancel the task:
 
 * **[`claude -p`](https://code.claude.com/docs/en/headless) runs and Agent SDK sessions**: Claude Code asks the server to cancel the task, without running your [`Elicitation` hooks](https://code.claude.com/docs/en/hooks#elicitation) or calling the Agent SDK's `onElicitation` callback
 * **VS Code and local desktop app sessions**: see [MCP tasks in VS Code and the desktop app](#mcp-tasks-in-vs-code-and-desktop)
-* **Cloud sessions and claude.ai chats**: see [Get an MCP task's result in the cloud](#mcp-task-results-in-the-cloud)
+* **Cloud sessions and claude.ai chats**: see [Answer an MCP task's question in the cloud](#mcp-task-questions-in-the-cloud)
 
 #### Exit, clear, or resume while an MCP task runs
 
@@ -553,11 +553,13 @@ For the cloud, see [MCP tasks in cloud sessions and claude.ai chats](#mcp-tasks-
 
 * The server supports tasks
 * The server is an HTTP, stdio, or claude.ai connector server connected on [protocol revision 2026-07-28](#mcp-client-runtimes). Setting [`MCP_SDK_GENERATION=v1` or `MCP_PROTOCOL_NEGOTIATION=legacy`](https://code.claude.com/docs/en/env-vars) rules that out
-* The session [fetches feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), so not on a third-party provider such as Amazon Bedrock, and not with telemetry or flag fetching turned off
 * Anthropic has turned MCP tasks on for your kind of session:
   * Terminal CLI sessions, [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) sessions, and [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) runs have them on v2.1.304 or later
   * For the VS Code extension and local sessions in the desktop app, see [MCP tasks in VS Code and the desktop app](#mcp-tasks-in-vs-code-and-desktop)
-* The call comes from the main conversation, not from a [subagent](https://code.claude.com/docs/en/sub-agents.md)
+* If [feature-flag fetching is off](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), for example on Amazon Bedrock or with telemetry turned off, you need an interactive terminal session on Claude Code v2.1.317 or later
+* The call comes from one of these:
+  * The main conversation
+  * A non-[fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation) [subagent](https://code.claude.com/docs/en/sub-agents.md) that the main conversation started, in an interactive terminal session that [fetches feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), on v2.1.331 or later. The server can't be one [defined in the subagent's own file](https://code.claude.com/docs/en/sub-agents.md#scope-mcp-servers-to-a-subagent)
 * Either the session is interactive, or an [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) session or a `claude -p` run reading `--input-format stream-json` has:
   * [`CLAUDE_AUTO_BACKGROUND_TASKS`](https://code.claude.com/docs/en/env-vars) at `1`
   * `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND` not `1`
@@ -569,7 +571,7 @@ Keep an Agent SDK or stream-json session's input open, because the run [doesn't 
 
 #### MCP tasks in VS Code and the desktop app
 
-MCP tasks work in the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) and local [desktop app](https://code.claude.com/docs/en/desktop.md) sessions only if Anthropic has turned them on for your account or organization. Update the extension or app to its latest version first.
+MCP tasks can work in the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) and in local [desktop app](https://code.claude.com/docs/en/desktop.md) sessions. In both, you need Claude Code v2.1.331 or later and a session that [fetches feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
 
 Use a terminal session in these cases:
 
@@ -580,11 +582,14 @@ Use a terminal session in these cases:
 Once the server accepts the job, you can see or stop the task in VS Code's [`/tasks`](https://code.claude.com/docs/en/vs-code#monitor-background-processes) or the desktop app's [**Background tasks** pane](https://code.claude.com/docs/en/desktop.md#watch-background-tasks). If no row appears while Claude waits on the call, or the tool fails, check these causes:
 
 * **`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` at `0` or `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND` at `1`**: remove it, for example from `env` in [`settings.json`](https://code.claude.com/docs/en/settings), and start a new session
-* **Tasks not turned on for your account**: no setting shows this, so use a terminal session if nothing above applies
+* **Claude Code earlier than v2.1.331**: check the version in [VS Code](https://code.claude.com/docs/en/vs-code.md#install-the-extension) or the [desktop app](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab), then update the extension or app and start a new session. If the latest update still carries an earlier version, use a terminal session until an update brings v2.1.331 or later.
+* **First session after an update**: MCP tasks [can be missing in that session](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade), so start another one
+
+If the call still doesn't become a task after these checks, use a terminal session. If it doesn't become one there either, see [What a call needs to become an MCP task](#requirements-for-mcp-tasks).
 
 #### MCP tasks in cloud sessions and claude.ai chats
 
-MCP tasks work in the cloud with [claude.ai connectors](#use-mcp-servers-from-claude-ai) that support them on [protocol revision 2026-07-28](#mcp-client-runtimes). Calls from the main conversation can become tasks in these places:
+MCP tasks work in the cloud with [claude.ai connectors](#use-mcp-servers-from-claude-ai) that support them on [protocol revision 2026-07-28](#mcp-client-runtimes). Tool calls can become tasks in these places:
 
 * [Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) you start yourself in Anthropic-hosted environments
 * New chats in the [unified Claude experience](https://support.claude.com/en/articles/16761823-claude-cowork-and-chat-are-one-claude) on Pro, Max, Ultra, and Team plans
@@ -607,13 +612,27 @@ Expect calls without tasks in cases such as these, and run a tool that needs tas
 * Incognito chats
 * Claude Code's [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md)
 
+In cloud sessions and chats that have tasks, a [subagent](https://code.claude.com/docs/en/sub-agents.md)'s call can become a task too. This needs a subagent that the main conversation started and that isn't a [fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation). The subagent gets the result if the task ends within two minutes. For a longer task, expect Claude to pick up the result in the main conversation.
+
+#### Answer an MCP task's question in the cloud
+
+When a task asks you a question in a cloud session or chat, select **Allow** on the permission prompt, then answer in the form that opens. If the prompt is denied, or if the form closes before you answer, the task keeps waiting, so ask Claude to show the question again.
+
+You can't answer in the **Cowork** option or in recurring work that you schedule. If Claude reports there, or in any other session or chat, that the question cancelled the task, start the task again from an interactive terminal session.
+
+#### Check or stop an MCP task in the cloud
+
+To check on or stop a running MCP task, ask Claude in the cloud session or claude.ai chat that started it, for example `stop the export task`. In a claude.ai chat on a computer, you can also hover over the tool call that started the task and select **Stop** if it appears.
+
+The server may still finish the job after either kind of stop, so ask Claude to check the task afterward. If the job still runs, look for a way to cancel it in the server's other tools or in the service that runs it.
+
 #### Get an MCP task's result in the cloud
 
 If a task's result hasn't arrived in a cloud session or chat, send a message so Claude Code checks the task again. You can leave while a task runs. When it completes or fails, Claude usually picks up the result unprompted, even in a session that stopped for inactivity.
 
 If Claude reports one of these problems with the task, take the step that matches its report:
 
-* **The task was cancelled because it asked you a question**: cloud sessions and chats can't show a task's questions, so run that tool from an interactive terminal session
+* **The task was cancelled because it asked you a question**: you [can't answer](#mcp-task-questions-in-the-cloud) in that session or chat, so start the task again from an interactive terminal session
 * **Tracking stopped after failed status checks**: the job can still be running, so ask Claude to check it again. If no result follows, ask Claude to find the outcome with the server's other tools
 * **The server no longer knows the task**: the result may be lost, so ask Claude to find the outcome with the server's other tools before you run the job again
 * **The task reached the seven-day tracking limit**: the job can still be running. In a cloud session, ask Claude to check it again. In a chat, ask Claude to find the outcome with the server's other tools
@@ -719,7 +738,7 @@ This example reports the build as done:
 | `failed` | Tells Claude the `message` of the top-level `error` object `{ code, message, data }`, which the tasks extension requires on a failed task. Without that `message`, Claude gets `statusMessage` instead, or else `Task failed` |
 | `cancelled` | Tells Claude `statusMessage`, or else `Task was cancelled by the server` |
 | `input_required` | Reads `inputRequests`, an object that maps a key you choose to `{ method, params }`. Claude Code answers each key once through `tasks/update` with `{ taskId, inputResponses }`, where `inputResponses` maps the same key to that request's result. Keys beyond 16 per task are ignored |
-| Methods in `inputRequests` | `elicitation/create` reaches a person only in interactive terminal sessions. `roots/list` is served outside the cloud. Don't depend on it in [cloud sessions and claude.ai chats](#mcp-tasks-in-the-cloud). When Claude Code can't serve a request, it asks the server to cancel the task |
+| Methods in `inputRequests` | `elicitation/create` reaches a person in interactive terminal sessions. For the cloud, see [where a person can answer](#mcp-task-questions-in-the-cloud). `roots/list` is served outside the cloud. Don't depend on it in [cloud sessions and claude.ai chats](#mcp-tasks-in-the-cloud). When Claude Code can't serve a request, it asks the server to cancel the task |
 | Another `status` value | Claude Code asks the server to cancel the task and reports it to Claude as failed |
 | JSON-RPC error `-32602` | Read as an unknown task ID. For a task in the background outside the cloud, Claude Code keeps asking for up to five minutes, then reports the outcome to Claude as unknown. In cloud sessions and claude.ai chats, expect about five minutes of retries too, then a report that [the server no longer knows the task](#mcp-task-results-in-the-cloud) |
 | `tasks/cancel` | Sent, for example, when Claude or the person stops the task while the server is connected. Not sent on exit |

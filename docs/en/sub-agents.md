@@ -463,7 +463,7 @@ On macOS, Linux, and WSL, a subagent can also receive the Glob and Grep tools wh
 * `WaitForMcpServers`
 * `Workflow`
 
-The second filter applies to subagents running in the background. `Agent` and `ExitPlanMode` follow the first filter's conditions wherever the subagent runs. A background subagent keeps every MCP tool, and [`SubagentHandback`](https://code.claude.com/docs/en/tools-reference) if it reports through that tool. It also keeps `Read`, `Grep`, `Glob`, `LSP`, `Bash`, `PowerShell`, `Edit`, `Write`, `NotebookEdit`, `WebFetch`, `WebSearch`, `TodoWrite`, `Skill`, `ToolSearch`, `EnterWorktree`, `ExitWorktree`, `Monitor`, `TaskStop`, `SendMessage`, `Artifact`, `ListPlugins`, `ListSkills`, `SearchPlugins`, and `SearchSkills`.
+The second filter applies to subagents running in the background. `Agent` and `ExitPlanMode` follow the first filter's conditions wherever the subagent runs. A background subagent keeps every MCP tool, and [`SubagentHandback`](https://code.claude.com/docs/en/tools-reference) if it reports through that tool. It also keeps `Read`, `Grep`, `Glob`, `LSP`, `Bash`, `PowerShell`, `Edit`, `Write`, `NotebookEdit`, `WebFetch`, `WebSearch`, `TodoWrite`, `Skill`, `ToolSearch`, `EnterWorktree`, `ExitWorktree`, `Monitor`, `TaskStop`, `SendMessage`, `Artifact`, `ListPlugins`, `ListSkills`, `SearchPlugins`, `SearchSkills`, and `REPL`.
 
 Don't rely on other built-in tools in a background subagent: Claude Code removes most of them, whether inherited or listed in the `tools` field. The removal reports no error unless it leaves the `tools` list [resolving to nothing](https://code.claude.com/docs/en/errors.md#agent-would-be-spawned-with-zero-tools).
 
@@ -1187,7 +1187,9 @@ Resuming starts a new run of the agent under the same ID, so a subagent that had
 
 `SendMessage` checks that a name still refers to the same agent it reached earlier in the conversation. If a newer agent has taken the name, such as a re-spawned background agent that reused it, Claude Code refuses the send rather than delivering it to the wrong agent, and the error reports which agent the name now reaches so Claude can retarget. To reach the earlier agent while it's still running, Claude addresses it by the agent ID it received when it spawned that agent. The check is scoped to the current conversation and resets on `/clear`.
 
-A subagent treats messages from the agent that launched it as normal task direction, including mid-task course corrections, and acts on them within its own permission settings. Two limits hold regardless of who sent the message: no message from any agent counts as your approval for a pending permission prompt, and no agent message can change a subagent's permission settings, `CLAUDE.md`, or configuration. Only the permission system or your own messages can grant approval.
+> [!NOTE]
+>
+> A subagent treats messages from the agent that launched it as normal task direction, including mid-task course corrections, and acts on them within its own permission settings. A message from an agent doesn't count as your approval for a pending permission prompt.
 
 You can also ask Claude for the agent ID if you want to reference it explicitly, or find IDs in the transcript files at `~/.claude/projects/{project}/{sessionId}/subagents/`. Each transcript is stored as `agent-{agentId}.jsonl`.
 

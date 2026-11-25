@@ -191,7 +191,7 @@ Don't approve a mod that fails this command, because some failures don't stop it
 | `$.process.run`, `$.process.spawn` | Starts programs as the user |
 | `$.http.fetch` | Makes network requests |
 | `$.env.get`, `$.settings.read` | Reads environment variables and settings, which can hold API keys. An `env reads:` line in the output names each variable. |
-| `$.env.set` | Sets an environment variable for Claude Code and for every command and MCP server it starts afterward, which can change what those programs run. An `env writes:` line names each variable. |
+| `$.env.set` | Sets an environment variable for Claude Code and for commands and MCP servers it starts afterward, which can change what those programs run. An `env writes:` line names each variable. |
 | `$.mcp.call` | Calls a tool on a connected MCP server, with no permission prompt |
 | `$.model.complete` | Uses the user's plan or API key for model calls |
 | `$.prompt.submit` | Submits a prompt, and can send it as the user's own words |

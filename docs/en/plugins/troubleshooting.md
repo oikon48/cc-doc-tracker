@@ -1189,6 +1189,11 @@ An install was refused with this line, an enable with the same line ending `cann
 
 Managed settings block this plugin, its marketplace, or a dependency it needs. Ask your administrator which entry applies. A blocked dependency means the plugin can't install until the dependency's marketplace is allowed.
 
+When you install from `/plugin`, ask your administrator about other forms of the message too, such as:
+
+* `Plugin "<name>" is blocked by your organization's policy and can't be installed`
+* `Can't install "<name>": dependency "<dep>" is blocked by your organization's policy`
+
 ### `--plugin-dir is disabled by your organization's managed settings (disableSideloadFlags)`
 
 You started `claude` with `--plugin-dir`, `--plugin-url`, `--agents`, or `--mcp-config`. Claude Code exited with this message and `Plugins, custom agents, and MCP servers can only be loaded from sources your administrator has approved.`
